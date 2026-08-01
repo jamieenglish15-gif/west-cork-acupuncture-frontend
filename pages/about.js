@@ -1,6 +1,12 @@
+import Head from "next/head";
+
 export default function About() {
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
+      <Head>
+        <title>About Kate | West Cork Acupuncture Skibbereen</title>
+        <meta name="description" content="Meet Kate, dedicated acupuncturist at West Cork Acupuncture in Skibbereen. Trained in traditional acupuncture, cupping and cosmetic facial acupuncture." />
+      </Head>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
 
         <h1 style={{ fontSize: "40px", color: "#085041", marginBottom: "24px" }}>About Your Practitioner</h1>
