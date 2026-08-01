@@ -35,7 +35,9 @@ export default function Admin() {
   const [manualPayment, setManualPayment] = useState("cash");
   const [manualMsg, setManualMsg] = useState("");
   const [expandedRow, setExpandedRow] = useState(null);
-
+  const [intakeForms, setIntakeForms] = useState([]);
+const [selectedIntake, setSelectedIntake] = useState(null);
+  
   const login = () => {
     if (password === "wca2024") {
       setAuthenticated(true);
@@ -62,11 +64,18 @@ export default function Admin() {
       .then(data => setBlockedSlots(data.map(r => r.time_slot)))
       .catch(() => setBlockedSlots([]));
   };
+  const fetchIntakes = () => {
+  fetch(process.env.NEXT_PUBLIC_API_URL + "/intake/all")
+    .then(r => r.json())
+    .then(data => setIntakeForms(data))
+    .catch(() => setIntakeForms([]));
+};
 
-  useEffect(() => {
-    if (!authenticated) return;
-    fetchBookings();
-  }, [authenticated]);
+useEffect(() => {
+  if (!authenticated) return;
+  fetchBookings();
+  fetchIntakes();
+}, [authenticated]);
 
   useEffect(() => {
     fetchBlockedSlots(blockDate);
@@ -349,6 +358,7 @@ export default function Admin() {
           <button style={tabStyle("archive")} onClick={() => setTab("archive")}>Archive</button>
           <button style={tabStyle("slots")} onClick={() => setTab("slots")}>Manage Slots</button>
           <button style={tabStyle("add")} onClick={() => setTab("add")}>Add Booking</button>
+                                  <button style={tabStyle("intake")} onClick={() => setTab("intake")}>Intake Forms</button>
         </div>
 
         {tab === "bookings" && (
