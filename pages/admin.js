@@ -333,6 +333,87 @@ useEffect(() => {
           <button onClick={login} style={{ width: "100%", background: "#1D9E75", color: "white", padding: "12px", borderRadius: "6px", border: "none", fontSize: "16px", cursor: "pointer", fontFamily: "sans-serif" }}>
             Login
           </button>
+           {tab === "intake" && (
+  <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+    <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
+      Intake Forms {intakeForms.length > 0 && "(" + intakeForms.length + ")"}
+    </h2>
+    {intakeForms.length === 0 ? (
+      <p style={{ fontFamily: "sans-serif", color: "#666" }}>No intake forms submitted yet.</p>
+    ) : (
+      <div>
+        {intakeForms.map(f => (
+          <div key={f.id} style={{ border: "1px solid #E1F5EE", borderRadius: "8px", marginBottom: "16px", overflow: "hidden" }}>
+            <div
+              onClick={() => setSelectedIntake(selectedIntake === f.id ? null : f.id)}
+              style={{ background: "#F5F0E8", padding: "16px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+            >
+              <div>
+                <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{f.name}</p>
+                <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>
+                  Submitted: {new Date(f.created_at).toLocaleDateString()}
+                </p>
+              </div>
+              <button style={btnStyle("#085041")}>
+                {selectedIntake === f.id ? "Hide" : "View"}
+              </button>
+            </div>
+            {selectedIntake === f.id && (
+              <div style={{ padding: "24px", fontFamily: "sans-serif", fontSize: "14px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px" }}>
+                  <div>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Date of Birth</p>
+                    <p style={{ color: "#333" }}>{f.date_of_birth || "-"}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Address</p>
+                    <p style={{ color: "#333" }}>{f.address || "-"}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Emergency Contact</p>
+                    <p style={{ color: "#333" }}>{f.emergency_contact || "-"} {f.emergency_phone ? "- " + f.emergency_phone : ""}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>GP Name</p>
+                    <p style={{ color: "#333" }}>{f.gp_name || "-"}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Reason for Visit</p>
+                    <p style={{ color: "#333" }}>{f.reason_for_visit || "-"}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Medical Conditions</p>
+                    <p style={{ color: "#333" }}>{f.medical_conditions || "-"}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Medications</p>
+                    <p style={{ color: "#333" }}>{f.medications || "-"}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Allergies</p>
+                    <p style={{ color: "#333" }}>{f.allergies || "-"}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Previous Acupuncture</p>
+                    <p style={{ color: "#333", textTransform: "capitalize" }}>{f.previous_acupuncture || "-"}</p>
+                  </div>
+                  <div>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Pregnant / Trying to Conceive</p>
+                    <p style={{ color: "#333", textTransform: "capitalize" }}>{f.pregnant || "-"}</p>
+                  </div>
+                  <div style={{ gridColumn: "1 / -1" }}>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Additional Information</p>
+                    <p style={{ color: "#333" }}>{f.additional_info || "-"}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+)}   
         </div>
       </div>
     );
