@@ -42,15 +42,6 @@ function IntakeForms() {
     fetchForms();
   };
 
-  if (forms.length === 0) {
-    return (
-      <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
-        <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Intake Forms</h2>
-        <p style={{ fontFamily: "sans-serif", color: "#666" }}>No intake forms submitted yet.</p>
-      </div>
-    );
-  }
-
   const fields = [
     ["date_of_birth", "Date of Birth"],
     ["address", "Address"],
@@ -66,123 +57,93 @@ function IntakeForms() {
     ["additional_info", "Additional Info"]
   ];
 
-  return (
-    <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
-      <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Intake Forms ({forms.length})</h2>
-      {forms.map(f => (
-        <div key={f.id} style={{ border: "1px solid #E1F5EE", borderRadius: "8px", marginBottom: "16px", overflow: "hidden" }}>
-          <div style={{ background: "#F5F0E8", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div onClick={() => setSelected(selected === f.id ? null : f.id)} style={{ cursor: "pointer", flex: 1 }}>
-              <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{f.name}</p>
-              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>
-                Submitted: {new Date(f.created_at).toLocaleDateString()}
-              </p>
-            </div>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <button
-                onClick={() => { setEditing(f.id); setEditData({...f}); setSelected(f.id); }}
-                style={{ background: "#085041", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => deleteForm(f.id)}
-                style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
-              >
-                Delete
-              </button>
-              <button
-                onClick={() => setSelected(selected === f.id ? null : f.id)}
-                style={{ background: "#888", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
-              >
-                {selected === f.id ? "Hide" : "View"}
-              </button>
-            </div>
-          </div>
-          {selected === f.id && (
-            <div style={{ padding: "24px", fontFamily: "sans-serif", fontSize: "14px" }}>
-              {editing === f.id ? (
-                <div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px", marginBottom: "16px" }}>
-                    {fields.map(([key, label]) => (
-                      <div key={key}>
-                        <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px", fontSize: "12px" }}>{label}</p>
-                        <input
-                          defaultValue={f[key] || ""}
-                          onChange={e => setEditData({ ...editData, [key]: e.target.value })}
-                          style={{ width: "100%", padding: "8px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", boxSizing: "border-box" }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    <button onClick={() => saveEdit(f.id)} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>Save</button>
-                    <button onClick={() => setEditing(null)} style={{ background: "#888", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>Cancel</button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px" }}>
-                  {fields.map(([key, label]) => (
-                    <div key={key}>
-                      <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>{label}</p>
-                      <p style={{ color: "#333" }}>{f[key] || "-"}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
+  if (forms.length === 0) {
+    return (
+      <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+        <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Intake Forms</h2>
+        <p style={{ fontFamily: "sans-serif", color: "#666" }}>No intake forms submitted yet.</p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
-      <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Intake Forms ({forms.length})</h2>
-      {forms.map(f => (
-        <div key={f.id} style={{ border: "1px solid #E1F5EE", borderRadius: "8px", marginBottom: "16px", overflow: "hidden" }}>
-          <div
-            onClick={() => setSelected(selected === f.id ? null : f.id)}
-            style={{ background: "#F5F0E8", padding: "16px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-          >
-            <div>
-              <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{f.name}</p>
-              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>
-                Submitted: {new Date(f.created_at).toLocaleDateString()}
-              </p>
+      <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>{"Intake Forms (" + forms.length + ")"}</h2>
+      {forms.map(function(f) {
+        return (
+          <div key={f.id} style={{ border: "1px solid #E1F5EE", borderRadius: "8px", marginBottom: "16px", overflow: "hidden" }}>
+            <div style={{ background: "#F5F0E8", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div onClick={() => setSelected(selected === f.id ? null : f.id)} style={{ cursor: "pointer", flex: 1 }}>
+                <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{f.name}</p>
+                <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>
+                  {"Submitted: " + new Date(f.created_at).toLocaleDateString()}
+                </p>
+              </div>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  onClick={() => { setEditing(f.id); setEditData(Object.assign({}, f)); setSelected(f.id); }}
+                  style={{ background: "#085041", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => deleteForm(f.id)}
+                  style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => setSelected(selected === f.id ? null : f.id)}
+                  style={{ background: "#888", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
+                >
+                  {selected === f.id ? "Hide" : "View"}
+                </button>
+              </div>
             </div>
-            <span style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041" }}>
-              {selected === f.id ? "Hide" : "View"}
-            </span>
-          </div>
-          {selected === f.id && (
-            <div style={{ padding: "24px", fontFamily: "sans-serif", fontSize: "14px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px" }}>
-                {[
-                  ["Date of Birth", f.date_of_birth],
-                  ["Address", f.address],
-                  ["Emergency Contact", (f.emergency_contact || "") + (f.emergency_phone ? " - " + f.emergency_phone : "")],
-                  ["GP Name", f.gp_name],
-                  ["Reason for Visit", f.reason_for_visit],
-                  ["Medical Conditions", f.medical_conditions],
-                  ["Medications", f.medications],
-                  ["Allergies", f.allergies],
-                  ["Previous Acupuncture", f.previous_acupuncture],
-                  ["Pregnant / Trying to Conceive", f.pregnant],
-                  ["Additional Info", f.additional_info]
-                ].map(item => (
-                  <div key={item[0]}>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>{item[0]}</p>
-                    <p style={{ color: "#333" }}>{item[1] || "-"}</p>
+            {selected === f.id && (
+              <div style={{ padding: "24px", fontFamily: "sans-serif", fontSize: "14px" }}>
+                {editing === f.id ? (
+                  <div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px", marginBottom: "16px" }}>
+                      {fields.map(function(field) {
+                        return (
+                          <div key={field[0]}>
+                            <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px", fontSize: "12px" }}>{field[1]}</p>
+                            <input
+                              defaultValue={f[field[0]] || ""}
+                              onChange={function(e) {
+                                var newData = Object.assign({}, editData);
+                                newData[field[0]] = e.target.value;
+                                setEditData(newData);
+                              }}
+                              style={{ width: "100%", padding: "8px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", boxSizing: "border-box" }}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button onClick={() => saveEdit(f.id)} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>Save</button>
+                      <button onClick={() => setEditing(null)} style={{ background: "#888", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px" }}>
+                    {fields.map(function(field) {
+                      return (
+                        <div key={field[0]}>
+                          <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>{field[1]}</p>
+                          <p style={{ color: "#333" }}>{f[field[0]] || "-"}</p>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
-            </div>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -530,7 +491,7 @@ export default function Admin() {
         {tab === "bookings" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
-              Active Bookings {bookings.length > 0 && "(" + bookings.length + ")"}
+              {"Active Bookings" + (bookings.length > 0 ? " (" + bookings.length + ")" : "")}
             </h2>
             {loading ? (
               <p style={{ fontFamily: "sans-serif", color: "#666" }}>Loading...</p>
@@ -542,7 +503,7 @@ export default function Admin() {
                   <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Status", "Actions", "More"])}</thead>
                   <tbody>
                     {bookings.map(b => (
-                      <tr key={b.id} style={{ borderBottom: expandedRow === b.id ? "none" : "1px solid #E1F5EE" }}>
+                      <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
                         <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.name}</td>
                         <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.phone}</td>
                         <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.service}</td>
@@ -574,53 +535,56 @@ export default function Admin() {
                         </td>
                       </tr>
                     ))}
-                    {bookings.map(b => expandedRow === b.id ? (
-                      <tr key={b.id + "-exp"} style={{ borderBottom: "1px solid #E1F5EE", background: "#F5F0E8" }}>
-                        <td colSpan={8} style={{ padding: "16px" }}>
-                          <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
-                            <div>
-                              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Payment</p>
-                              <p style={{ fontFamily: "sans-serif", fontSize: "13px", textTransform: "capitalize" }}>{b.payment_method}</p>
-                            </div>
-                            <div style={{ flex: 1, minWidth: "200px" }}>
-                              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Notes</p>
-                              {editingNote === b.id ? (
-                                <div>
-                                  <textarea
-                                    defaultValue={b.notes || ""}
-                                    onChange={e => setNoteText(e.target.value)}
-                                    style={{ width: "100%", padding: "6px", fontFamily: "sans-serif", fontSize: "12px", borderRadius: "4px", border: "1px solid #9FE1CB", marginBottom: "4px" }}
-                                    rows={3}
-                                  />
-                                  <div style={{ display: "flex", gap: "4px" }}>
-                                    <button onClick={() => saveNote(b.id)} style={btnStyle("#1D9E75")}>Save</button>
-                                    <button onClick={() => setEditingNote(null)} style={btnStyle("#888")}>Cancel</button>
+                    {bookings.map(b => {
+                      if (expandedRow !== b.id) return null;
+                      return (
+                        <tr key={b.id + "-exp"} style={{ borderBottom: "1px solid #E1F5EE", background: "#F5F0E8" }}>
+                          <td colSpan={8} style={{ padding: "16px" }}>
+                            <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+                              <div>
+                                <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Payment</p>
+                                <p style={{ fontFamily: "sans-serif", fontSize: "13px", textTransform: "capitalize" }}>{b.payment_method}</p>
+                              </div>
+                              <div style={{ flex: 1, minWidth: "200px" }}>
+                                <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Notes</p>
+                                {editingNote === b.id ? (
+                                  <div>
+                                    <textarea
+                                      defaultValue={b.notes || ""}
+                                      onChange={e => setNoteText(e.target.value)}
+                                      style={{ width: "100%", padding: "6px", fontFamily: "sans-serif", fontSize: "12px", borderRadius: "4px", border: "1px solid #9FE1CB", marginBottom: "4px" }}
+                                      rows={3}
+                                    />
+                                    <div style={{ display: "flex", gap: "4px" }}>
+                                      <button onClick={() => saveNote(b.id)} style={btnStyle("#1D9E75")}>Save</button>
+                                      <button onClick={() => setEditingNote(null)} style={btnStyle("#888")}>Cancel</button>
+                                    </div>
                                   </div>
-                                </div>
-                              ) : (
-                                <div>
-                                  <p style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}>{b.notes || "No notes"}</p>
-                                  <button onClick={() => { setEditingNote(b.id); setNoteText(b.notes || ""); }} style={btnStyle("#085041")}>
-                                    {b.notes ? "Edit Note" : "Add Note"}
+                                ) : (
+                                  <div>
+                                    <p style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}>{b.notes || "No notes"}</p>
+                                    <button onClick={() => { setEditingNote(b.id); setNoteText(b.notes || ""); }} style={btnStyle("#085041")}>
+                                      {b.notes ? "Edit Note" : "Add Note"}
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                              <div>
+                                <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "8px" }}>Quick Actions</p>
+                                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                                  <button onClick={() => sendReminder(b)} style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
+                                    Send Reminder
+                                  </button>
+                                  <button onClick={() => sendIntake(b)} style={btnStyle("#085041")}>
+                                    Send Intake Form
                                   </button>
                                 </div>
-                              )}
-                            </div>
-                            <div>
-                              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "8px" }}>Quick Actions</p>
-                              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                                <button onClick={() => sendReminder(b)} style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
-                                  Send Reminder
-                                </button>
-                                <button onClick={() => sendIntake(b)} style={btnStyle("#085041")}>
-                                  Send Intake Form
-                                </button>
                               </div>
                             </div>
-                          </div>
-                        </td>
-                      </tr>
-                    ) : null)}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -633,7 +597,7 @@ export default function Admin() {
             <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
               <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1))} style={btnStyle("#085041")}>Prev</button>
               <h2 style={{ fontSize: "24px", color: "#085041", margin: 0 }}>
-                {MONTHS[calendarDate.getMonth()]} {calendarDate.getFullYear()}
+                {MONTHS[calendarDate.getMonth()] + " " + calendarDate.getFullYear()}
               </h2>
               <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1))} style={btnStyle("#085041")}>Next</button>
             </div>
@@ -652,7 +616,7 @@ export default function Admin() {
                         <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", margin: "0 0 4px 0" }}>{day}</p>
                         {dayBookings.map(b => (
                           <div key={b.id} style={{ background: statusColor(b.status), color: "white", padding: "2px 4px", borderRadius: "3px", fontSize: "10px", fontFamily: "sans-serif", marginBottom: "2px" }}>
-                            {b.time_slot} {b.name.split(" ")[0]}
+                            {b.time_slot + " " + b.name.split(" ")[0]}
                           </div>
                         ))}
                       </div>
@@ -672,7 +636,7 @@ export default function Admin() {
         {tab === "contacts" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
-              Client Contacts {uniqueClients().length > 0 && "(" + uniqueClients().length + ")"}
+              {"Client Contacts" + (uniqueClients().length > 0 ? " (" + uniqueClients().length + ")" : "")}
             </h2>
             <div style={{ background: "#F5F0E8", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
               <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>Add New Contact</h3>
@@ -740,7 +704,7 @@ export default function Admin() {
         {tab === "archive" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
-              Archived Bookings {archived.length > 0 && "(" + archived.length + ")"}
+              {"Archived Bookings" + (archived.length > 0 ? " (" + archived.length + ")" : "")}
             </h2>
             {archived.length === 0 ? (
               <p style={{ fontFamily: "sans-serif", color: "#666" }}>No archived bookings.</p>
@@ -807,7 +771,7 @@ export default function Admin() {
                           textDecoration: isBlocked ? "line-through" : "none"
                         }}
                       >
-                        {slot} {isBlocked ? "X" : ""}
+                        {slot + (isBlocked ? " X" : "")}
                       </button>
                     );
                   })}
