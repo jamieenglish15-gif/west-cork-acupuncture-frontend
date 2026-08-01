@@ -72,19 +72,26 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ABOUT STRIP */}
-      <div style={{ background: "#085041", padding: "100px 60px", color: "white" }}>
-        <div style={{ maxWidth: "700px", margin: "0 auto", textAlign: "center" }}>
-          <p style={{ fontFamily: "sans-serif", fontSize: "11px", letterSpacing: "4px", opacity: 0.6, textTransform: "uppercase", marginBottom: "24px" }}>Your Practitioner</p>
-          <h2 style={{ fontSize: "42px", fontWeight: "normal", marginBottom: "24px" }}>Kate</h2>
-          <p style={{ fontFamily: "sans-serif", fontSize: "17px", opacity: 0.85, lineHeight: "1.8", marginBottom: "40px" }}>
-            A dedicated acupuncturist with a passion for helping clients reconnect with balance, ease, and natural healing. Every treatment is tailored, gentle, and deeply supportive.
-          </p>
-          <a href="/about" style={{ border: "1px solid rgba(255,255,255,0.5)", color: "white", padding: "14px 36px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", letterSpacing: "2px" }}>
-            MEET KATE
-          </a>
-        </div>
-      </div>
+{/* ABOUT STRIP */}
+<div style={{ background: "#085041", padding: "100px 60px", color: "white" }}>
+  <div style={{ maxWidth: "1000px", margin: "0 auto", display: "flex", gap: "60px", alignItems: "center", flexWrap: "wrap" }}>
+    <img
+      src="/kate.png"
+      alt="Kate - West Cork Acupuncture"
+      style={{ width: "320px", height: "320px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
+    />
+    <div style={{ flex: 1, minWidth: "280px" }}>
+      <p style={{ fontFamily: "sans-serif", fontSize: "11px", letterSpacing: "4px", opacity: 0.6, textTransform: "uppercase", marginBottom: "24px" }}>Your Practitioner</p>
+      <h2 style={{ fontSize: "42px", fontWeight: "normal", marginBottom: "24px" }}>Kate</h2>
+      <p style={{ fontFamily: "sans-serif", fontSize: "17px", opacity: 0.85, lineHeight: "1.8", marginBottom: "40px" }}>
+        A dedicated acupuncturist with a passion for helping clients reconnect with balance, ease, and natural healing. Every treatment is tailored, gentle, and deeply supportive.
+      </p>
+      <a href="/about" style={{ border: "1px solid rgba(255,255,255,0.5)", color: "white", padding: "14px 36px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", letterSpacing: "2px" }}>
+        MEET KATE
+      </a>
+    </div>
+  </div>
+</div>
 
       {/* TESTIMONIALS */}
       <div style={{ padding: "100px 60px", background: "#F5F0E8" }}>
