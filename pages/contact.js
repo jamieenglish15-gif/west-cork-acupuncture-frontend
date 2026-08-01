@@ -15,15 +15,15 @@ export default function Contact() {
           </p>
           <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "12px" }}>
             <strong>Instagram:</strong>{" "}
-            <a href="https://instagram.com/westcorkacupuncture" target="_blank" style={{ color: "#1D9E75" }}>
-              @westcorkacupuncture
+            <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" style={{ color: "#1D9E75" }}>
+              @west_corkacupuncture
             </a>
           </p>
           <div style={{ display: "flex", gap: "12px", marginTop: "16px", flexWrap: "wrap" }}>
             <a href="https://wa.me/353831156950" style={{ background: "#1D9E75", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>
               WhatsApp Kate
             </a>
-            <a href="https://instagram.com/westcorkacupuncture" target="_blank" style={{ background: "#085041", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>
+            <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" style={{ background: "#085041", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>
               Follow on Instagram
             </a>
           </div>
@@ -31,9 +31,16 @@ export default function Contact() {
 
         <div style={{ background: "white", padding: "32px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
           <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Location</h2>
-          <p style={{ fontFamily: "sans-serif", color: "#333" }}>
-            West Cork, Ireland — Calm, private, and designed for deep relaxation.
-          </p>
+          <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "4px" }}>13 North Street</p>
+          <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "4px" }}>Skibbereen</p>
+          <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "24px" }}>P81 Y237</p>
+          
+            href="https://www.google.com/maps/search/13+North+Street+Skibbereen+P81+Y237"
+            target="_blank"
+            style={{ display: "inline-block", background: "#085041", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}
+          >
+            Open in Google Maps
+          </a>
         </div>
 
         <div style={{ textAlign: "center", marginTop: "40px" }}>
