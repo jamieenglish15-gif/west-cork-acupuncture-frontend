@@ -364,7 +364,7 @@ export default function Admin() {
             ) : (
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
-                  <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Payment", "Status", "Notes", "Reminder", "Actions"])}</thead>
+                  <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Payment", "Status", "Notes", "Intake", "Reminder", "Actions"])}</thead>
                   <tbody>
                     {bookings.map(b => (
                       <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
@@ -403,24 +403,18 @@ export default function Admin() {
                             Send Reminder
                           </button>
                         </td>
-                        <td style={{ padding: "10px" }}>
-                          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                            {b.status === "pending" && (
-                              <div>
-                                <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Accept</button>
-                                <button onClick={() => updateStatus(b.id, "rejected", b)} style={{ ...btnStyle("#c00"), marginLeft: "4px" }}>Reject</button>
-                              </div>
-                            )}
-                            {b.status === "accepted" && (
-                              <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Cancel</button>
-                            )}
-                            {b.status === "rejected" && (
-                              <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Restore</button>
-                            )}
-                            <button onClick={() => updateStatus(b.id, "archived", b)} style={{ ...btnStyle("#888"), marginLeft: "4px" }}>Archive</button>
-                            <button onClick={() => deleteBooking(b.id)} style={{ ...btnStyle("#333"), marginLeft: "4px" }}>Delete</button>
-                          </div>
-                        </td>
+<td style={{ padding: "10px" }}>
+  <button
+    onClick={() => {
+      const phone = b.phone.replace(/\D/g, "");
+      const msg = encodeURIComponent("Hi " + b.name + ", please fill in our health questionnaire before your appointment: https://west-cork-acupuncture-frontend.vercel.app/intake - it only takes 2 minutes. Thanks, Kate");
+      window.open("https://wa.me/" + phone + "?text=" + msg);
+    }}
+    style={{ background: "#085041", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
+  >
+    Send Intake
+  </button>
+</td>
                       </tr>
                     ))}
                   </tbody>
