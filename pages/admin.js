@@ -6,6 +6,9 @@ const ALL_SLOTS = [
   "15:30", "16:00", "16:30", "17:00"
 ];
 
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
   const [archived, setArchived] = useState([]);
@@ -16,6 +19,9 @@ export default function Admin() {
   const [tab, setTab] = useState("bookings");
   const [blockDate, setBlockDate] = useState("");
   const [blockedSlots, setBlockedSlots] = useState([]);
+  const [editingNote, setEditingNote] = useState(null);
+  const [noteText, setNoteText] = useState("");
+  const [calendarDate, setCalendarDate] = useState(new Date());
 
   const login = () => {
     if (password === "wca2024") {
@@ -68,11 +74,20 @@ export default function Admin() {
     fetchBookings();
   };
 
+  const saveNote = async (id) => {
+    await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + id, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ notes: noteText })
+    });
+    setEditingNote(null);
+    setNoteText("");
+    fetchBookings();
+  };
+
   const deleteBooking = async (id) => {
     if (!confirm("Are you sure you want to permanently delete this record?")) return;
-    await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + id, {
-      method: "DELETE"
-    });
+    await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + id, { method: "DELETE" });
     fetchBookings();
   };
 
@@ -124,7 +139,7 @@ export default function Admin() {
     if (status === "accepted") return "#1D9E75";
     if (status === "rejected") return "#c00";
     if (status === "archived") return "#888";
-    return "#999";
+    return "#e6a817";
   };
 
   const tabStyle = (t) => ({
@@ -159,6 +174,26 @@ export default function Admin() {
       seen.add(b.email);
       return true;
     });
+  };
+
+  const getCalendarDays = () => {
+    const year = calendarDate.getFullYear();
+    const month = calendarDate.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const days = [];
+    for (let i = 0; i < firstDay; i++) days.push(null);
+    for (let i = 1; i <= daysInMonth; i++) days.push(i);
+    return days;
+  };
+
+  const getBookingsForDay = (day) => {
+    if (!day) return [];
+    const year = calendarDate.getFullYear();
+    const month = String(calendarDate.getMonth() + 1).padStart(2, "0");
+    const d = String(day).padStart(2, "0");
+    const dateStr = year + "-" + month + "-" + d;
+    return bookings.filter(b => String(b.date).slice(0,10) === dateStr);
   };
 
   if (!authenticated) {
@@ -197,6 +232,7 @@ export default function Admin() {
 
         <div style={{ marginBottom: "24px" }}>
           <button style={tabStyle("bookings")} onClick={() => setTab("bookings")}>Bookings</button>
+          <button style={tabStyle("calendar")} onClick={() => setTab("calendar")}>Calendar</button>
           <button style={tabStyle("contacts")} onClick={() => setTab("contacts")}>Contacts</button>
           <button style={tabStyle("archive")} onClick={() => setTab("archive")}>Archive</button>
           <button style={tabStyle("slots")} onClick={() => setTab("slots")}>Manage Slots</button>
@@ -215,7 +251,7 @@ export default function Admin() {
             ) : (
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
-                  <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Payment", "Status", "Actions"])}</thead>
+                  <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Payment", "Status", "Notes", "Actions"])}</thead>
                   <tbody>
                     {bookings.map(b => (
                       <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
@@ -226,13 +262,36 @@ export default function Admin() {
                         <td style={{ padding: "10px" }}>{b.time_slot}</td>
                         <td style={{ padding: "10px", textTransform: "capitalize" }}>{b.payment_method}</td>
                         <td style={{ padding: "10px", fontWeight: "bold", color: statusColor(b.status), textTransform: "capitalize" }}>{b.status}</td>
+                        <td style={{ padding: "10px", maxWidth: "160px" }}>
+                          {editingNote === b.id ? (
+                            <div>
+                              <textarea
+                                defaultValue={b.notes || ""}
+                                onChange={e => setNoteText(e.target.value)}
+                                style={{ width: "100%", padding: "6px", fontFamily: "sans-serif", fontSize: "12px", borderRadius: "4px", border: "1px solid #9FE1CB", marginBottom: "4px" }}
+                                rows={3}
+                              />
+                              <div style={{ display: "flex", gap: "4px" }}>
+                                <button onClick={() => saveNote(b.id)} style={btnStyle("#1D9E75")}>Save</button>
+                                <button onClick={() => setEditingNote(null)} style={btnStyle("#888")}>Cancel</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div>
+                              <p style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}>{b.notes || "No notes"}</p>
+                              <button onClick={() => { setEditingNote(b.id); setNoteText(b.notes || ""); }} style={btnStyle("#085041")}>
+                                {b.notes ? "Edit" : "Add Note"}
+                              </button>
+                            </div>
+                          )}
+                        </td>
                         <td style={{ padding: "10px" }}>
                           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
                             {b.status === "pending" && (
-                              <>
+                              <div>
                                 <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Accept</button>
-                                <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Reject</button>
-                              </>
+                                <button onClick={() => updateStatus(b.id, "rejected", b)} style={{ ...btnStyle("#c00"), marginLeft: "4px" }}>Reject</button>
+                              </div>
                             )}
                             {b.status === "accepted" && (
                               <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Cancel</button>
@@ -240,8 +299,8 @@ export default function Admin() {
                             {b.status === "rejected" && (
                               <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Restore</button>
                             )}
-                            <button onClick={() => updateStatus(b.id, "archived", b)} style={btnStyle("#888")}>Archive</button>
-                            <button onClick={() => deleteBooking(b.id)} style={btnStyle("#333")}>Delete</button>
+                            <button onClick={() => updateStatus(b.id, "archived", b)} style={{ ...btnStyle("#888"), marginLeft: "4px" }}>Archive</button>
+                            <button onClick={() => deleteBooking(b.id)} style={{ ...btnStyle("#333"), marginLeft: "4px" }}>Delete</button>
                           </div>
                         </td>
                       </tr>
@@ -250,6 +309,71 @@ export default function Admin() {
                 </table>
               </div>
             )}
+          </div>
+        )}
+
+        {/* CALENDAR */}
+        {tab === "calendar" && (
+          <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
+              <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1))} style={btnStyle("#085041")}>
+                Prev
+              </button>
+              <h2 style={{ fontSize: "24px", color: "#085041", margin: 0 }}>
+                {MONTHS[calendarDate.getMonth()]} {calendarDate.getFullYear()}
+              </h2>
+              <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1))} style={btnStyle("#085041")}>
+                Next
+              </button>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px", marginBottom: "8px" }}>
+              {DAYS.map(d => (
+                <div key={d} style={{ textAlign: "center", fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", padding: "8px" }}>
+                  {d}
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px" }}>
+              {getCalendarDays().map((day, i) => {
+                const dayBookings = getBookingsForDay(day);
+                return (
+                  <div key={i} style={{
+                    minHeight: "80px",
+                    background: day ? "#F5F0E8" : "transparent",
+                    borderRadius: "4px",
+                    padding: "6px",
+                    border: day ? "1px solid #E1F5EE" : "none"
+                  }}>
+                    {day && (
+                      <div>
+                        <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", margin: "0 0 4px 0" }}>{day}</p>
+                        {dayBookings.map(b => (
+                          <div key={b.id} style={{
+                            background: statusColor(b.status),
+                            color: "white",
+                            padding: "2px 4px",
+                            borderRadius: "3px",
+                            fontSize: "10px",
+                            fontFamily: "sans-serif",
+                            marginBottom: "2px"
+                          }}>
+                            {b.time_slot} {b.name.split(" ")[0]}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ marginTop: "16px", display: "flex", gap: "16px", fontFamily: "sans-serif", fontSize: "12px" }}>
+              <span style={{ color: "#e6a817" }}>● Pending</span>
+              <span style={{ color: "#1D9E75" }}>● Accepted</span>
+              <span style={{ color: "#c00" }}>● Rejected</span>
+            </div>
           </div>
         )}
 
@@ -299,7 +423,7 @@ export default function Admin() {
             ) : (
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
-                  <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Payment", "Actions"])}</thead>
+                  <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Payment", "Notes", "Actions"])}</thead>
                   <tbody>
                     {archived.map(b => (
                       <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE", opacity: 0.7 }}>
@@ -309,6 +433,7 @@ export default function Admin() {
                         <td style={{ padding: "10px" }}>{String(b.date).slice(0,10)}</td>
                         <td style={{ padding: "10px" }}>{b.time_slot}</td>
                         <td style={{ padding: "10px", textTransform: "capitalize" }}>{b.payment_method}</td>
+                        <td style={{ padding: "10px", fontSize: "12px", color: "#555" }}>{b.notes || "-"}</td>
                         <td style={{ padding: "10px" }}>
                           <div style={{ display: "flex", gap: "6px" }}>
                             <button onClick={() => updateStatus(b.id, "pending", b)} style={btnStyle("#085041")}>Restore</button>
@@ -363,7 +488,7 @@ export default function Admin() {
                           textDecoration: isBlocked ? "line-through" : "none"
                         }}
                       >
-                        {slot} {isBlocked ? "🔒" : ""}
+                        {slot} {isBlocked ? "X" : ""}
                       </button>
                     );
                   })}
