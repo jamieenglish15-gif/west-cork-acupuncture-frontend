@@ -177,12 +177,12 @@ function IntakeForms() {
                     <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>{item[0]}</p>
                     <p style={{ color: "#333" }}>{item[1] || "-"}</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           )}
         </div>
-      ))}
+      )}
     </div>
   );
 }
