@@ -17,7 +17,7 @@ export default function Nav() {
             {link.label}
           </a>
         ))}
-        <a href="https://instagram.com/westcorkacupuncture" target="_blank" style={{ color: "#9FE1CB", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px" }}>
+        <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" style={{ color: "#9FE1CB", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px" }}>
           Instagram
         </a>
       </div>
