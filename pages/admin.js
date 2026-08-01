@@ -94,6 +94,32 @@ export default function Admin() {
     fetchBlockedSlots(blockDate);
   };
 
+  const blockAll = async () => {
+    for (const slot of ALL_SLOTS) {
+      if (!blockedSlots.includes(slot)) {
+        await fetch(process.env.NEXT_PUBLIC_API_URL + "/blocked", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ date: blockDate, time_slot: slot })
+        });
+      }
+    }
+    fetchBlockedSlots(blockDate);
+  };
+
+  const unblockAll = async () => {
+    for (const slot of ALL_SLOTS) {
+      if (blockedSlots.includes(slot)) {
+        await fetch(process.env.NEXT_PUBLIC_API_URL + "/blocked", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ date: blockDate, time_slot: slot })
+        });
+      }
+    }
+    fetchBlockedSlots(blockDate);
+  };
+
   const statusColor = (status) => {
     if (status === "accepted") return "#1D9E75";
     if (status === "rejected") return "#c00";
@@ -309,29 +335,39 @@ export default function Admin() {
               style={{ padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginBottom: "24px", fontFamily: "sans-serif", fontSize: "14px" }}
             />
             {blockDate && (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" }}>
-                {ALL_SLOTS.map(slot => {
-                  const isBlocked = blockedSlots.includes(slot);
-                  return (
-                    <button
-                      key={slot}
-                      onClick={() => toggleBlock(slot)}
-                      style={{
-                        padding: "12px",
-                        border: "1px solid #9FE1CB",
-                        borderRadius: "6px",
-                        background: isBlocked ? "#e0e0e0" : "#E1F5EE",
-                        color: isBlocked ? "#aaa" : "#085041",
-                        cursor: "pointer",
-                        fontFamily: "sans-serif",
-                        fontSize: "14px",
-                        textDecoration: isBlocked ? "line-through" : "none"
-                      }}
-                    >
-                      {slot} {isBlocked ? "🔒" : ""}
-                    </button>
-                  );
-                })}
+              <div>
+                <div style={{ marginBottom: "16px", display: "flex", gap: "10px" }}>
+                  <button onClick={blockAll} style={{ background: "#c00", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>
+                    Block All
+                  </button>
+                  <button onClick={unblockAll} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>
+                    Unblock All
+                  </button>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" }}>
+                  {ALL_SLOTS.map(slot => {
+                    const isBlocked = blockedSlots.includes(slot);
+                    return (
+                      <button
+                        key={slot}
+                        onClick={() => toggleBlock(slot)}
+                        style={{
+                          padding: "12px",
+                          border: "1px solid #9FE1CB",
+                          borderRadius: "6px",
+                          background: isBlocked ? "#e0e0e0" : "#E1F5EE",
+                          color: isBlocked ? "#aaa" : "#085041",
+                          cursor: "pointer",
+                          fontFamily: "sans-serif",
+                          fontSize: "14px",
+                          textDecoration: isBlocked ? "line-through" : "none"
+                        }}
+                      >
+                        {slot} {isBlocked ? "🔒" : ""}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
