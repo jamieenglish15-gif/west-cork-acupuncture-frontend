@@ -59,14 +59,20 @@ export default function Admin() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status })
     });
-
     if (status === "accepted") {
       const msg = encodeURIComponent(
         "Hi " + booking.name + ", your " + booking.service + " appointment on " + String(booking.date).slice(0,10) + " at " + booking.time_slot + " is confirmed. See you soon! — West Cork Acupuncture"
       );
       window.open("https://wa.me/" + booking.phone.replace(/\D/g, "") + "?text=" + msg, "_blank");
     }
+    fetchBookings();
+  };
 
+  const deleteBooking = async (id) => {
+    if (!confirm("Are you sure you want to permanently delete this record?")) return;
+    await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + id, {
+      method: "DELETE"
+    });
     fetchBookings();
   };
 
@@ -106,6 +112,17 @@ export default function Admin() {
     color: tab === t ? "white" : "#085041",
     marginRight: "8px",
     marginBottom: "8px"
+  });
+
+  const btnStyle = (color) => ({
+    background: color,
+    color: "white",
+    border: "none",
+    padding: "6px 10px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontFamily: "sans-serif",
+    fontSize: "12px"
   });
 
   const uniqueClients = () => {
@@ -159,7 +176,7 @@ export default function Admin() {
           <button style={tabStyle("slots")} onClick={() => setTab("slots")}>Manage Slots</button>
         </div>
 
-        {/* BOOKINGS TAB */}
+        {/* BOOKINGS */}
         {tab === "bookings" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
@@ -187,17 +204,18 @@ export default function Admin() {
                           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
                             {b.status === "pending" && (
                               <>
-                                <button onClick={() => updateStatus(b.id, "accepted", b)} style={{ background: "#1D9E75", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Accept</button>
-                                <button onClick={() => updateStatus(b.id, "rejected", b)} style={{ background: "#c00", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Reject</button>
+                                <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Accept</button>
+                                <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Reject</button>
                               </>
                             )}
                             {b.status === "accepted" && (
-                              <button onClick={() => updateStatus(b.id, "rejected", b)} style={{ background: "#c00", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Cancel</button>
+                              <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Cancel</button>
                             )}
                             {b.status === "rejected" && (
-                              <button onClick={() => updateStatus(b.id, "accepted", b)} style={{ background: "#1D9E75", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Restore</button>
+                              <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Restore</button>
                             )}
-                            <button onClick={() => updateStatus(b.id, "archived", b)} style={{ background: "#888", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Archive</button>
+                            <button onClick={() => updateStatus(b.id, "archived", b)} style={btnStyle("#888")}>Archive</button>
+                            <button onClick={() => deleteBooking(b.id)} style={btnStyle("#333")}>Delete</button>
                           </div>
                         </td>
                       </tr>
@@ -209,7 +227,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* CONTACTS TAB */}
+        {/* CONTACTS */}
         {tab === "contacts" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
@@ -220,7 +238,7 @@ export default function Admin() {
             ) : (
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
-                  <thead>{tableHead(["Name", "Email", "Phone", "WhatsApp"])}</thead>
+                  <thead>{tableHead(["Name", "Email", "Phone", "WhatsApp", "Delete"])}</thead>
                   <tbody>
                     {uniqueClients().map(b => (
                       <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
@@ -232,6 +250,9 @@ export default function Admin() {
                             Message
                           </a>
                         </td>
+                        <td style={{ padding: "10px" }}>
+                          <button onClick={() => deleteBooking(b.id)} style={btnStyle("#333")}>Delete</button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -241,7 +262,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ARCHIVE TAB */}
+        {/* ARCHIVE */}
         {tab === "archive" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
@@ -263,9 +284,10 @@ export default function Admin() {
                         <td style={{ padding: "10px" }}>{b.time_slot}</td>
                         <td style={{ padding: "10px", textTransform: "capitalize" }}>{b.payment_method}</td>
                         <td style={{ padding: "10px" }}>
-                          <button onClick={() => updateStatus(b.id, "pending", b)} style={{ background: "#085041", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
-                            Restore
-                          </button>
+                          <div style={{ display: "flex", gap: "6px" }}>
+                            <button onClick={() => updateStatus(b.id, "pending", b)} style={btnStyle("#085041")}>Restore</button>
+                            <button onClick={() => deleteBooking(b.id)} style={btnStyle("#333")}>Delete</button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -276,7 +298,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* SLOTS TAB */}
+        {/* SLOTS */}
         {tab === "slots" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Manage Available Slots</h2>
