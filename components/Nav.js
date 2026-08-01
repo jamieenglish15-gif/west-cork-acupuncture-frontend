@@ -1,6 +1,6 @@
 export default function Nav() {
   return (
-    <>
+    <div>
       <nav style={{
         background: "#085041",
         padding: "12px 24px",
@@ -36,9 +36,8 @@ export default function Nav() {
           </a>
         </div>
       </nav>
-
       
-        href="https://wa.me/353831156950?text=Hi%20Kate,%20I%20would%20like%20to%20book%20an%20appointment."
+        href="https://wa.me/353831156950"
         target="_blank"
         style={{
           position: "fixed",
@@ -53,14 +52,11 @@ export default function Nav() {
           fontSize: "14px",
           fontWeight: "bold",
           boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
-          zIndex: 999,
-          display: "flex",
-          alignItems: "center",
-          gap: "8px"
+          zIndex: 999
         }}
       >
         WhatsApp Kate
       </a>
-    </>
+    </div>
   );
 }
