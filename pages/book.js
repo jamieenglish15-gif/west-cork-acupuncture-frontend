@@ -28,7 +28,7 @@ export default function Book() {
   const [acceptedSlots, setAcceptedSlots] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/services`)
+    fetch(process.env.NEXT_PUBLIC_API_URL + "/services")
       .then(r => r.json())
       .then(data => setServices(data))
       .catch(() => setServices([]));
@@ -36,7 +36,7 @@ export default function Book() {
 
   useEffect(() => {
     if (!date) return;
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings/accepted?date=${date}`)
+    fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/accepted?date=" + date)
       .then(r => r.json())
       .then(data => setAcceptedSlots(data))
       .catch(() => setAcceptedSlots([]));
@@ -52,43 +52,33 @@ export default function Book() {
   const handleBooking = async () => {
     setError("");
     setMessage("");
-
     if (!name || !email || !phone || !selectedService || !date || !selectedSlot || !paymentMethod) {
       setError("Please fill in all fields.");
       return;
     }
-
     setLoading(true);
-
     try {
       const serviceName = services.find(s => String(s.id) === String(selectedService))?.name || selectedService;
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings`, {
+      const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
-          email,
-          phone,
+          name, email, phone,
           service: serviceName,
-          date,
-          time_slot: selectedSlot,
+          date, time_slot: selectedSlot,
           payment_method: paymentMethod,
           voucher_code: voucherCode || null
         })
       });
-
       const data = await res.json();
-
       if (data.success) {
-        setMessage(`Booking request sent for ${name} on ${date} at ${selectedSlot}. We will confirm shortly!`);
+        setMessage("Booking request sent for " + name + " on " + date + " at " + selectedSlot + ". We will confirm shortly!");
       } else {
         setError("Something went wrong. Please try again.");
       }
     } catch (err) {
       setError("Could not connect to server. Please try again.");
     }
-
     setLoading(false);
   };
 
@@ -135,11 +125,11 @@ export default function Book() {
           {services.length > 0 ? services.map(s => (
             <option key={s.id} value={s.id}>{s.name}</option>
           )) : (
-            <>
+            <span>
               <option value="1">Acupuncture</option>
               <option value="2">Cupping Therapy</option>
               <option value="3">Cosmetic Acupuncture</option>
-            </>
+            </span>
           )}
         </select>
 
@@ -147,7 +137,7 @@ export default function Book() {
         <input type="date" onChange={e => setDate(e.target.value)} style={inputStyle} />
 
         {date && (
-          <>
+          <div>
             <label style={labelStyle}>Available Time Slots</label>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", marginBottom: "24px", marginTop: "8px" }}>
               {ALL_SLOTS.map(slot => {
@@ -174,14 +164,49 @@ export default function Book() {
                 );
               })}
             </div>
-          </>
+          </div>
         )}
 
         <h3 style={{ fontSize: "20px", color: "#085041", marginBottom: "16px" }}>Payment Method</h3>
 
-        {[
-          { value: "stripe", label: "Pay Now (Card)" },
-          { value: "cash", label: "Pay Cash on the Day" },
-          { value: "voucher", label: "Redeem Gift Voucher" }
-        ].map(m => (
-          <label key={m.value} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", border: "1px solid #9FE1CB", borderRadius:
+        <div>
+          {[
+            { value: "stripe", label: "Pay Now (Card)" },
+            { value: "cash", label: "Pay Cash on the Day" },
+            { value: "voucher", label: "Redeem Gift Voucher" }
+          ].map(m => (
+            <label key={m.value} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginBottom: "8px", cursor: "pointer", fontFamily: "sans-serif", color: "#085041" }}>
+              <input type="radio" name="payment" value={m.value} onChange={() => setPaymentMethod(m.value)} />
+              {m.label}
+            </label>
+          ))}
+        </div>
+
+        {paymentMethod === "voucher" && (
+          <input placeholder="Enter voucher code" onChange={e => setVoucherCode(e.target.value)} style={inputStyle} />
+        )}
+
+        {error && (
+          <div style={{ background: "#ffe0e0", padding: "12px", borderRadius: "6px", marginTop: "16px", fontFamily: "sans-serif", color: "#c00" }}>
+            {error}
+          </div>
+        )}
+
+        {message && (
+          <div style={{ background: "#E1F5EE", padding: "12px", borderRadius: "6px", marginTop: "16px", fontFamily: "sans-serif", color: "#085041" }}>
+            {message}
+          </div>
+        )}
+
+        <button onClick={handleBooking} disabled={loading} style={{ width: "100%", background: loading ? "#aaa" : "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontSize: "18px", marginTop: "24px", cursor: loading ? "not-allowed" : "pointer", fontFamily: "sans-serif" }}>
+          {loading ? "Sending..." : "Request Booking"}
+        </button>
+
+        <a href="https://wa.me/353000000000" style={{ display: "block", textAlign: "center", marginTop: "16px", fontFamily: "sans-serif", color: "#085041", textDecoration: "underline" }}>
+          Prefer WhatsApp? Message to book.
+        </a>
+
+      </div>
+    </div>
+  );
+}
