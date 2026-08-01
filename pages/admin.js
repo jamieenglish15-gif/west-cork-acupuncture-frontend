@@ -22,6 +22,9 @@ export default function Admin() {
   const [editingNote, setEditingNote] = useState(null);
   const [noteText, setNoteText] = useState("");
   const [calendarDate, setCalendarDate] = useState(new Date());
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPhone, setNewPhone] = useState("");
 
   const login = () => {
     if (password === "wca2024") {
@@ -86,6 +89,32 @@ export default function Admin() {
   const deleteBooking = async (id) => {
     if (!confirm("Are you sure you want to permanently delete this record?")) return;
     await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + id, { method: "DELETE" });
+    fetchBookings();
+  };
+
+  const addContact = async () => {
+    if (!newName || !newPhone) return;
+    await fetch(process.env.NEXT_PUBLIC_API_URL + "/contacts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: newName, email: newEmail, phone: newPhone })
+    });
+    setNewName("");
+    setNewEmail("");
+    setNewPhone("");
+    fetchBookings();
+  };
+
+  const saveContact = async (id) => {
+    const name = document.getElementById("edit-name-" + id).value;
+    const email = document.getElementById("edit-email-" + id).value;
+    const phone = document.getElementById("edit-phone-" + id).value;
+    await fetch(process.env.NEXT_PUBLIC_API_URL + "/contacts/" + id, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, phone })
+    });
+    setEditingNote(null);
     fetchBookings();
   };
 
@@ -170,6 +199,16 @@ export default function Admin() {
     fontSize: "12px"
   });
 
+  const inputStyle = {
+    padding: "10px",
+    border: "1px solid #9FE1CB",
+    borderRadius: "6px",
+    fontFamily: "sans-serif",
+    fontSize: "14px",
+    flex: 1,
+    minWidth: "150px"
+  };
+
   const uniqueClients = () => {
     const all = [...bookings, ...archived];
     const seen = new Set();
@@ -178,6 +217,10 @@ export default function Admin() {
       seen.add(b.email);
       return true;
     });
+  };
+
+  const visitCount = (email) => {
+    return [...bookings, ...archived].filter(x => x.email === email && x.status !== "contact").length;
   };
 
   const getCalendarDays = () => {
@@ -364,22 +407,75 @@ export default function Admin() {
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
               Client Contacts {uniqueClients().length > 0 && "(" + uniqueClients().length + ")"}
             </h2>
+
+            <div style={{ background: "#F5F0E8", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
+              <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>Add New Contact</h3>
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <input
+                  placeholder="Full Name"
+                  value={newName}
+                  onChange={e => setNewName(e.target.value)}
+                  style={inputStyle}
+                />
+                <input
+                  placeholder="Email"
+                  value={newEmail}
+                  onChange={e => setNewEmail(e.target.value)}
+                  style={inputStyle}
+                />
+                <input
+                  placeholder="Phone"
+                  value={newPhone}
+                  onChange={e => setNewPhone(e.target.value)}
+                  style={inputStyle}
+                />
+                <button onClick={addContact} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>
+                  Add Contact
+                </button>
+              </div>
+            </div>
+
             {uniqueClients().length === 0 ? (
               <p style={{ fontFamily: "sans-serif", color: "#666" }}>No contacts yet.</p>
             ) : (
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
-                  <thead>{tableHead(["Name", "Email", "Phone", "WhatsApp", "Delete"])}</thead>
+                  <thead>{tableHead(["Name", "Email", "Phone", "Visits", "WhatsApp", "Edit", "Delete"])}</thead>
                   <tbody>
                     {uniqueClients().map(b => (
                       <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
-                        <td style={{ padding: "10px" }}>{b.name}</td>
-                        <td style={{ padding: "10px" }}>{b.email}</td>
-                        <td style={{ padding: "10px" }}>{b.phone}</td>
+                        <td style={{ padding: "10px" }}>
+                          {editingNote === "contact-" + b.id ? (
+                            <input id={"edit-name-" + b.id} defaultValue={b.name} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} />
+                          ) : b.name}
+                        </td>
+                        <td style={{ padding: "10px" }}>
+                          {editingNote === "contact-" + b.id ? (
+                            <input id={"edit-email-" + b.id} defaultValue={b.email} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} />
+                          ) : b.email}
+                        </td>
+                        <td style={{ padding: "10px" }}>
+                          {editingNote === "contact-" + b.id ? (
+                            <input id={"edit-phone-" + b.id} defaultValue={b.phone} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} />
+                          ) : b.phone}
+                        </td>
+                        <td style={{ padding: "10px", textAlign: "center", fontWeight: "bold", color: "#085041" }}>
+                          {visitCount(b.email)}
+                        </td>
                         <td style={{ padding: "10px" }}>
                           <a href={"https://wa.me/" + b.phone.replace(/\D/g, "")} target="_blank" style={{ background: "#1D9E75", color: "white", padding: "6px 12px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "12px" }}>
                             Message
                           </a>
+                        </td>
+                        <td style={{ padding: "10px" }}>
+                          {editingNote === "contact-" + b.id ? (
+                            <div style={{ display: "flex", gap: "4px" }}>
+                              <button onClick={() => saveContact(b.id)} style={btnStyle("#1D9E75")}>Save</button>
+                              <button onClick={() => setEditingNote(null)} style={btnStyle("#888")}>Cancel</button>
+                            </div>
+                          ) : (
+                            <button onClick={() => setEditingNote("contact-" + b.id)} style={btnStyle("#085041")}>Edit</button>
+                          )}
                         </td>
                         <td style={{ padding: "10px" }}>
                           <button onClick={() => deleteBooking(b.id)} style={btnStyle("#333")}>Delete</button>
