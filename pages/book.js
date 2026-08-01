@@ -6,10 +6,13 @@ const ALL_SLOTS = [
   "15:30", "16:00", "16:30", "17:00"
 ];
 
-function getBlockedSlot(slot) {
-  if (!slot) return null;
+function getBlockedSlots(slot) {
+  if (!slot) return [];
   const idx = ALL_SLOTS.indexOf(slot);
-  return idx !== -1 && idx + 1 < ALL_SLOTS.length ? ALL_SLOTS[idx + 1] : null;
+  const blocked = [];
+  if (idx + 1 < ALL_SLOTS.length) blocked.push(ALL_SLOTS[idx + 1]);
+  if (idx + 2 < ALL_SLOTS.length) blocked.push(ALL_SLOTS[idx + 2]);
+  return blocked;
 }
 
 export default function Book() {
@@ -43,10 +46,10 @@ export default function Book() {
     setSelectedSlot("");
   }, [date]);
 
-  const blockedSlot = getBlockedSlot(selectedSlot);
+  const blockedSlots2 = getBlockedSlots(selectedSlot);
 
   const isUnavailable = (slot) => {
-    return acceptedSlots.includes(slot) || blockedSlot === slot;
+    return acceptedSlots.includes(slot) || blockedSlots2.includes(slot);
   };
 
   const handleBooking = async () => {
@@ -129,6 +132,7 @@ export default function Book() {
               <option value="1">Acupuncture</option>
               <option value="2">Cupping Therapy</option>
               <option value="3">Cosmetic Acupuncture</option>
+              <option value="4">Facial Rejuvenation</option>
             </span>
           )}
         </select>
@@ -202,8 +206,8 @@ export default function Book() {
           {loading ? "Sending..." : "Request Booking"}
         </button>
 
-        <a href="https://wa.me/353000000000" style={{ display: "block", textAlign: "center", marginTop: "16px", fontFamily: "sans-serif", color: "#085041", textDecoration: "underline" }}>
-          Prefer WhatsApp? Message to book.
+        <a href="https://wa.me/353831156950" style={{ display: "block", textAlign: "center", marginTop: "16px", fontFamily: "sans-serif", color: "#085041", textDecoration: "underline" }}>
+          Prefer WhatsApp? Message Kate to book.
         </a>
 
       </div>
