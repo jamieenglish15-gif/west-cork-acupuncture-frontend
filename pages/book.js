@@ -24,6 +24,7 @@ export default function Book() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -54,8 +55,8 @@ export default function Book() {
   const handleBooking = async () => {
     setError("");
     setMessage("");
-    if (!name || !email || !phone || !selectedService || !date || !selectedSlot || !paymentMethod) {
-      setError("Please fill in all fields.");
+    if (!name || !email || !phone || !selectedService || !date || !selectedSlot || !paymentMethod || !agreed) {
+      setError("Please fill in all fields and agree to the cancellation policy.");
       return;
     }
     setLoading(true);
@@ -191,6 +192,17 @@ export default function Book() {
         {paymentMethod === "voucher" && (
           <input placeholder="Enter voucher code" onChange={e => setVoucherCode(e.target.value)} style={inputStyle} />
         )}
+
+        <div style={{ background: "#F5F0E8", padding: "16px", borderRadius: "6px", marginTop: "24px", marginBottom: "16px" }}>
+          <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "12px", fontWeight: "bold" }}>Cancellation Policy</p>
+          <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#555", lineHeight: "1.6", marginBottom: "12px" }}>
+            We require at least 24 hours notice for cancellations or rescheduling. Late cancellations or no-shows may be charged the full treatment fee.
+          </p>
+          <label style={{ display: "flex", alignItems: "center", gap: "8px", fontFamily: "sans-serif", fontSize: "13px", color: "#085041", cursor: "pointer" }}>
+            <input type="checkbox" onChange={e => setAgreed(e.target.checked)} />
+            I agree to the cancellation policy
+          </label>
+        </div>
 
         {error && (
           <div style={{ background: "#ffe0e0", padding: "12px", borderRadius: "6px", marginTop: "16px", fontFamily: "sans-serif", color: "#c00" }}>
