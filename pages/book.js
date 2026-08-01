@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { useState, useEffect } from "react";
 
 const ALL_SLOTS = [
@@ -76,9 +77,7 @@ export default function Book() {
       const data = await res.json();
       if (data.success) {
         setMessage("Booking request sent! Redirecting you home...");
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 2000);
+        setTimeout(() => { window.location.href = "/"; }, 2000);
       } else {
         setError("Something went wrong. Please try again.");
       }
@@ -109,6 +108,10 @@ export default function Book() {
 
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
+      <Head>
+        <title>Book Appointment | West Cork Acupuncture Skibbereen</title>
+        <meta name="description" content="Book an acupuncture, cupping or cosmetic facial acupuncture appointment online with Kate at West Cork Acupuncture, Skibbereen." />
+      </Head>
       <div style={{ maxWidth: "560px", margin: "0 auto", background: "white", padding: "40px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
 
         <h1 style={{ fontSize: "36px", color: "#085041", marginBottom: "8px" }}>Book Appointment</h1>
