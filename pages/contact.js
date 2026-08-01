@@ -34,13 +34,12 @@ export default function Contact() {
           <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "4px" }}>13 North Street</p>
           <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "4px" }}>Skibbereen</p>
           <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "24px" }}>P81 Y237</p>
-          
-            href="https://maps.google.com/?q=13+North+Street+Skibbereen+Ireland"
-            target="_blank"
-            style={{ display: "inline-block", background: "#085041", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}
+          <button
+            onClick={() => window.open("https://maps.google.com/?q=13+North+Street,Skibbereen,Ireland")}
+            style={{ background: "#085041", color: "white", padding: "12px 24px", borderRadius: "6px", border: "none", cursor: "pointer", fontFamily: "sans-serif" }}
           >
             Open in Google Maps
-          </a>
+          </button>
         </div>
 
         <div style={{ textAlign: "center", marginTop: "40px" }}>
