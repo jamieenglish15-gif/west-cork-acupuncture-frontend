@@ -16,10 +16,7 @@ export default function Contact() {
           <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "12px" }}>
             <strong>Instagram:</strong> @westcorkacupuncture
           </p>
-          
-            href="https://wa.me/353000000000?text=Hi,%20I'd%20like%20to%20book%20an%20appointment."
-            style={{ display: "inline-block", marginTop: "16px", background: "#1D9E75", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}
-          >
+          <a href="https://wa.me/353000000000" style={{ display: "inline-block", marginTop: "16px", background: "#1D9E75", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>
             Message on WhatsApp
           </a>
         </div>
@@ -27,7 +24,7 @@ export default function Contact() {
         <div style={{ background: "white", padding: "32px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
           <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Location</h2>
           <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "16px" }}>
-            West Cork, Ireland — Calm, private, and designed for deep relaxation.
+            West Cork, Ireland
           </p>
         </div>
 
