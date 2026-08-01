@@ -9,7 +9,60 @@ const ALL_SLOTS = [
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const SERVICES = ["Acupuncture", "Cupping Therapy", "Cosmetic Acupuncture", "Facial Rejuvenation"];
+function IntakeForms({ apiUrl }) {
+  const [forms, setForms] = useState([]);
+  const [selected, setSelected] = useState(null);
 
+  useEffect(() => {
+    fetch(apiUrl + "/intake/all")
+      .then(r => r.json())
+      .then(data => setForms(data))
+      .catch(err => console.error(err));
+  }, []);
+
+  if (forms.length === 0) return <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}><p style={{ fontFamily: "sans-serif", color: "#666" }}>No intake forms yet.</p></div>;
+
+  return (
+    <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+      <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Intake Forms ({forms.length})</h2>
+      {forms.map(f => (
+        <div key={f.id} style={{ border: "1px solid #E1F5EE", borderRadius: "8px", marginBottom: "16px", overflow: "hidden" }}>
+          <div onClick={() => setSelected(selected === f.id ? null : f.id)} style={{ background: "#F5F0E8", padding: "16px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{f.name}</p>
+              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>Submitted: {new Date(f.created_at).toLocaleDateString()}</p>
+            </div>
+            <span style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041" }}>{selected === f.id ? "Hide" : "View"}</span>
+          </div>
+          {selected === f.id && (
+            <div style={{ padding: "24px", fontFamily: "sans-serif", fontSize: "14px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px" }}>
+                {[
+                  ["Date of Birth", f.date_of_birth],
+                  ["Address", f.address],
+                  ["Emergency Contact", f.emergency_contact + (f.emergency_phone ? " - " + f.emergency_phone : "")],
+                  ["GP Name", f.gp_name],
+                  ["Reason for Visit", f.reason_for_visit],
+                  ["Medical Conditions", f.medical_conditions],
+                  ["Medications", f.medications],
+                  ["Allergies", f.allergies],
+                  ["Previous Acupuncture", f.previous_acupuncture],
+                  ["Pregnant / Trying to Conceive", f.pregnant],
+                  ["Additional Info", f.additional_info]
+                ].map(([label, value]) => (
+                  <div key={label}>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>{label}</p>
+                    <p style={{ color: "#333" }}>{value || "-"}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
   const [archived, setArchived] = useState([]);
@@ -333,7 +386,7 @@ useEffect(() => {
           <button onClick={login} style={{ width: "100%", background: "#1D9E75", color: "white", padding: "12px", borderRadius: "6px", border: "none", fontSize: "16px", cursor: "pointer", fontFamily: "sans-serif" }}>
             Login
           </button>
-           {tab === "intake" && (
+           {tab === "intake" && (   <IntakeForms apiUrl="https://west-cork-acupuncture-backend-production-366a.up.railway.app" /> )}
   <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
     <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
       Intake Forms {intakeForms.length > 0 && "(" + intakeForms.length + ")"}
