@@ -9,30 +9,46 @@ const ALL_SLOTS = [
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const SERVICES = ["Acupuncture", "Cupping Therapy", "Cosmetic Acupuncture", "Facial Rejuvenation"];
-function IntakeForms({ apiUrl }) {
+const API = "https://west-cork-acupuncture-backend-production-366a.up.railway.app";
+
+function IntakeForms() {
   const [forms, setForms] = useState([]);
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    fetch(apiUrl + "/intake/all")
+    fetch(API + "/intake/all")
       .then(r => r.json())
       .then(data => setForms(data))
       .catch(err => console.error(err));
   }, []);
 
-  if (forms.length === 0) return <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}><p style={{ fontFamily: "sans-serif", color: "#666" }}>No intake forms yet.</p></div>;
+  if (forms.length === 0) {
+    return (
+      <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+        <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Intake Forms</h2>
+        <p style={{ fontFamily: "sans-serif", color: "#666" }}>No intake forms submitted yet.</p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
       <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Intake Forms ({forms.length})</h2>
       {forms.map(f => (
         <div key={f.id} style={{ border: "1px solid #E1F5EE", borderRadius: "8px", marginBottom: "16px", overflow: "hidden" }}>
-          <div onClick={() => setSelected(selected === f.id ? null : f.id)} style={{ background: "#F5F0E8", padding: "16px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div
+            onClick={() => setSelected(selected === f.id ? null : f.id)}
+            style={{ background: "#F5F0E8", padding: "16px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
+          >
             <div>
               <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{f.name}</p>
-              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>Submitted: {new Date(f.created_at).toLocaleDateString()}</p>
+              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>
+                Submitted: {new Date(f.created_at).toLocaleDateString()}
+              </p>
             </div>
-            <span style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041" }}>{selected === f.id ? "Hide" : "View"}</span>
+            <span style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041" }}>
+              {selected === f.id ? "Hide" : "View"}
+            </span>
           </div>
           {selected === f.id && (
             <div style={{ padding: "24px", fontFamily: "sans-serif", fontSize: "14px" }}>
@@ -40,7 +56,7 @@ function IntakeForms({ apiUrl }) {
                 {[
                   ["Date of Birth", f.date_of_birth],
                   ["Address", f.address],
-                  ["Emergency Contact", f.emergency_contact + (f.emergency_phone ? " - " + f.emergency_phone : "")],
+                  ["Emergency Contact", (f.emergency_contact || "") + (f.emergency_phone ? " - " + f.emergency_phone : "")],
                   ["GP Name", f.gp_name],
                   ["Reason for Visit", f.reason_for_visit],
                   ["Medical Conditions", f.medical_conditions],
@@ -49,10 +65,10 @@ function IntakeForms({ apiUrl }) {
                   ["Previous Acupuncture", f.previous_acupuncture],
                   ["Pregnant / Trying to Conceive", f.pregnant],
                   ["Additional Info", f.additional_info]
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>{label}</p>
-                    <p style={{ color: "#333" }}>{value || "-"}</p>
+                ].map(item => (
+                  <div key={item[0]}>
+                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>{item[0]}</p>
+                    <p style={{ color: "#333" }}>{item[1] || "-"}</p>
                   </div>
                 ))}
               </div>
@@ -63,6 +79,7 @@ function IntakeForms({ apiUrl }) {
     </div>
   );
 }
+
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
   const [archived, setArchived] = useState([]);
@@ -88,9 +105,7 @@ export default function Admin() {
   const [manualPayment, setManualPayment] = useState("cash");
   const [manualMsg, setManualMsg] = useState("");
   const [expandedRow, setExpandedRow] = useState(null);
-  const [intakeForms, setIntakeForms] = useState([]);
-const [selectedIntake, setSelectedIntake] = useState(null);
-  
+
   const login = () => {
     if (password === "wca2024") {
       setAuthenticated(true);
@@ -100,7 +115,7 @@ const [selectedIntake, setSelectedIntake] = useState(null);
   };
 
   const fetchBookings = () => {
-    fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings")
+    fetch(API + "/bookings")
       .then(r => r.json())
       .then(data => {
         setBookings(data.filter(b => b.status !== "archived" && b.status !== "contact"));
@@ -112,30 +127,23 @@ const [selectedIntake, setSelectedIntake] = useState(null);
 
   const fetchBlockedSlots = (date) => {
     if (!date) return;
-    fetch(process.env.NEXT_PUBLIC_API_URL + "/blocked?date=" + date)
+    fetch(API + "/blocked?date=" + date)
       .then(r => r.json())
       .then(data => setBlockedSlots(data.map(r => r.time_slot)))
       .catch(() => setBlockedSlots([]));
   };
-  const fetchIntakes = () => {
-  fetch("https://west-cork-acupuncture-backend-production-366a.up.railway.app/intake/all")
-    .then(r => r.json())
-    .then(data => setIntakeForms(data))
-    .catch(() => setIntakeForms([]));
-};
 
-useEffect(() => {
-  if (!authenticated) return;
-  fetchBookings();
-  fetchIntakes();
-}, [authenticated]);
+  useEffect(() => {
+    if (!authenticated) return;
+    fetchBookings();
+  }, [authenticated]);
 
   useEffect(() => {
     fetchBlockedSlots(blockDate);
   }, [blockDate]);
 
   const updateStatus = async (id, status, booking) => {
-    await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + id, {
+    await fetch(API + "/bookings/" + id, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status })
@@ -148,7 +156,7 @@ useEffect(() => {
   };
 
   const saveNote = async (id) => {
-    await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + id, {
+    await fetch(API + "/bookings/" + id, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ notes: noteText })
@@ -160,20 +168,18 @@ useEffect(() => {
 
   const deleteBooking = async (id) => {
     if (!confirm("Are you sure you want to permanently delete this record?")) return;
-    await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + id, { method: "DELETE" });
+    await fetch(API + "/bookings/" + id, { method: "DELETE" });
     fetchBookings();
   };
 
   const addContact = async () => {
     if (!newName || !newPhone) return;
-    await fetch(process.env.NEXT_PUBLIC_API_URL + "/contacts", {
+    await fetch(API + "/contacts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newName, email: newEmail, phone: newPhone })
     });
-    setNewName("");
-    setNewEmail("");
-    setNewPhone("");
+    setNewName(""); setNewEmail(""); setNewPhone("");
     fetchBookings();
   };
 
@@ -181,7 +187,7 @@ useEffect(() => {
     const name = document.getElementById("edit-name-" + id).value;
     const email = document.getElementById("edit-email-" + id).value;
     const phone = document.getElementById("edit-phone-" + id).value;
-    await fetch(process.env.NEXT_PUBLIC_API_URL + "/contacts/" + id, {
+    await fetch(API + "/contacts/" + id, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, phone })
@@ -196,14 +202,14 @@ useEffect(() => {
       setManualMsg("Please fill in all required fields.");
       return;
     }
-    const check = await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/accepted?date=" + manualDate);
+    const check = await fetch(API + "/bookings/accepted?date=" + manualDate);
     const takenSlots = await check.json();
     if (takenSlots.includes(manualSlot)) {
       setManualMsg("That slot is already booked. Please choose another time.");
       alert("That slot is already booked. Please choose another time.");
       return;
     }
-    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings", {
+    const res = await fetch(API + "/bookings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -214,7 +220,7 @@ useEffect(() => {
     });
     const data = await res.json();
     if (data.success) {
-      await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + data.booking.id, {
+      await fetch(API + "/bookings/" + data.booking.id, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "accepted" })
@@ -232,13 +238,13 @@ useEffect(() => {
   const toggleBlock = async (slot) => {
     const isBlocked = blockedSlots.includes(slot);
     if (isBlocked) {
-      await fetch(process.env.NEXT_PUBLIC_API_URL + "/blocked", {
+      await fetch(API + "/blocked", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ date: blockDate, time_slot: slot })
       });
     } else {
-      await fetch(process.env.NEXT_PUBLIC_API_URL + "/blocked", {
+      await fetch(API + "/blocked", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ date: blockDate, time_slot: slot })
@@ -250,7 +256,7 @@ useEffect(() => {
   const blockAll = async () => {
     for (const slot of ALL_SLOTS) {
       if (!blockedSlots.includes(slot)) {
-        await fetch(process.env.NEXT_PUBLIC_API_URL + "/blocked", {
+        await fetch(API + "/blocked", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ date: blockDate, time_slot: slot })
@@ -263,7 +269,7 @@ useEffect(() => {
   const unblockAll = async () => {
     for (const slot of ALL_SLOTS) {
       if (blockedSlots.includes(slot)) {
-        await fetch(process.env.NEXT_PUBLIC_API_URL + "/blocked", {
+        await fetch(API + "/blocked", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ date: blockDate, time_slot: slot })
@@ -281,7 +287,7 @@ useEffect(() => {
 
   const sendIntake = (b) => {
     const phone = b.phone.replace(/\D/g, "");
-    const msg = encodeURIComponent("Hi " + b.name + ", please fill in our health questionnaire before your appointment: https://west-cork-acupuncture-frontend.vercel.app/intake - it only takes 2 minutes. Thanks, Kate");
+    const msg = encodeURIComponent("Hi " + b.name + ", please fill in our health questionnaire before your appointment: https://west-cork-acupuncture-frontend.vercel.app/intake - Thanks, Kate");
     window.open("https://wa.me/" + phone + "?text=" + msg);
   };
 
@@ -386,87 +392,6 @@ useEffect(() => {
           <button onClick={login} style={{ width: "100%", background: "#1D9E75", color: "white", padding: "12px", borderRadius: "6px", border: "none", fontSize: "16px", cursor: "pointer", fontFamily: "sans-serif" }}>
             Login
           </button>
-           {tab === "intake" && (   <IntakeForms apiUrl="https://west-cork-acupuncture-backend-production-366a.up.railway.app" /> )}
-  <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
-    <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
-      Intake Forms {intakeForms.length > 0 && "(" + intakeForms.length + ")"}
-    </h2>
-    {intakeForms.length === 0 ? (
-      <p style={{ fontFamily: "sans-serif", color: "#666" }}>No intake forms submitted yet.</p>
-    ) : (
-      <div>
-        {intakeForms.map(f => (
-          <div key={f.id} style={{ border: "1px solid #E1F5EE", borderRadius: "8px", marginBottom: "16px", overflow: "hidden" }}>
-            <div
-              onClick={() => setSelectedIntake(selectedIntake === f.id ? null : f.id)}
-              style={{ background: "#F5F0E8", padding: "16px", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
-            >
-              <div>
-                <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{f.name}</p>
-                <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>
-                  Submitted: {new Date(f.created_at).toLocaleDateString()}
-                </p>
-              </div>
-              <button style={btnStyle("#085041")}>
-                {selectedIntake === f.id ? "Hide" : "View"}
-              </button>
-            </div>
-            {selectedIntake === f.id && (
-              <div style={{ padding: "24px", fontFamily: "sans-serif", fontSize: "14px" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px" }}>
-                  <div>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Date of Birth</p>
-                    <p style={{ color: "#333" }}>{f.date_of_birth || "-"}</p>
-                  </div>
-                  <div>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Address</p>
-                    <p style={{ color: "#333" }}>{f.address || "-"}</p>
-                  </div>
-                  <div>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Emergency Contact</p>
-                    <p style={{ color: "#333" }}>{f.emergency_contact || "-"} {f.emergency_phone ? "- " + f.emergency_phone : ""}</p>
-                  </div>
-                  <div>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>GP Name</p>
-                    <p style={{ color: "#333" }}>{f.gp_name || "-"}</p>
-                  </div>
-                  <div>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Reason for Visit</p>
-                    <p style={{ color: "#333" }}>{f.reason_for_visit || "-"}</p>
-                  </div>
-                  <div>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Medical Conditions</p>
-                    <p style={{ color: "#333" }}>{f.medical_conditions || "-"}</p>
-                  </div>
-                  <div>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Medications</p>
-                    <p style={{ color: "#333" }}>{f.medications || "-"}</p>
-                  </div>
-                  <div>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Allergies</p>
-                    <p style={{ color: "#333" }}>{f.allergies || "-"}</p>
-                  </div>
-                  <div>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Previous Acupuncture</p>
-                    <p style={{ color: "#333", textTransform: "capitalize" }}>{f.previous_acupuncture || "-"}</p>
-                  </div>
-                  <div>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Pregnant / Trying to Conceive</p>
-                    <p style={{ color: "#333", textTransform: "capitalize" }}>{f.pregnant || "-"}</p>
-                  </div>
-                  <div style={{ gridColumn: "1 / -1" }}>
-                    <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Additional Information</p>
-                    <p style={{ color: "#333" }}>{f.additional_info || "-"}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-)}   
         </div>
       </div>
     );
@@ -492,7 +417,7 @@ useEffect(() => {
           <button style={tabStyle("archive")} onClick={() => setTab("archive")}>Archive</button>
           <button style={tabStyle("slots")} onClick={() => setTab("slots")}>Manage Slots</button>
           <button style={tabStyle("add")} onClick={() => setTab("add")}>Add Booking</button>
-                                  <button style={tabStyle("intake")} onClick={() => setTab("intake")}>Intake Forms</button>
+          <button style={tabStyle("intake")} onClick={() => setTab("intake")}>Intake Forms</button>
         </div>
 
         {tab === "bookings" && (
@@ -510,90 +435,85 @@ useEffect(() => {
                   <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Status", "Actions", "More"])}</thead>
                   <tbody>
                     {bookings.map(b => (
-                      <>
-                        <tr key={b.id} style={{ borderBottom: expandedRow === b.id ? "none" : "1px solid #E1F5EE" }}>
-                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.name}</td>
-                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.phone}</td>
-                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.service}</td>
-                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{String(b.date).slice(0,10)}</td>
-                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.time_slot}</td>
-                          <td style={{ padding: "10px", fontWeight: "bold", color: statusColor(b.status), textTransform: "capitalize", whiteSpace: "nowrap" }}>{b.status}</td>
-                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>
-                            <div style={{ display: "flex", gap: "4px", flexWrap: "nowrap" }}>
-                              {b.status === "pending" && (
-                                <>
-                                  <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Accept</button>
-                                  <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Reject</button>
-                                </>
-                              )}
-                              {b.status === "accepted" && (
-                                <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Cancel</button>
-                              )}
-                              {b.status === "rejected" && (
-                                <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Restore</button>
-                              )}
-                              <button onClick={() => updateStatus(b.id, "archived", b)} style={btnStyle("#888")}>Archive</button>
-                              <button onClick={() => deleteBooking(b.id)} style={btnStyle("#333")}>Delete</button>
+                      <tr key={b.id} style={{ borderBottom: expandedRow === b.id ? "none" : "1px solid #E1F5EE" }}>
+                        <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.name}</td>
+                        <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.phone}</td>
+                        <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.service}</td>
+                        <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{String(b.date).slice(0,10)}</td>
+                        <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.time_slot}</td>
+                        <td style={{ padding: "10px", fontWeight: "bold", color: statusColor(b.status), textTransform: "capitalize", whiteSpace: "nowrap" }}>{b.status}</td>
+                        <td style={{ padding: "10px", whiteSpace: "nowrap" }}>
+                          <div style={{ display: "flex", gap: "4px" }}>
+                            {b.status === "pending" && (
+                              <div style={{ display: "flex", gap: "4px" }}>
+                                <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Accept</button>
+                                <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Reject</button>
+                              </div>
+                            )}
+                            {b.status === "accepted" && (
+                              <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Cancel</button>
+                            )}
+                            {b.status === "rejected" && (
+                              <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Restore</button>
+                            )}
+                            <button onClick={() => updateStatus(b.id, "archived", b)} style={btnStyle("#888")}>Archive</button>
+                            <button onClick={() => deleteBooking(b.id)} style={btnStyle("#333")}>Delete</button>
+                          </div>
+                        </td>
+                        <td style={{ padding: "10px" }}>
+                          <button onClick={() => setExpandedRow(expandedRow === b.id ? null : b.id)} style={btnStyle("#085041")}>
+                            {expandedRow === b.id ? "Hide" : "Details"}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {bookings.map(b => expandedRow === b.id ? (
+                      <tr key={b.id + "-exp"} style={{ borderBottom: "1px solid #E1F5EE", background: "#F5F0E8" }}>
+                        <td colSpan={8} style={{ padding: "16px" }}>
+                          <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+                            <div>
+                              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Payment</p>
+                              <p style={{ fontFamily: "sans-serif", fontSize: "13px", textTransform: "capitalize" }}>{b.payment_method}</p>
                             </div>
-                          </td>
-                          <td style={{ padding: "10px" }}>
-                            <button
-                              onClick={() => setExpandedRow(expandedRow === b.id ? null : b.id)}
-                              style={btnStyle("#085041")}
-                            >
-                              {expandedRow === b.id ? "Hide" : "Details"}
-                            </button>
-                          </td>
-                        </tr>
-                        {expandedRow === b.id && (
-                          <tr key={b.id + "-exp"} style={{ borderBottom: "1px solid #E1F5EE", background: "#F5F0E8" }}>
-                            <td colSpan={8} style={{ padding: "16px" }}>
-                              <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+                            <div style={{ flex: 1, minWidth: "200px" }}>
+                              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Notes</p>
+                              {editingNote === b.id ? (
                                 <div>
-                                  <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Payment</p>
-                                  <p style={{ fontFamily: "sans-serif", fontSize: "13px", textTransform: "capitalize" }}>{b.payment_method}</p>
-                                </div>
-                                <div style={{ flex: 1, minWidth: "200px" }}>
-                                  <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Notes</p>
-                                  {editingNote === b.id ? (
-                                    <div>
-                                      <textarea
-                                        defaultValue={b.notes || ""}
-                                        onChange={e => setNoteText(e.target.value)}
-                                        style={{ width: "100%", padding: "6px", fontFamily: "sans-serif", fontSize: "12px", borderRadius: "4px", border: "1px solid #9FE1CB", marginBottom: "4px" }}
-                                        rows={3}
-                                      />
-                                      <div style={{ display: "flex", gap: "4px" }}>
-                                        <button onClick={() => saveNote(b.id)} style={btnStyle("#1D9E75")}>Save</button>
-                                        <button onClick={() => setEditingNote(null)} style={btnStyle("#888")}>Cancel</button>
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <div>
-                                      <p style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}>{b.notes || "No notes"}</p>
-                                      <button onClick={() => { setEditingNote(b.id); setNoteText(b.notes || ""); }} style={btnStyle("#085041")}>
-                                        {b.notes ? "Edit Note" : "Add Note"}
-                                      </button>
-                                    </div>
-                                  )}
-                                </div>
-                                <div>
-                                  <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "8px" }}>Quick Actions</p>
-                                  <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                                    <button onClick={() => sendReminder(b)} style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
-                                      Send Reminder
-                                    </button>
-                                    <button onClick={() => sendIntake(b)} style={btnStyle("#085041")}>
-                                      Send Intake Form
-                                    </button>
+                                  <textarea
+                                    defaultValue={b.notes || ""}
+                                    onChange={e => setNoteText(e.target.value)}
+                                    style={{ width: "100%", padding: "6px", fontFamily: "sans-serif", fontSize: "12px", borderRadius: "4px", border: "1px solid #9FE1CB", marginBottom: "4px" }}
+                                    rows={3}
+                                  />
+                                  <div style={{ display: "flex", gap: "4px" }}>
+                                    <button onClick={() => saveNote(b.id)} style={btnStyle("#1D9E75")}>Save</button>
+                                    <button onClick={() => setEditingNote(null)} style={btnStyle("#888")}>Cancel</button>
                                   </div>
                                 </div>
+                              ) : (
+                                <div>
+                                  <p style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}>{b.notes || "No notes"}</p>
+                                  <button onClick={() => { setEditingNote(b.id); setNoteText(b.notes || ""); }} style={btnStyle("#085041")}>
+                                    {b.notes ? "Edit Note" : "Add Note"}
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "8px" }}>Quick Actions</p>
+                              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                                <button onClick={() => sendReminder(b)} style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
+                                  Send Reminder
+                                </button>
+                                <button onClick={() => sendIntake(b)} style={btnStyle("#085041")}>
+                                  Send Intake Form
+                                </button>
                               </div>
-                            </td>
-                          </tr>
-                        )}
-                      </>
-                    ))}
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : null)}
                   </tbody>
                 </table>
               </div>
@@ -837,6 +757,8 @@ useEffect(() => {
             </button>
           </div>
         )}
+
+        {tab === "intake" && <IntakeForms />}
 
       </div>
     </div>
