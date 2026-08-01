@@ -35,7 +35,7 @@ export default function Contact() {
           <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "4px" }}>Skibbereen</p>
           <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "24px" }}>P81 Y237</p>
           
-            href="https://www.google.com/maps/search/13+North+Street+Skibbereen+P81+Y237"
+            href="https://maps.google.com/?q=13+North+Street+Skibbereen+Ireland"
             target="_blank"
             style={{ display: "inline-block", background: "#085041", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}
           >
