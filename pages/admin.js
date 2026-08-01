@@ -132,19 +132,50 @@ export default function Admin() {
       setManualMsg("Please fill in all required fields.");
       return;
     }
-    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings", {
-      method: "POST",
+const addManualBooking = async () => {
+  if (!manualName || !manualPhone || !manualService || !manualDate || !manualSlot) {
+    setManualMsg("Please fill in all required fields.");
+    return;
+  }
+  const check = await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/accepted?date=" + manualDate);
+  const takenSlots = await check.json();
+  if (takenSlots.includes(manualSlot)) {
+    setManualMsg("That slot is already booked. Please choose another time.");
+    return;
+  }
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: manualName,
+      email: manualEmail,
+      phone: manualPhone,
+      service: manualService,
+      date: manualDate,
+      time_slot: manualSlot,
+      payment_method: manualPayment
+    })
+  });
+  const data = await res.json();
+  if (data.success) {
+    await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + data.booking.id, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: manualName,
-        email: manualEmail,
-        phone: manualPhone,
-        service: manualService,
-        date: manualDate,
-        time_slot: manualSlot,
-        payment_method: manualPayment
-      })
+      body: JSON.stringify({ status: "accepted" })
     });
+    setManualMsg("Booking added and accepted successfully!");
+    setManualName("");
+    setManualEmail("");
+    setManualPhone("");
+    setManualService("");
+    setManualDate("");
+    setManualSlot("");
+    setManualPayment("cash");
+    fetchBookings();
+  } else {
+    setManualMsg(data.error || "Something went wrong. Please try again.");
+  }
+};
     const data = await res.json();
     if (data.success) {
       await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + data.booking.id, {
