@@ -76,7 +76,7 @@ export default function Home() {
 <div style={{ background: "#085041", padding: "100px 60px", color: "white" }}>
   <div style={{ maxWidth: "1000px", margin: "0 auto", display: "flex", gap: "60px", alignItems: "center", flexWrap: "wrap" }}>
     <img
-      src="/kate.png"
+      src="/WestCorkAcupuncture-facial.png"
       alt="Kate - West Cork Acupuncture"
       style={{ width: "320px", height: "320px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }}
     />
