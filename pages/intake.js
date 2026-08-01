@@ -27,7 +27,7 @@ export default function Intake() {
       setError("Please fill in your name and reason for visit.");
       return;
     }
-    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/intake", {
+    const res = await fetch("https://west-cork-acupuncture-backend-production-366a.up.railway.app/intake", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form)
