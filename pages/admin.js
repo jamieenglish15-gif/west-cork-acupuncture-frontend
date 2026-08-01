@@ -352,9 +352,10 @@ export default function Admin() {
     window.open("https://wa.me/" + phone + "?text=" + msg);
   };
 
-  const printReceipt = (b) => {
+const printReceipt = (b) => {
     const price = PRICES[b.service] || "80";
-    window.open("/receipt?name=" + encodeURIComponent(b.name) + "&service=" + encodeURIComponent(b.service) + "&date=" + String(b.date).slice(0,10) + "&time=" + b.time_slot + "&payment=" + b.payment_method + "&amount=" + price);
+    const ref = "WCA-" + String(b.id).padStart(4, "0");
+    window.open("/receipt?name=" + encodeURIComponent(b.name) + "&service=" + encodeURIComponent(b.service) + "&date=" + String(b.date).slice(0,10) + "&time=" + b.time_slot + "&payment=" + b.payment_method + "&amount=" + price + "&ref=" + ref);
   };
 
   const statusColor = (status) => {
