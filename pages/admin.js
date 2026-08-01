@@ -8,6 +8,7 @@ const ALL_SLOTS = [
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const SERVICES = ["Acupuncture", "Cupping Therapy", "Cosmetic Acupuncture", "Facial Rejuvenation"];
 
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
@@ -25,6 +26,14 @@ export default function Admin() {
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPhone, setNewPhone] = useState("");
+  const [manualName, setManualName] = useState("");
+  const [manualEmail, setManualEmail] = useState("");
+  const [manualPhone, setManualPhone] = useState("");
+  const [manualService, setManualService] = useState("");
+  const [manualDate, setManualDate] = useState("");
+  const [manualSlot, setManualSlot] = useState("");
+  const [manualPayment, setManualPayment] = useState("cash");
+  const [manualMsg, setManualMsg] = useState("");
 
   const login = () => {
     if (password === "wca2024") {
@@ -118,6 +127,45 @@ export default function Admin() {
     fetchBookings();
   };
 
+  const addManualBooking = async () => {
+    if (!manualName || !manualPhone || !manualService || !manualDate || !manualSlot) {
+      setManualMsg("Please fill in all required fields.");
+      return;
+    }
+    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: manualName,
+        email: manualEmail,
+        phone: manualPhone,
+        service: manualService,
+        date: manualDate,
+        time_slot: manualSlot,
+        payment_method: manualPayment
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + data.booking.id, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "accepted" })
+      });
+      setManualMsg("Booking added and accepted successfully!");
+      setManualName("");
+      setManualEmail("");
+      setManualPhone("");
+      setManualService("");
+      setManualDate("");
+      setManualSlot("");
+      setManualPayment("cash");
+      fetchBookings();
+    } else {
+      setManualMsg("Something went wrong. Please try again.");
+    }
+  };
+
   const toggleBlock = async (slot) => {
     const isBlocked = blockedSlots.includes(slot);
     if (isBlocked) {
@@ -209,6 +257,18 @@ export default function Admin() {
     minWidth: "150px"
   };
 
+  const formInput = {
+    width: "100%",
+    padding: "12px",
+    border: "1px solid #9FE1CB",
+    borderRadius: "6px",
+    marginBottom: "16px",
+    fontFamily: "sans-serif",
+    fontSize: "14px",
+    boxSizing: "border-box",
+    background: "#E1F5EE"
+  };
+
   const uniqueClients = () => {
     const all = [...bookings, ...archived];
     const seen = new Set();
@@ -281,6 +341,7 @@ export default function Admin() {
           <button style={tabStyle("contacts")} onClick={() => setTab("contacts")}>Contacts</button>
           <button style={tabStyle("archive")} onClick={() => setTab("archive")}>Archive</button>
           <button style={tabStyle("slots")} onClick={() => setTab("slots")}>Manage Slots</button>
+          <button style={tabStyle("add")} onClick={() => setTab("add")}>Add Booking</button>
         </div>
 
         {tab === "bookings" && (
@@ -407,34 +468,17 @@ export default function Admin() {
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
               Client Contacts {uniqueClients().length > 0 && "(" + uniqueClients().length + ")"}
             </h2>
-
             <div style={{ background: "#F5F0E8", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
               <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>Add New Contact</h3>
               <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                <input
-                  placeholder="Full Name"
-                  value={newName}
-                  onChange={e => setNewName(e.target.value)}
-                  style={inputStyle}
-                />
-                <input
-                  placeholder="Email"
-                  value={newEmail}
-                  onChange={e => setNewEmail(e.target.value)}
-                  style={inputStyle}
-                />
-                <input
-                  placeholder="Phone"
-                  value={newPhone}
-                  onChange={e => setNewPhone(e.target.value)}
-                  style={inputStyle}
-                />
+                <input placeholder="Full Name" value={newName} onChange={e => setNewName(e.target.value)} style={inputStyle} />
+                <input placeholder="Email" value={newEmail} onChange={e => setNewEmail(e.target.value)} style={inputStyle} />
+                <input placeholder="Phone" value={newPhone} onChange={e => setNewPhone(e.target.value)} style={inputStyle} />
                 <button onClick={addContact} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>
                   Add Contact
                 </button>
               </div>
             </div>
-
             {uniqueClients().length === 0 ? (
               <p style={{ fontFamily: "sans-serif", color: "#666" }}>No contacts yet.</p>
             ) : (
@@ -459,9 +503,7 @@ export default function Admin() {
                             <input id={"edit-phone-" + b.id} defaultValue={b.phone} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} />
                           ) : b.phone}
                         </td>
-                        <td style={{ padding: "10px", textAlign: "center", fontWeight: "bold", color: "#085041" }}>
-                          {visitCount(b.email)}
-                        </td>
+                        <td style={{ padding: "10px", textAlign: "center", fontWeight: "bold", color: "#085041" }}>{visitCount(b.email)}</td>
                         <td style={{ padding: "10px" }}>
                           <a href={"https://wa.me/" + b.phone.replace(/\D/g, "")} target="_blank" style={{ background: "#1D9E75", color: "white", padding: "6px 12px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "12px" }}>
                             Message
@@ -566,6 +608,54 @@ export default function Admin() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {tab === "add" && (
+          <div style={{ background: "white", borderRadius: "8px", padding: "24px", maxWidth: "600px" }}>
+            <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "8px" }}>Add Manual Booking</h2>
+            <p style={{ fontFamily: "sans-serif", color: "#666", marginBottom: "24px" }}>For bookings made over WhatsApp or phone.</p>
+
+            <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Full Name</label>
+            <input value={manualName} onChange={e => setManualName(e.target.value)} placeholder="Jane Smith" style={formInput} />
+
+            <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Email</label>
+            <input value={manualEmail} onChange={e => setManualEmail(e.target.value)} placeholder="jane@email.com" style={formInput} />
+
+            <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Phone</label>
+            <input value={manualPhone} onChange={e => setManualPhone(e.target.value)} placeholder="+353 87 000 0000" style={formInput} />
+
+            <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Service</label>
+            <select value={manualService} onChange={e => setManualService(e.target.value)} style={formInput}>
+              <option value="">Select service</option>
+              {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+
+            <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Date</label>
+            <input type="date" value={manualDate} onChange={e => setManualDate(e.target.value)} style={formInput} />
+
+            <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Time Slot</label>
+            <select value={manualSlot} onChange={e => setManualSlot(e.target.value)} style={formInput}>
+              <option value="">Select time</option>
+              {ALL_SLOTS.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+
+            <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Payment Method</label>
+            <select value={manualPayment} onChange={e => setManualPayment(e.target.value)} style={formInput}>
+              <option value="cash">Cash on the Day</option>
+              <option value="card">Card</option>
+              <option value="voucher">Voucher</option>
+            </select>
+
+            {manualMsg && (
+              <div style={{ background: manualMsg.includes("success") ? "#E1F5EE" : "#ffe0e0", padding: "12px", borderRadius: "6px", marginBottom: "16px", fontFamily: "sans-serif", color: manualMsg.includes("success") ? "#085041" : "#c00" }}>
+                {manualMsg}
+              </div>
+            )}
+
+            <button onClick={addManualBooking} style={{ width: "100%", background: "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontSize: "16px", cursor: "pointer", fontFamily: "sans-serif" }}>
+              Add Booking
+            </button>
           </div>
         )}
 
