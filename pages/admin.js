@@ -15,13 +15,40 @@ export default function Admin() {
     }
   };
 
-  useEffect(() => {
-    if (!authenticated) return;
+  const fetchBookings = () => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings`)
       .then(r => r.json())
       .then(data => { setBookings(data); setLoading(false); })
       .catch(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    if (!authenticated) return;
+    fetchBookings();
   }, [authenticated]);
+
+  const updateStatus = async (id, status, booking) => {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status })
+    });
+
+    if (status === "accepted") {
+      const msg = encodeURIComponent(
+        `Hi ${booking.name}, your ${booking.service} appointment on ${booking.date} at ${booking.time_slot} is confirmed. See you soon! — West Cork Acupuncture`
+      );
+      window.open(`https://wa.me/${booking.phone.replace(/\D/g, "")}?text=${msg}`, "_blank");
+    }
+
+    fetchBookings();
+  };
+
+  const statusColor = (status) => {
+    if (status === "accepted") return "#1D9E75";
+    if (status === "rejected") return "#c00";
+    return "#999";
+  };
 
   if (!authenticated) {
     return (
@@ -46,7 +73,7 @@ export default function Admin() {
 
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#085041", minHeight: "100vh", padding: "40px" }}>
-      <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
         <h1 style={{ fontSize: "36px", color: "white", marginBottom: "8px" }}>Admin Dashboard</h1>
         <p style={{ fontFamily: "sans-serif", color: "#9FE1CB", marginBottom: "32px" }}>West Cork Acupuncture — All Bookings</p>
@@ -65,7 +92,7 @@ export default function Admin() {
               <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
                 <thead>
                   <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
-                    {["Name", "Email", "Phone", "Service", "Date", "Time", "Payment", "Booked At"].map(h => (
+                    {["Name", "Phone", "Service", "Date", "Time", "Payment", "Status", "Actions"].map(h => (
                       <th key={h} style={{ padding: "10px", textAlign: "left", color: "#085041" }}>{h}</th>
                     ))}
                   </tr>
@@ -74,13 +101,38 @@ export default function Admin() {
                   {bookings.map(b => (
                     <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
                       <td style={{ padding: "10px" }}>{b.name}</td>
-                      <td style={{ padding: "10px" }}>{b.email}</td>
                       <td style={{ padding: "10px" }}>{b.phone}</td>
                       <td style={{ padding: "10px" }}>{b.service}</td>
-                      <td style={{ padding: "10px" }}>{b.date}</td>
+                      <td style={{ padding: "10px" }}>{String(b.date).slice(0,10)}</td>
                       <td style={{ padding: "10px" }}>{b.time_slot}</td>
                       <td style={{ padding: "10px", textTransform: "capitalize" }}>{b.payment_method}</td>
-                      <td style={{ padding: "10px" }}>{new Date(b.created_at).toLocaleString()}</td>
+                      <td style={{ padding: "10px", fontWeight: "bold", color: statusColor(b.status), textTransform: "capitalize" }}>{b.status}</td>
+                      <td style={{ padding: "10px" }}>
+                        {b.status === "pending" && (
+                          <div style={{ display: "flex", gap: "8px" }}>
+                            <button
+                              onClick={() => updateStatus(b.id, "accepted", b)}
+                              style={{ background: "#1D9E75", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif" }}
+                            >
+                              Accept
+                            </button>
+                            <button
+                              onClick={() => updateStatus(b.id, "rejected", b)}
+                              style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif" }}
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
+                        {b.status === "accepted" && (
+                          <button
+                            onClick={() => updateStatus(b.id, "rejected", b)}
+                            style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif" }}
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -88,7 +140,6 @@ export default function Admin() {
             </div>
           )}
         </div>
-
       </div>
     </div>
   );
