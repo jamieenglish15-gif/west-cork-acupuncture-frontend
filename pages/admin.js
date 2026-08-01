@@ -66,9 +66,7 @@ export default function Admin() {
       body: JSON.stringify({ status })
     });
     if (status === "accepted") {
-      const msg = encodeURIComponent(
-        "Hi " + booking.name + ", your " + booking.service + " appointment on " + String(booking.date).slice(0,10) + " at " + booking.time_slot + " is confirmed. See you soon! — West Cork Acupuncture"
-      );
+      const msg = encodeURIComponent("Hi " + booking.name + ", your " + booking.service + " appointment on " + String(booking.date).slice(0,10) + " at " + booking.time_slot + " is confirmed. See you soon! - West Cork Acupuncture");
       window.open("https://wa.me/" + booking.phone.replace(/\D/g, "") + "?text=" + msg, "_blank");
     }
     fetchBookings();
@@ -196,6 +194,8 @@ export default function Admin() {
     return bookings.filter(b => String(b.date).slice(0,10) === dateStr);
   };
 
+  const reminderMsg = (b) => encodeURIComponent("Hi " + b.name + ", reminder: " + b.service + " tomorrow at " + b.time_slot + " - West Cork Acupuncture");
+
   if (!authenticated) {
     return (
       <div style={{ fontFamily: "Georgia, serif", background: "#085041", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -238,7 +238,6 @@ export default function Admin() {
           <button style={tabStyle("slots")} onClick={() => setTab("slots")}>Manage Slots</button>
         </div>
 
-        {/* BOOKINGS */}
         {tab === "bookings" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
@@ -287,7 +286,7 @@ export default function Admin() {
                         </td>
                         <td style={{ padding: "10px" }}>
                           
-                            href={"https://wa.me/" + b.phone.replace(/\D/g, "") + "?text=" + encodeURIComponent("Hi " + b.name + ", just a reminder that you have a " + b.service + " appointment tomorrow at " + b.time_slot + " with West Cork Acupuncture. See you then! — Kate")}
+                            href={"https://wa.me/" + b.phone.replace(/\D/g, "") + "?text=" + reminderMsg(b)}
                             target="_blank"
                             style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "12px" }}
                           >
@@ -321,53 +320,30 @@ export default function Admin() {
           </div>
         )}
 
-        {/* CALENDAR */}
         {tab === "calendar" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
-              <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1))} style={btnStyle("#085041")}>
-                Prev
-              </button>
+              <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1))} style={btnStyle("#085041")}>Prev</button>
               <h2 style={{ fontSize: "24px", color: "#085041", margin: 0 }}>
                 {MONTHS[calendarDate.getMonth()]} {calendarDate.getFullYear()}
               </h2>
-              <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1))} style={btnStyle("#085041")}>
-                Next
-              </button>
+              <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1))} style={btnStyle("#085041")}>Next</button>
             </div>
-
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px", marginBottom: "8px" }}>
               {DAYS.map(d => (
-                <div key={d} style={{ textAlign: "center", fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", padding: "8px" }}>
-                  {d}
-                </div>
+                <div key={d} style={{ textAlign: "center", fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", padding: "8px" }}>{d}</div>
               ))}
             </div>
-
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px" }}>
               {getCalendarDays().map((day, i) => {
                 const dayBookings = getBookingsForDay(day);
                 return (
-                  <div key={i} style={{
-                    minHeight: "80px",
-                    background: day ? "#F5F0E8" : "transparent",
-                    borderRadius: "4px",
-                    padding: "6px",
-                    border: day ? "1px solid #E1F5EE" : "none"
-                  }}>
+                  <div key={i} style={{ minHeight: "80px", background: day ? "#F5F0E8" : "transparent", borderRadius: "4px", padding: "6px", border: day ? "1px solid #E1F5EE" : "none" }}>
                     {day && (
                       <div>
                         <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", margin: "0 0 4px 0" }}>{day}</p>
                         {dayBookings.map(b => (
-                          <div key={b.id} style={{
-                            background: statusColor(b.status),
-                            color: "white",
-                            padding: "2px 4px",
-                            borderRadius: "3px",
-                            fontSize: "10px",
-                            fontFamily: "sans-serif",
-                            marginBottom: "2px"
-                          }}>
+                          <div key={b.id} style={{ background: statusColor(b.status), color: "white", padding: "2px 4px", borderRadius: "3px", fontSize: "10px", fontFamily: "sans-serif", marginBottom: "2px" }}>
                             {b.time_slot} {b.name.split(" ")[0]}
                           </div>
                         ))}
@@ -377,16 +353,14 @@ export default function Admin() {
                 );
               })}
             </div>
-
             <div style={{ marginTop: "16px", display: "flex", gap: "16px", fontFamily: "sans-serif", fontSize: "12px" }}>
-              <span style={{ color: "#e6a817" }}>● Pending</span>
-              <span style={{ color: "#1D9E75" }}>● Accepted</span>
-              <span style={{ color: "#c00" }}>● Rejected</span>
+              <span style={{ color: "#e6a817" }}>Pending</span>
+              <span style={{ color: "#1D9E75" }}>Accepted</span>
+              <span style={{ color: "#c00" }}>Rejected</span>
             </div>
           </div>
         )}
 
-        {/* CONTACTS */}
         {tab === "contacts" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
@@ -421,7 +395,6 @@ export default function Admin() {
           </div>
         )}
 
-        {/* ARCHIVE */}
         {tab === "archive" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
@@ -458,7 +431,6 @@ export default function Admin() {
           </div>
         )}
 
-        {/* SLOTS */}
         {tab === "slots" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Manage Available Slots</h2>
@@ -471,12 +443,8 @@ export default function Admin() {
             {blockDate && (
               <div>
                 <div style={{ marginBottom: "16px", display: "flex", gap: "10px" }}>
-                  <button onClick={blockAll} style={{ background: "#c00", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>
-                    Block All
-                  </button>
-                  <button onClick={unblockAll} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>
-                    Unblock All
-                  </button>
+                  <button onClick={blockAll} style={{ background: "#c00", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>Block All</button>
+                  <button onClick={unblockAll} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>Unblock All</button>
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" }}>
                   {ALL_SLOTS.map(slot => {
