@@ -11,7 +11,6 @@ function getBlockedSlots(slot) {
   const idx = ALL_SLOTS.indexOf(slot);
   const blocked = [];
   if (idx + 1 < ALL_SLOTS.length) blocked.push(ALL_SLOTS[idx + 1]);
-  if (idx + 2 < ALL_SLOTS.length) blocked.push(ALL_SLOTS[idx + 2]);
   return blocked;
 }
 
@@ -75,7 +74,10 @@ export default function Book() {
       });
       const data = await res.json();
       if (data.success) {
-        setMessage("Booking request sent for " + name + " on " + date + " at " + selectedSlot + ". We will confirm shortly!");
+        setMessage("Booking request sent! Redirecting you home...");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000);
       } else {
         setError("Something went wrong. Please try again.");
       }
