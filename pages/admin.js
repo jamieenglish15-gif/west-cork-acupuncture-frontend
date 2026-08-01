@@ -65,7 +65,7 @@ const [selectedIntake, setSelectedIntake] = useState(null);
       .catch(() => setBlockedSlots([]));
   };
   const fetchIntakes = () => {
-  fetch(process.env.NEXT_PUBLIC_API_URL + "/intake/all")
+  fetch("https://west-cork-acupuncture-backend-production-366a.up.railway.app/intake/all")
     .then(r => r.json())
     .then(data => setIntakeForms(data))
     .catch(() => setIntakeForms([]));
