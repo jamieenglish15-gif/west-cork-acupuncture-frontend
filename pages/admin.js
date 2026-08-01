@@ -34,6 +34,7 @@ export default function Admin() {
   const [manualSlot, setManualSlot] = useState("");
   const [manualPayment, setManualPayment] = useState("cash");
   const [manualMsg, setManualMsg] = useState("");
+  const [expandedRow, setExpandedRow] = useState(null);
 
   const login = () => {
     if (password === "wca2024") {
@@ -144,12 +145,8 @@ export default function Admin() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        name: manualName,
-        email: manualEmail,
-        phone: manualPhone,
-        service: manualService,
-        date: manualDate,
-        time_slot: manualSlot,
+        name: manualName, email: manualEmail, phone: manualPhone,
+        service: manualService, date: manualDate, time_slot: manualSlot,
         payment_method: manualPayment
       })
     });
@@ -161,12 +158,8 @@ export default function Admin() {
         body: JSON.stringify({ status: "accepted" })
       });
       setManualMsg("Booking added and accepted successfully!");
-      setManualName("");
-      setManualEmail("");
-      setManualPhone("");
-      setManualService("");
-      setManualDate("");
-      setManualSlot("");
+      setManualName(""); setManualEmail(""); setManualPhone("");
+      setManualService(""); setManualDate(""); setManualSlot("");
       setManualPayment("cash");
       fetchBookings();
     } else {
@@ -221,6 +214,12 @@ export default function Admin() {
   const sendReminder = (b) => {
     const phone = b.phone.replace(/\D/g, "");
     const msg = encodeURIComponent("Reminder: " + b.service + " tomorrow at " + b.time_slot + " - West Cork Acupuncture");
+    window.open("https://wa.me/" + phone + "?text=" + msg);
+  };
+
+  const sendIntake = (b) => {
+    const phone = b.phone.replace(/\D/g, "");
+    const msg = encodeURIComponent("Hi " + b.name + ", please fill in our health questionnaire before your appointment: https://west-cork-acupuncture-frontend.vercel.app/intake - it only takes 2 minutes. Thanks, Kate");
     window.open("https://wa.me/" + phone + "?text=" + msg);
   };
 
@@ -332,13 +331,13 @@ export default function Admin() {
 
   const tableHead = (cols) => (
     <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
-      {cols.map(h => <th key={h} style={{ padding: "10px", textAlign: "left", color: "#085041", fontFamily: "sans-serif", fontSize: "14px" }}>{h}</th>)}
+      {cols.map(h => <th key={h} style={{ padding: "10px", textAlign: "left", color: "#085041", fontFamily: "sans-serif", fontSize: "14px", whiteSpace: "nowrap" }}>{h}</th>)}
     </tr>
   );
 
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#085041", minHeight: "100vh", padding: "40px" }}>
-      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
 
         <h1 style={{ fontSize: "36px", color: "white", marginBottom: "8px" }}>Admin Dashboard</h1>
         <p style={{ fontFamily: "sans-serif", color: "#9FE1CB", marginBottom: "24px" }}>West Cork Acupuncture</p>
@@ -363,59 +362,93 @@ export default function Admin() {
               <p style={{ fontFamily: "sans-serif", color: "#666" }}>No active bookings.</p>
             ) : (
               <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
-                  <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Payment", "Status", "Notes", "Intake", "Reminder", "Actions"])}</thead>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "13px" }}>
+                  <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Status", "Actions", "More"])}</thead>
                   <tbody>
                     {bookings.map(b => (
-                      <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
-                        <td style={{ padding: "10px" }}>{b.name}</td>
-                        <td style={{ padding: "10px" }}>{b.phone}</td>
-                        <td style={{ padding: "10px" }}>{b.service}</td>
-                        <td style={{ padding: "10px" }}>{String(b.date).slice(0,10)}</td>
-                        <td style={{ padding: "10px" }}>{b.time_slot}</td>
-                        <td style={{ padding: "10px", textTransform: "capitalize" }}>{b.payment_method}</td>
-                        <td style={{ padding: "10px", fontWeight: "bold", color: statusColor(b.status), textTransform: "capitalize" }}>{b.status}</td>
-                        <td style={{ padding: "10px", maxWidth: "160px" }}>
-                          {editingNote === b.id ? (
-                            <div>
-                              <textarea
-                                defaultValue={b.notes || ""}
-                                onChange={e => setNoteText(e.target.value)}
-                                style={{ width: "100%", padding: "6px", fontFamily: "sans-serif", fontSize: "12px", borderRadius: "4px", border: "1px solid #9FE1CB", marginBottom: "4px" }}
-                                rows={3}
-                              />
-                              <div style={{ display: "flex", gap: "4px" }}>
-                                <button onClick={() => saveNote(b.id)} style={btnStyle("#1D9E75")}>Save</button>
-                                <button onClick={() => setEditingNote(null)} style={btnStyle("#888")}>Cancel</button>
+                      <>
+                        <tr key={b.id} style={{ borderBottom: expandedRow === b.id ? "none" : "1px solid #E1F5EE" }}>
+                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.name}</td>
+                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.phone}</td>
+                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.service}</td>
+                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{String(b.date).slice(0,10)}</td>
+                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>{b.time_slot}</td>
+                          <td style={{ padding: "10px", fontWeight: "bold", color: statusColor(b.status), textTransform: "capitalize", whiteSpace: "nowrap" }}>{b.status}</td>
+                          <td style={{ padding: "10px", whiteSpace: "nowrap" }}>
+                            <div style={{ display: "flex", gap: "4px", flexWrap: "nowrap" }}>
+                              {b.status === "pending" && (
+                                <>
+                                  <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Accept</button>
+                                  <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Reject</button>
+                                </>
+                              )}
+                              {b.status === "accepted" && (
+                                <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Cancel</button>
+                              )}
+                              {b.status === "rejected" && (
+                                <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Restore</button>
+                              )}
+                              <button onClick={() => updateStatus(b.id, "archived", b)} style={btnStyle("#888")}>Archive</button>
+                              <button onClick={() => deleteBooking(b.id)} style={btnStyle("#333")}>Delete</button>
+                            </div>
+                          </td>
+                          <td style={{ padding: "10px" }}>
+                            <button
+                              onClick={() => setExpandedRow(expandedRow === b.id ? null : b.id)}
+                              style={btnStyle("#085041")}
+                            >
+                              {expandedRow === b.id ? "Hide" : "Details"}
+                            </button>
+                          </td>
+                        </tr>
+                        {expandedRow === b.id && (
+                          <tr key={b.id + "-exp"} style={{ borderBottom: "1px solid #E1F5EE", background: "#F5F0E8" }}>
+                            <td colSpan={8} style={{ padding: "16px" }}>
+                              <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+                                <div>
+                                  <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Payment</p>
+                                  <p style={{ fontFamily: "sans-serif", fontSize: "13px", textTransform: "capitalize" }}>{b.payment_method}</p>
+                                </div>
+                                <div style={{ flex: 1, minWidth: "200px" }}>
+                                  <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Notes</p>
+                                  {editingNote === b.id ? (
+                                    <div>
+                                      <textarea
+                                        defaultValue={b.notes || ""}
+                                        onChange={e => setNoteText(e.target.value)}
+                                        style={{ width: "100%", padding: "6px", fontFamily: "sans-serif", fontSize: "12px", borderRadius: "4px", border: "1px solid #9FE1CB", marginBottom: "4px" }}
+                                        rows={3}
+                                      />
+                                      <div style={{ display: "flex", gap: "4px" }}>
+                                        <button onClick={() => saveNote(b.id)} style={btnStyle("#1D9E75")}>Save</button>
+                                        <button onClick={() => setEditingNote(null)} style={btnStyle("#888")}>Cancel</button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div>
+                                      <p style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}>{b.notes || "No notes"}</p>
+                                      <button onClick={() => { setEditingNote(b.id); setNoteText(b.notes || ""); }} style={btnStyle("#085041")}>
+                                        {b.notes ? "Edit Note" : "Add Note"}
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                                <div>
+                                  <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "8px" }}>Quick Actions</p>
+                                  <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                                    <button onClick={() => sendReminder(b)} style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
+                                      Send Reminder
+                                    </button>
+                                    <button onClick={() => sendIntake(b)} style={btnStyle("#085041")}>
+                                      Send Intake Form
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          ) : (
-                            <div>
-                              <p style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}>{b.notes || "No notes"}</p>
-                              <button onClick={() => { setEditingNote(b.id); setNoteText(b.notes || ""); }} style={btnStyle("#085041")}>
-                                {b.notes ? "Edit" : "Add Note"}
-                              </button>
-                            </div>
-                          )}
-                        </td>
-                        <td style={{ padding: "10px" }}>
-                          <button onClick={() => sendReminder(b)} style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
-                            Send Reminder
-                          </button>
-                        </td>
-<td style={{ padding: "10px" }}>
-  <button
-    onClick={() => {
-      const phone = b.phone.replace(/\D/g, "");
-      const msg = encodeURIComponent("Hi " + b.name + ", please fill in our health questionnaire before your appointment: https://west-cork-acupuncture-frontend.vercel.app/intake - it only takes 2 minutes. Thanks, Kate");
-      window.open("https://wa.me/" + phone + "?text=" + msg);
-    }}
-    style={{ background: "#085041", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
-  >
-    Send Intake
-  </button>
-</td>
-                      </tr>
+                            </td>
+                          </tr>
+                        )}
+                      </>
                     ))}
                   </tbody>
                 </table>
