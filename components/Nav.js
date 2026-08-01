@@ -37,7 +37,6 @@ export default function Nav() {
         </div>
       </nav>
 
-      {/* FLOATING WHATSAPP BUTTON */}
       
         href="https://wa.me/353831156950?text=Hi%20Kate,%20I'd%20like%20to%20book%20an%20appointment."
         target="_blank"
