@@ -8,23 +8,31 @@ export default function Contact() {
         <div style={{ background: "white", padding: "32px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", marginBottom: "24px" }}>
           <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Get in Touch</h2>
           <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "12px" }}>
-            <strong>Phone:</strong> +353 00 000 0000
+            <strong>Contact:</strong> Kate
           </p>
           <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "12px" }}>
-            <strong>Email:</strong> info@westcorkacupuncture.com
+            <strong>Phone:</strong> 083 115 6950
           </p>
           <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "12px" }}>
-            <strong>Instagram:</strong> @westcorkacupuncture
+            <strong>Instagram:</strong>{" "}
+            <a href="https://instagram.com/westcorkacupuncture" target="_blank" style={{ color: "#1D9E75" }}>
+              @westcorkacupuncture
+            </a>
           </p>
-          <a href="https://wa.me/353000000000" style={{ display: "inline-block", marginTop: "16px", background: "#1D9E75", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>
-            Message on WhatsApp
-          </a>
+          <div style={{ display: "flex", gap: "12px", marginTop: "16px", flexWrap: "wrap" }}>
+            <a href="https://wa.me/353831156950" style={{ background: "#1D9E75", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>
+              WhatsApp Kate
+            </a>
+            <a href="https://instagram.com/westcorkacupuncture" target="_blank" style={{ background: "#085041", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>
+              Follow on Instagram
+            </a>
+          </div>
         </div>
 
         <div style={{ background: "white", padding: "32px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
           <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Location</h2>
-          <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "16px" }}>
-            West Cork, Ireland
+          <p style={{ fontFamily: "sans-serif", color: "#333" }}>
+            West Cork, Ireland — Calm, private, and designed for deep relaxation.
           </p>
         </div>
 
