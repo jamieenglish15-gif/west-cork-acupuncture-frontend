@@ -133,6 +133,12 @@ export default function Admin() {
     fetchBlockedSlots(blockDate);
   };
 
+  const sendReminder = (b) => {
+    const phone = b.phone.replace(/\D/g, "");
+    const msg = encodeURIComponent("Reminder: " + b.service + " tomorrow at " + b.time_slot + " - West Cork Acupuncture");
+    window.open("https://wa.me/" + phone + "?text=" + msg);
+  };
+
   const statusColor = (status) => {
     if (status === "accepted") return "#1D9E75";
     if (status === "rejected") return "#c00";
@@ -192,11 +198,7 @@ export default function Admin() {
     const d = String(day).padStart(2, "0");
     const dateStr = year + "-" + month + "-" + d;
     return bookings.filter(b => String(b.date).slice(0,10) === dateStr);
-  };
-
-  const reminderMsg = (b) => encodeURIComponent("Hi " + b.name + ", reminder: " + b.service + " tomorrow at " + b.time_slot + " - West Cork Acupuncture");
-
-  if (!authenticated) {
+  };if (!authenticated) {
     return (
       <div style={{ fontFamily: "Georgia, serif", background: "#085041", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <div style={{ background: "white", padding: "40px", borderRadius: "8px", maxWidth: "360px", width: "100%", textAlign: "center" }}>
@@ -285,13 +287,9 @@ export default function Admin() {
                           )}
                         </td>
                         <td style={{ padding: "10px" }}>
-                          
-                            href={"https://wa.me/" + b.phone.replace(/\D/g, "") + "?text=" + reminderMsg(b)}
-                            target="_blank"
-                            style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "12px" }}
-                          >
+                          <button onClick={() => sendReminder(b)} style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
                             Send Reminder
-                          </a>
+                          </button>
                         </td>
                         <td style={{ padding: "10px" }}>
                           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
