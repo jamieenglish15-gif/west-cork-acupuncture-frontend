@@ -51,7 +51,7 @@ export default function Nav() {
           fontFamily: "sans-serif",
           fontSize: "14px",
           fontWeight: "bold",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+          boxShadow: "0 4px 16px #00000033",
           zIndex: 999
         }}
       >
