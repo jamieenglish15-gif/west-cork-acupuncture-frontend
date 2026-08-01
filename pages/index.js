@@ -49,10 +49,10 @@ export default function Home() {
           <h2 style={{ fontSize: "42px", color: "#085041", marginBottom: "60px", fontWeight: "normal" }}>What We Offer</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "32px" }}>
             {[
-              { title: "Acupuncture", desc: "Supports pain relief, stress reduction, hormonal balance, and overall wellbeing through traditional needle therapy.", duration: "45-50 min", price: "80" },
-              { title: "Cosmetic Acupuncture", desc: "A natural approach to skin rejuvenation - stimulating collagen, improving tone and reducing signs of aging.", duration: "60 min", price: "125" },
-              { title: "Facial Rejuvenation", desc: "Stimulates blood flow, collagen production and natural healing for a more youthful appearance. A deeply relaxing and restorative treatment.", duration: "60 min", price: "125" }
-            ].map(s => (
+{[
+  { title: "Acupuncture", desc: "Supports pain relief, stress reduction, hormonal balance, and overall wellbeing through traditional needle therapy.", duration: "45-50 min", price: "80" },
+  { title: "Cosmetic Acupuncture", desc: "A natural approach to skin rejuvenation - stimulating collagen, improving tone and reducing signs of aging.", duration: "45-50 min", price: "125" }
+].map(s => (
               <div key={s.title} style={{ background: "white", borderRadius: "4px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
                 <div style={{ background: "#085041", height: "4px" }}></div>
                 <div style={{ padding: "36px" }}>
