@@ -1,6 +1,12 @@
+import Head from "next/head";
+
 export default function Contact() {
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
+      <Head>
+        <title>Contact | West Cork Acupuncture Skibbereen</title>
+        <meta name="description" content="Contact West Cork Acupuncture. Kate is based at 13 North Street, Skibbereen, P81 Y237. Call 083 115 6950 or book online." />
+      </Head>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
 
         <h1 style={{ fontSize: "40px", color: "#085041", marginBottom: "24px" }}>Contact & Location</h1>
