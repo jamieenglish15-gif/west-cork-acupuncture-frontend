@@ -25,6 +25,7 @@ export default function Book() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [acceptedSlots, setAcceptedSlots] = useState([]);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/services`)
@@ -33,7 +34,20 @@ export default function Book() {
       .catch(() => setServices([]));
   }, []);
 
+  useEffect(() => {
+    if (!date) return;
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings/accepted?date=${date}`)
+      .then(r => r.json())
+      .then(data => setAcceptedSlots(data))
+      .catch(() => setAcceptedSlots([]));
+    setSelectedSlot("");
+  }, [date]);
+
   const blockedSlot = getBlockedSlot(selectedSlot);
+
+  const isUnavailable = (slot) => {
+    return acceptedSlots.includes(slot) || blockedSlot === slot;
+  };
 
   const handleBooking = async () => {
     setError("");
@@ -67,7 +81,7 @@ export default function Book() {
       const data = await res.json();
 
       if (data.success) {
-        setMessage(`Booking confirmed for ${name} on ${date} at ${selectedSlot}. See you soon!`);
+        setMessage(`Booking request sent for ${name} on ${date} at ${selectedSlot}. We will confirm shortly!`);
       } else {
         setError("Something went wrong. Please try again.");
       }
@@ -130,34 +144,38 @@ export default function Book() {
         </select>
 
         <label style={labelStyle}>Date</label>
-        <input type="date" onChange={e => { setDate(e.target.value); setSelectedSlot(""); }} style={inputStyle} />
+        <input type="date" onChange={e => setDate(e.target.value)} style={inputStyle} />
 
-        <label style={labelStyle}>Available Time Slots</label>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", marginBottom: "24px", marginTop: "8px" }}>
-          {ALL_SLOTS.map(slot => {
-            const isSelected = selectedSlot === slot;
-            const isBlocked = blockedSlot === slot;
-            return (
-              <button
-                key={slot}
-                disabled={isBlocked}
-                onClick={() => !isBlocked && setSelectedSlot(slot)}
-                style={{
-                  padding: "10px",
-                  border: "1px solid #9FE1CB",
-                  borderRadius: "6px",
-                  background: isSelected ? "#085041" : isBlocked ? "#e0e0e0" : "white",
-                  color: isSelected ? "white" : isBlocked ? "#aaa" : "#085041",
-                  cursor: isBlocked ? "not-allowed" : "pointer",
-                  fontFamily: "sans-serif",
-                  fontSize: "14px"
-                }}
-              >
-                {slot}
-              </button>
-            );
-          })}
-        </div>
+        {date && (
+          <>
+            <label style={labelStyle}>Available Time Slots</label>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", marginBottom: "24px", marginTop: "8px" }}>
+              {ALL_SLOTS.map(slot => {
+                const isSelected = selectedSlot === slot;
+                const unavailable = isUnavailable(slot);
+                return (
+                  <button
+                    key={slot}
+                    disabled={unavailable}
+                    onClick={() => !unavailable && setSelectedSlot(slot)}
+                    style={{
+                      padding: "10px",
+                      border: "1px solid #9FE1CB",
+                      borderRadius: "6px",
+                      background: isSelected ? "#085041" : unavailable ? "#e0e0e0" : "white",
+                      color: isSelected ? "white" : unavailable ? "#aaa" : "#085041",
+                      cursor: unavailable ? "not-allowed" : "pointer",
+                      fontFamily: "sans-serif",
+                      fontSize: "14px"
+                    }}
+                  >
+                    {slot}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
 
         <h3 style={{ fontSize: "20px", color: "#085041", marginBottom: "16px" }}>Payment Method</h3>
 
@@ -166,37 +184,4 @@ export default function Book() {
           { value: "cash", label: "Pay Cash on the Day" },
           { value: "voucher", label: "Redeem Gift Voucher" }
         ].map(m => (
-          <label key={m.value} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginBottom: "8px", cursor: "pointer", fontFamily: "sans-serif", color: "#085041" }}>
-            <input type="radio" name="payment" value={m.value} onChange={() => setPaymentMethod(m.value)} />
-            {m.label}
-          </label>
-        ))}
-
-        {paymentMethod === "voucher" && (
-          <input placeholder="Enter voucher code" onChange={e => setVoucherCode(e.target.value)} style={{ ...inputStyle, marginTop: "8px" }} />
-        )}
-
-        {error && (
-          <div style={{ background: "#ffe0e0", padding: "12px", borderRadius: "6px", marginTop: "16px", fontFamily: "sans-serif", color: "#c00" }}>
-            {error}
-          </div>
-        )}
-
-        {message && (
-          <div style={{ background: "#E1F5EE", padding: "12px", borderRadius: "6px", marginTop: "16px", fontFamily: "sans-serif", color: "#085041" }}>
-            {message}
-          </div>
-        )}
-
-        <button onClick={handleBooking} disabled={loading} style={{ width: "100%", background: loading ? "#aaa" : "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontSize: "18px", marginTop: "24px", cursor: loading ? "not-allowed" : "pointer", fontFamily: "sans-serif" }}>
-          {loading ? "Confirming..." : "Confirm Booking"}
-        </button>
-
-        <a href="https://wa.me/353000000000?text=Hi,%20I'd%20like%20to%20book%20an%20appointment." style={{ display: "block", textAlign: "center", marginTop: "16px", fontFamily: "sans-serif", color: "#085041", textDecoration: "underline" }}>
-          Prefer WhatsApp? Message to book.
-        </a>
-
-      </div>
-    </div>
-  );
-}
+          <label key={m.value} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", border: "1px solid #9FE1CB", borderRadius:
