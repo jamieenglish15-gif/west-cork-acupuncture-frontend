@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
 
+const ALL_SLOTS = [
+  "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+  "12:00", "13:00", "13:30", "14:00", "14:30", "15:00",
+  "15:30", "16:00", "16:30", "17:00"
+];
+
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
   const [error, setError] = useState("");
+  const [tab, setTab] = useState("bookings");
+  const [blockDate, setBlockDate] = useState("");
+  const [blockedSlots, setBlockedSlots] = useState([]);
 
   const login = () => {
     if (password === "wca2024") {
@@ -22,10 +31,22 @@ export default function Admin() {
       .catch(() => setLoading(false));
   };
 
+  const fetchBlockedSlots = (date) => {
+    if (!date) return;
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/blocked?date=${date}`)
+      .then(r => r.json())
+      .then(data => setBlockedSlots(data.map(r => r.time_slot)))
+      .catch(() => setBlockedSlots([]));
+  };
+
   useEffect(() => {
     if (!authenticated) return;
     fetchBookings();
   }, [authenticated]);
+
+  useEffect(() => {
+    fetchBlockedSlots(blockDate);
+  }, [blockDate]);
 
   const updateStatus = async (id, status, booking) => {
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bookings/${id}`, {
@@ -36,7 +57,7 @@ export default function Admin() {
 
     if (status === "accepted") {
       const msg = encodeURIComponent(
-        `Hi ${booking.name}, your ${booking.service} appointment on ${booking.date} at ${booking.time_slot} is confirmed. See you soon! — West Cork Acupuncture`
+        `Hi ${booking.name}, your ${booking.service} appointment on ${String(booking.date).slice(0,10)} at ${booking.time_slot} is confirmed. See you soon! — West Cork Acupuncture`
       );
       window.open(`https://wa.me/${booking.phone.replace(/\D/g, "")}?text=${msg}`, "_blank");
     }
@@ -44,11 +65,41 @@ export default function Admin() {
     fetchBookings();
   };
 
+  const toggleBlock = async (slot) => {
+    const isBlocked = blockedSlots.includes(slot);
+    if (isBlocked) {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blocked`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: blockDate, time_slot: slot })
+      });
+    } else {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blocked`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: blockDate, time_slot: slot })
+      });
+    }
+    fetchBlockedSlots(blockDate);
+  };
+
   const statusColor = (status) => {
     if (status === "accepted") return "#1D9E75";
     if (status === "rejected") return "#c00";
     return "#999";
   };
+
+  const tabStyle = (t) => ({
+    padding: "10px 24px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+    fontFamily: "sans-serif",
+    fontSize: "14px",
+    background: tab === t ? "#1D9E75" : "white",
+    color: tab === t ? "white" : "#085041",
+    marginRight: "8px"
+  });
 
   if (!authenticated) {
     return (
@@ -76,70 +127,114 @@ export default function Admin() {
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
         <h1 style={{ fontSize: "36px", color: "white", marginBottom: "8px" }}>Admin Dashboard</h1>
-        <p style={{ fontFamily: "sans-serif", color: "#9FE1CB", marginBottom: "32px" }}>West Cork Acupuncture — All Bookings</p>
+        <p style={{ fontFamily: "sans-serif", color: "#9FE1CB", marginBottom: "24px" }}>West Cork Acupuncture</p>
 
-        <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
-          <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
-            Bookings {bookings.length > 0 && `(${bookings.length})`}
-          </h2>
-
-          {loading ? (
-            <p style={{ fontFamily: "sans-serif", color: "#666" }}>Loading...</p>
-          ) : bookings.length === 0 ? (
-            <p style={{ fontFamily: "sans-serif", color: "#666" }}>No bookings yet.</p>
-          ) : (
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
-                <thead>
-                  <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
-                    {["Name", "Phone", "Service", "Date", "Time", "Payment", "Status", "Actions"].map(h => (
-                      <th key={h} style={{ padding: "10px", textAlign: "left", color: "#085041" }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {bookings.map(b => (
-                    <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
-                      <td style={{ padding: "10px" }}>{b.name}</td>
-                      <td style={{ padding: "10px" }}>{b.phone}</td>
-                      <td style={{ padding: "10px" }}>{b.service}</td>
-                      <td style={{ padding: "10px" }}>{String(b.date).slice(0,10)}</td>
-                      <td style={{ padding: "10px" }}>{b.time_slot}</td>
-                      <td style={{ padding: "10px", textTransform: "capitalize" }}>{b.payment_method}</td>
-                      <td style={{ padding: "10px", fontWeight: "bold", color: statusColor(b.status), textTransform: "capitalize" }}>{b.status}</td>
-                      <td style={{ padding: "10px" }}>
-                        {b.status === "pending" && (
-                          <div style={{ display: "flex", gap: "8px" }}>
-                            <button
-                              onClick={() => updateStatus(b.id, "accepted", b)}
-                              style={{ background: "#1D9E75", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif" }}
-                            >
-                              Accept
-                            </button>
-                            <button
-                              onClick={() => updateStatus(b.id, "rejected", b)}
-                              style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif" }}
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        )}
-                        {b.status === "accepted" && (
-                          <button
-                            onClick={() => updateStatus(b.id, "rejected", b)}
-                            style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif" }}
-                          >
-                            Cancel
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+        <div style={{ marginBottom: "24px" }}>
+          <button style={tabStyle("bookings")} onClick={() => setTab("bookings")}>Bookings</button>
+          <button style={tabStyle("slots")} onClick={() => setTab("slots")}>Manage Slots</button>
         </div>
+
+        {tab === "bookings" && (
+          <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+            <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
+              Bookings {bookings.length > 0 && `(${bookings.length})`}
+            </h2>
+
+            {loading ? (
+              <p style={{ fontFamily: "sans-serif", color: "#666" }}>Loading...</p>
+            ) : bookings.length === 0 ? (
+              <p style={{ fontFamily: "sans-serif", color: "#666" }}>No bookings yet.</p>
+            ) : (
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
+                      {["Name", "Phone", "Service", "Date", "Time", "Payment", "Status", "Actions"].map(h => (
+                        <th key={h} style={{ padding: "10px", textAlign: "left", color: "#085041" }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bookings.map(b => (
+                      <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
+                        <td style={{ padding: "10px" }}>{b.name}</td>
+                        <td style={{ padding: "10px" }}>{b.phone}</td>
+                        <td style={{ padding: "10px" }}>{b.service}</td>
+                        <td style={{ padding: "10px" }}>{String(b.date).slice(0,10)}</td>
+                        <td style={{ padding: "10px" }}>{b.time_slot}</td>
+                        <td style={{ padding: "10px", textTransform: "capitalize" }}>{b.payment_method}</td>
+                        <td style={{ padding: "10px", fontWeight: "bold", color: statusColor(b.status), textTransform: "capitalize" }}>{b.status}</td>
+                        <td style={{ padding: "10px" }}>
+                          {b.status === "pending" && (
+                            <div style={{ display: "flex", gap: "8px" }}>
+                              <button onClick={() => updateStatus(b.id, "accepted", b)} style={{ background: "#1D9E75", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif" }}>
+                                Accept
+                              </button>
+                              <button onClick={() => updateStatus(b.id, "rejected", b)} style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif" }}>
+                                Reject
+                              </button>
+                            </div>
+                          )}
+                          {b.status === "accepted" && (
+                            <button onClick={() => updateStatus(b.id, "rejected", b)} style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif" }}>
+                              Cancel
+                            </button>
+                          )}
+                          {b.status === "rejected" && (
+                            <button onClick={() => updateStatus(b.id, "accepted", b)} style={{ background: "#1D9E75", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif" }}>
+                              Restore
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {tab === "slots" && (
+          <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+            <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Manage Available Slots</h2>
+            <p style={{ fontFamily: "sans-serif", color: "#666", marginBottom: "24px" }}>Select a date then click slots to block or unblock them.</p>
+
+            <input
+              type="date"
+              onChange={e => setBlockDate(e.target.value)}
+              style={{ padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginBottom: "24px", fontFamily: "sans-serif", fontSize: "14px" }}
+            />
+
+            {blockDate && (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" }}>
+                {ALL_SLOTS.map(slot => {
+                  const isBlocked = blockedSlots.includes(slot);
+                  return (
+                    <button
+                      key={slot}
+                      onClick={() => toggleBlock(slot)}
+                      style={{
+                        padding: "12px",
+                        border: "1px solid #9FE1CB",
+                        borderRadius: "6px",
+                        background: isBlocked ? "#e0e0e0" : "#E1F5EE",
+                        color: isBlocked ? "#aaa" : "#085041",
+                        cursor: "pointer",
+                        fontFamily: "sans-serif",
+                        fontSize: "14px",
+                        textDecoration: isBlocked ? "line-through" : "none"
+                      }}
+                    >
+                      {slot} {isBlocked ? "🔒" : ""}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
       </div>
     </div>
   );
