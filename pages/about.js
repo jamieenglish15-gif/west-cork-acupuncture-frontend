@@ -6,27 +6,42 @@ export default function About() {
         <h1 style={{ fontSize: "40px", color: "#085041", marginBottom: "24px" }}>About Your Practitioner</h1>
 
         <div style={{ background: "white", padding: "32px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", marginBottom: "24px" }}>
-          <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Jamie — Acupuncturist & Holistic Practitioner</h2>
+          <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Kate — Acupuncturist & Holistic Practitioner</h2>
           <p style={{ fontFamily: "sans-serif", color: "#333", lineHeight: "1.8", marginBottom: "16px" }}>
-            Jamie is a dedicated acupuncturist with a passion for helping clients reconnect with balance, ease, and natural healing. With a calm, grounded approach, each treatment is tailored to support the nervous system, reduce pain, and restore harmony in the body.
+            Kate is a dedicated acupuncturist with a passion for helping clients reconnect with balance, ease, and natural healing. With a calm, grounded approach, each treatment is tailored to support the nervous system, reduce pain, and restore harmony in the body.
           </p>
           <p style={{ fontFamily: "sans-serif", color: "#333", lineHeight: "1.8", marginBottom: "16px" }}>
-            Trained in traditional acupuncture, cupping therapy, and cosmetic facial acupuncture, Jamie blends evidence-based practice with intuitive care.
+            Trained in traditional acupuncture, cupping therapy, and cosmetic facial acupuncture, Kate blends evidence-based practice with intuitive care.
           </p>
           <p style={{ fontFamily: "sans-serif", color: "#333", lineHeight: "1.8" }}>
-            Whether you're seeking pain relief, stress reduction, hormonal support, or a cosmetic boost, Jamie's treatments are designed to help you feel grounded, restored, and deeply cared for.
+            Whether you are seeking pain relief, stress reduction, hormonal support, or a cosmetic boost, Kate's treatments are designed to help you feel grounded, restored, and deeply cared for.
           </p>
         </div>
 
-        <div style={{ background: "#E1F5EE", padding: "24px", borderRadius: "8px" }}>
+        <div style={{ background: "#E1F5EE", padding: "24px", borderRadius: "8px", marginBottom: "24px" }}>
           <p style={{ fontSize: "22px", color: "#085041", marginBottom: "8px" }}>"Healing happens when the body feels safe."</p>
           <p style={{ fontFamily: "sans-serif", color: "#555" }}>Every session is built around creating that sense of safety.</p>
         </div>
 
-        <div style={{ textAlign: "center", marginTop: "40px" }}>
-          <a href="/book" style={{ background: "#1D9E75", color: "white", padding: "14px 40px", borderRadius: "8px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "16px" }}>
-            Book Appointment
-          </a>
+        <div style={{ background: "white", padding: "32px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", marginBottom: "24px" }}>
+          <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Contact Kate</h2>
+          <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "12px" }}>
+            <strong>Phone:</strong> 083 115 6950
+          </p>
+          <p style={{ fontFamily: "sans-serif", color: "#333", marginBottom: "20px" }}>
+            <strong>Instagram:</strong>{" "}
+            <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" style={{ color: "#1D9E75" }}>
+              @west_corkacupuncture
+            </a>
+          </p>
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+            <a href="https://wa.me/353831156950" style={{ background: "#1D9E75", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>
+              WhatsApp Kate
+            </a>
+            <a href="/book" style={{ background: "#085041", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>
+              Book Appointment
+            </a>
+          </div>
         </div>
 
       </div>
