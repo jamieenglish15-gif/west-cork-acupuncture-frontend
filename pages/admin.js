@@ -8,8 +8,9 @@ const ALL_SLOTS = [
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const SERVICES = ["Acupuncture", "Cupping Therapy", "Cosmetic Acupuncture", "Facial Rejuvenation"];
+const SERVICES = ["Acupuncture", "Cosmetic Acupuncture", "Facial Rejuvenation"];
 const API = "https://west-cork-acupuncture-backend-production-366a.up.railway.app";
+const PRICES = { "Acupuncture": "80", "Cosmetic Acupuncture": "125", "Facial Rejuvenation": "125" };
 
 function IntakeForms() {
   const [forms, setForms] = useState([]);
@@ -80,24 +81,9 @@ function IntakeForms() {
                 </p>
               </div>
               <div style={{ display: "flex", gap: "8px" }}>
-                <button
-                  onClick={() => { setEditing(f.id); setEditData(Object.assign({}, f)); setSelected(f.id); }}
-                  style={{ background: "#085041", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => deleteForm(f.id)}
-                  style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
-                >
-                  Delete
-                </button>
-                <button
-                  onClick={() => setSelected(selected === f.id ? null : f.id)}
-                  style={{ background: "#888", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
-                >
-                  {selected === f.id ? "Hide" : "View"}
-                </button>
+                <button onClick={() => { setEditing(f.id); setEditData(Object.assign({}, f)); setSelected(f.id); }} style={{ background: "#085041", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Edit</button>
+                <button onClick={() => deleteForm(f.id)} style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Delete</button>
+                <button onClick={() => setSelected(selected === f.id ? null : f.id)} style={{ background: "#888", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>{selected === f.id ? "Hide" : "View"}</button>
               </div>
             </div>
             {selected === f.id && (
@@ -359,6 +345,18 @@ export default function Admin() {
     window.open("https://wa.me/" + phone + "?text=" + msg);
   };
 
+  const sendReceipt = (b) => {
+    const price = PRICES[b.service] || "80";
+    const phone = b.phone.replace(/\D/g, "");
+    const msg = encodeURIComponent("Hi " + b.name + ", thank you for your visit to West Cork Acupuncture on " + String(b.date).slice(0,10) + ". Treatment: " + b.service + ". Amount: EUR" + price + ". Payment: " + b.payment_method + ". Thank you - Kate");
+    window.open("https://wa.me/" + phone + "?text=" + msg);
+  };
+
+  const printReceipt = (b) => {
+    const price = PRICES[b.service] || "80";
+    window.open("/receipt?name=" + encodeURIComponent(b.name) + "&service=" + encodeURIComponent(b.service) + "&date=" + String(b.date).slice(0,10) + "&time=" + b.time_slot + "&payment=" + b.payment_method + "&amount=" + price);
+  };
+
   const statusColor = (status) => {
     if (status === "accepted") return "#1D9E75";
     if (status === "rejected") return "#c00";
@@ -575,9 +573,9 @@ export default function Admin() {
                                   <button onClick={() => sendReminder(b)} style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
                                     Send Reminder
                                   </button>
-                                  <button onClick={() => sendIntake(b)} style={btnStyle("#085041")}>
-                                    Send Intake Form
-                                  </button>
+                                  <button onClick={() => sendIntake(b)} style={btnStyle("#085041")}>Send Intake</button>
+                                  <button onClick={() => sendReceipt(b)} style={btnStyle("#1D9E75")}>WhatsApp Receipt</button>
+                                  <button onClick={() => printReceipt(b)} style={btnStyle("#085041")}>Print Receipt</button>
                                 </div>
                               </div>
                             </div>
