@@ -38,7 +38,7 @@ export default function Nav() {
       </nav>
 
       
-        href="https://wa.me/353831156950?text=Hi%20Kate,%20I'd%20like%20to%20book%20an%20appointment."
+        href="https://wa.me/353831156950?text=Hi%20Kate,%20I%20would%20like%20to%20book%20an%20appointment."
         target="_blank"
         style={{
           position: "fixed",
