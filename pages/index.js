@@ -1,6 +1,13 @@
+import Head from "next/head";
+
 export default function Home() {
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8" }}>
+
+      <Head>
+        <title>West Cork Acupuncture | Acupuncture Skibbereen | Kate</title>
+        <meta name="description" content="West Cork Acupuncture offers traditional acupuncture, cupping therapy and cosmetic facial acupuncture at 13 North Street, Skibbereen. Book online with Kate." />
+      </Head>
 
       {/* HERO */}
       <div style={{
@@ -47,8 +54,8 @@ export default function Home() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "32px" }}>
             {[
-              { title: "Acupuncture", desc: "Supports pain relief, stress reduction, hormonal balance, and overall wellbeing through traditional needle therapy.", duration: "60–75 min" },
-              { title: "Cupping Therapy", desc: "Releases deep muscle tension, improves circulation, and supports faster recovery from injury or stress.", duration: "45–60 min" },
+              { title: "Acupuncture", desc: "Supports pain relief, stress reduction, hormonal balance, and overall wellbeing through traditional needle therapy.", duration: "60-75 min" },
+              { title: "Cupping Therapy", desc: "Releases deep muscle tension, improves circulation, and supports faster recovery from injury or stress.", duration: "45-60 min" },
               { title: "Cosmetic Acupuncture", desc: "A natural approach to skin rejuvenation — stimulating collagen, improving tone and reducing signs of aging.", duration: "60 min" },
               { title: "Facial Rejuvenation", desc: "Stimulates blood flow, collagen production and natural healing for a more youthful appearance. A deeply relaxing and restorative treatment.", duration: "60 min" }
             ].map(s => (
@@ -117,7 +124,7 @@ export default function Home() {
       {/* FOOTER */}
       <div style={{ background: "#085041", padding: "40px 60px", textAlign: "center" }}>
         <p style={{ fontFamily: "sans-serif", color: "rgba(255,255,255,0.5)", fontSize: "13px" }}>
-          © 2026 West Cork Acupuncture · 083 115 6950 ·{" "}
+          2026 West Cork Acupuncture · 083 115 6950 ·{" "}
           <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" style={{ color: "#9FE1CB", textDecoration: "none" }}>Instagram</a>
         </p>
       </div>
