@@ -14,13 +14,33 @@ const API = "https://west-cork-acupuncture-backend-production-366a.up.railway.ap
 function IntakeForms() {
   const [forms, setForms] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [editData, setEditData] = useState({});
 
-  useEffect(() => {
+  const fetchForms = () => {
     fetch(API + "/intake/all")
       .then(r => r.json())
       .then(data => setForms(data))
       .catch(err => console.error(err));
-  }, []);
+  };
+
+  useEffect(() => { fetchForms(); }, []);
+
+  const deleteForm = async (id) => {
+    if (!confirm("Delete this intake form permanently?")) return;
+    await fetch(API + "/intake/" + id, { method: "DELETE" });
+    fetchForms();
+  };
+
+  const saveEdit = async (id) => {
+    await fetch(API + "/intake/" + id, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(editData)
+    });
+    setEditing(null);
+    fetchForms();
+  };
 
   if (forms.length === 0) {
     return (
@@ -30,6 +50,93 @@ function IntakeForms() {
       </div>
     );
   }
+
+  const fields = [
+    ["date_of_birth", "Date of Birth"],
+    ["address", "Address"],
+    ["emergency_contact", "Emergency Contact"],
+    ["emergency_phone", "Emergency Phone"],
+    ["gp_name", "GP Name"],
+    ["reason_for_visit", "Reason for Visit"],
+    ["medical_conditions", "Medical Conditions"],
+    ["medications", "Medications"],
+    ["allergies", "Allergies"],
+    ["previous_acupuncture", "Previous Acupuncture"],
+    ["pregnant", "Pregnant / Trying to Conceive"],
+    ["additional_info", "Additional Info"]
+  ];
+
+  return (
+    <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+      <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Intake Forms ({forms.length})</h2>
+      {forms.map(f => (
+        <div key={f.id} style={{ border: "1px solid #E1F5EE", borderRadius: "8px", marginBottom: "16px", overflow: "hidden" }}>
+          <div style={{ background: "#F5F0E8", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div onClick={() => setSelected(selected === f.id ? null : f.id)} style={{ cursor: "pointer", flex: 1 }}>
+              <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{f.name}</p>
+              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>
+                Submitted: {new Date(f.created_at).toLocaleDateString()}
+              </p>
+            </div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button
+                onClick={() => { setEditing(f.id); setEditData({...f}); setSelected(f.id); }}
+                style={{ background: "#085041", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => deleteForm(f.id)}
+                style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
+              >
+                Delete
+              </button>
+              <button
+                onClick={() => setSelected(selected === f.id ? null : f.id)}
+                style={{ background: "#888", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}
+              >
+                {selected === f.id ? "Hide" : "View"}
+              </button>
+            </div>
+          </div>
+          {selected === f.id && (
+            <div style={{ padding: "24px", fontFamily: "sans-serif", fontSize: "14px" }}>
+              {editing === f.id ? (
+                <div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px", marginBottom: "16px" }}>
+                    {fields.map(([key, label]) => (
+                      <div key={key}>
+                        <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px", fontSize: "12px" }}>{label}</p>
+                        <input
+                          defaultValue={f[key] || ""}
+                          onChange={e => setEditData({ ...editData, [key]: e.target.value })}
+                          style={{ width: "100%", padding: "8px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", boxSizing: "border-box" }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button onClick={() => saveEdit(f.id)} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>Save</button>
+                    <button onClick={() => setEditing(null)} style={{ background: "#888", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "16px" }}>
+                  {fields.map(([key, label]) => (
+                    <div key={key}>
+                      <p style={{ color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>{label}</p>
+                      <p style={{ color: "#333" }}>{f[key] || "-"}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
 
   return (
     <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
