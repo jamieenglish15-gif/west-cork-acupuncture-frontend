@@ -6,6 +6,7 @@ export default function Book() {
   const [voucherCode, setVoucherCode] = useState("");
   const [date, setDate] = useState("");
   const [selectedService, setSelectedService] = useState("");
+  const [selectedSlot, setSelectedSlot] = useState("");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -16,11 +17,11 @@ export default function Book() {
   }, []);
 
   const handleBooking = async () => {
-    if (!selectedService || !date || !paymentMethod) {
+    if (!selectedService || !date || !selectedSlot || !paymentMethod) {
       setMessage("Please fill in all fields.");
       return;
     }
-    setMessage("Booking confirmed! We will be in touch shortly.");
+    setMessage(`Booking confirmed for ${date} at ${selectedSlot}. We will be in touch shortly.`);
   };
 
   return (
@@ -46,6 +47,32 @@ export default function Book() {
 
         <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Date</label>
         <input type="date" onChange={e => setDate(e.target.value)} style={{ width: "100%", padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginBottom: "24px", marginTop: "4px", background: "#E1F5EE" }} />
+
+        <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Available Time Slots</label>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", marginBottom: "24px", marginTop: "8px" }}>
+          {[
+            "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+            "12:00", "13:00", "13:30", "14:00", "14:30", "15:00",
+            "15:30", "16:00", "16:30", "17:00"
+          ].map(slot => (
+            <button
+              key={slot}
+              onClick={() => setSelectedSlot(slot)}
+              style={{
+                padding: "10px",
+                border: "1px solid #9FE1CB",
+                borderRadius: "6px",
+                background: selectedSlot === slot ? "#085041" : "white",
+                color: selectedSlot === slot ? "white" : "#085041",
+                cursor: "pointer",
+                fontFamily: "sans-serif",
+                fontSize: "14px"
+              }}
+            >
+              {slot}
+            </button>
+          ))}
+        </div>
 
         <h3 style={{ fontSize: "20px", color: "#085041", marginBottom: "16px" }}>Payment Method</h3>
 
