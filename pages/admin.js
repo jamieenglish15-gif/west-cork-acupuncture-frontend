@@ -47,7 +47,7 @@ export default function Admin() {
     fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings")
       .then(r => r.json())
       .then(data => {
-        setBookings(data.filter(b => b.status !== "archived"));
+        setBookings(data.filter(b => b.status !== "archived" && b.status !== "contact"));
         setArchived(data.filter(b => b.status === "archived"));
         setLoading(false);
       })
@@ -128,54 +128,31 @@ export default function Admin() {
   };
 
   const addManualBooking = async () => {
+    setManualMsg("");
     if (!manualName || !manualPhone || !manualService || !manualDate || !manualSlot) {
       setManualMsg("Please fill in all required fields.");
       return;
     }
-const addManualBooking = async () => {
-  if (!manualName || !manualPhone || !manualService || !manualDate || !manualSlot) {
-    setManualMsg("Please fill in all required fields.");
-    return;
-  }
-  const check = await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/accepted?date=" + manualDate);
-  const takenSlots = await check.json();
-  if (takenSlots.includes(manualSlot)) {
-    setManualMsg("That slot is already booked. Please choose another time.");
-    return;
-  }
-  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name: manualName,
-      email: manualEmail,
-      phone: manualPhone,
-      service: manualService,
-      date: manualDate,
-      time_slot: manualSlot,
-      payment_method: manualPayment
-    })
-  });
-  const data = await res.json();
-  if (data.success) {
-    await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + data.booking.id, {
-      method: "PATCH",
+    const check = await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/accepted?date=" + manualDate);
+    const takenSlots = await check.json();
+    if (takenSlots.includes(manualSlot)) {
+      setManualMsg("That slot is already booked. Please choose another time.");
+      alert("That slot is already booked. Please choose another time.");
+      return;
+    }
+    const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "accepted" })
+      body: JSON.stringify({
+        name: manualName,
+        email: manualEmail,
+        phone: manualPhone,
+        service: manualService,
+        date: manualDate,
+        time_slot: manualSlot,
+        payment_method: manualPayment
+      })
     });
-    setManualMsg("Booking added and accepted successfully!");
-    setManualName("");
-    setManualEmail("");
-    setManualPhone("");
-    setManualService("");
-    setManualDate("");
-    setManualSlot("");
-    setManualPayment("cash");
-    fetchBookings();
-  } else {
-    setManualMsg(data.error || "Something went wrong. Please try again.");
-  }
-};
     const data = await res.json();
     if (data.success) {
       await fetch(process.env.NEXT_PUBLIC_API_URL + "/bookings/" + data.booking.id, {
@@ -193,7 +170,7 @@ const addManualBooking = async () => {
       setManualPayment("cash");
       fetchBookings();
     } else {
-      setManualMsg("Something went wrong. Please try again.");
+      setManualMsg(data.error || "Something went wrong. Please try again.");
     }
   };
 
