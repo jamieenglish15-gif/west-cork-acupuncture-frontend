@@ -60,7 +60,7 @@ export default function Nav() {
           gap: "8px"
         }}
       >
-        💬 WhatsApp Kate
+        WhatsApp Kate
       </a>
     </>
   );
