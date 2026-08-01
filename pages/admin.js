@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 
 const ALL_SLOTS = [
   "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-  "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", 
-  "15:00","15:30", "16:00", "16:30", "17:00"
+  "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00",
+  "15:30", "16:00", "16:30", "17:00"
 ];
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -251,7 +251,7 @@ export default function Admin() {
             ) : (
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
-                  <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Payment", "Status", "Notes", "Actions"])}</thead>
+                  <thead>{tableHead(["Name", "Phone", "Service", "Date", "Time", "Payment", "Status", "Notes", "Reminder", "Actions"])}</thead>
                   <tbody>
                     {bookings.map(b => (
                       <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
@@ -284,6 +284,15 @@ export default function Admin() {
                               </button>
                             </div>
                           )}
+                        </td>
+                        <td style={{ padding: "10px" }}>
+                          
+                            href={"https://wa.me/" + b.phone.replace(/\D/g, "") + "?text=" + encodeURIComponent("Hi " + b.name + ", just a reminder that you have a " + b.service + " appointment tomorrow at " + b.time_slot + " with West Cork Acupuncture. See you then! — Kate")}
+                            target="_blank"
+                            style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "12px" }}
+                          >
+                            Send Reminder
+                          </a>
                         </td>
                         <td style={{ padding: "10px" }}>
                           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
