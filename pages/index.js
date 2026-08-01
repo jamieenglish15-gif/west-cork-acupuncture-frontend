@@ -41,7 +41,7 @@ export default function Home() {
 
       {/* INTRO STRIP */}
       <div style={{ background: "#1D9E75", padding: "24px 60px", display: "flex", gap: "40px", flexWrap: "wrap", justifyContent: "center" }}>
-        {["Pain Relief", "Stress & Anxiety", "Fertility Support", "Cosmetic Acupuncture", "Cupping Therapy", "Facial Rejuvenation"].map(t => (
+        {["Pain Relief", "Stress & Anxiety", "Fertility Support", "Cosmetic Acupuncture", "Facial Rejuvenation"].map(t => (
           <span key={t} style={{ color: "white", fontFamily: "sans-serif", fontSize: "13px", letterSpacing: "2px", textTransform: "uppercase" }}>{t}</span>
         ))}
       </div>
@@ -53,24 +53,21 @@ export default function Home() {
           <h2 style={{ fontSize: "42px", color: "#085041", marginBottom: "60px", fontWeight: "normal" }}>What We Offer</h2>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "32px" }}>
-            {[
-              { title: "Acupuncture", desc: "Supports pain relief, stress reduction, hormonal balance, and overall wellbeing through traditional needle therapy.", duration: "60-75 min" },
-              { title: "Cupping Therapy", desc: "Releases deep muscle tension, improves circulation, and supports faster recovery from injury or stress.", duration: "45-60 min" },
-              { title: "Cosmetic Acupuncture", desc: "A natural approach to skin rejuvenation — stimulating collagen, improving tone and reducing signs of aging.", duration: "60 min" },
-              { title: "Facial Rejuvenation", desc: "Stimulates blood flow, collagen production and natural healing for a more youthful appearance. A deeply relaxing and restorative treatment.", duration: "60 min" }
-            ].map(s => (
-              <div key={s.title} style={{ background: "white", borderRadius: "4px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
-                <div style={{ background: "#085041", height: "4px" }}></div>
-                <div style={{ padding: "36px" }}>
-                  <h3 style={{ fontSize: "22px", color: "#085041", marginBottom: "16px", fontWeight: "normal" }}>{s.title}</h3>
-                  <p style={{ fontFamily: "sans-serif", color: "#555", lineHeight: "1.7", marginBottom: "24px" }}>{s.desc}</p>
-                  <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#1D9E75", letterSpacing: "2px", textTransform: "uppercase" }}>Duration: {s.duration}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+{[
+  { title: "Acupuncture", desc: "Supports pain relief, stress reduction, hormonal balance, and overall wellbeing through traditional needle therapy.", duration: "45-50 min", price: "€80" },
+  { title: "Cosmetic Acupuncture", desc: "A natural approach to skin rejuvenation — stimulating collagen, improving tone and reducing signs of aging.", duration: "60 min", price: "€125" },
+  { title: "Facial Rejuvenation", desc: "Stimulates blood flow, collagen production and natural healing for a more youthful appearance. A deeply relaxing and restorative treatment.", duration: "60 min", price: "€125" }
+].map(s => (
+  <div key={s.title} style={{ background: "white", borderRadius: "4px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+    <div style={{ background: "#085041", height: "4px" }}></div>
+    <div style={{ padding: "36px" }}>
+      <h3 style={{ fontSize: "22px", color: "#085041", marginBottom: "16px", fontWeight: "normal" }}>{s.title}</h3>
+      <p style={{ fontFamily: "sans-serif", color: "#555", lineHeight: "1.7", marginBottom: "24px" }}>{s.desc}</p>
+      <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#1D9E75", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px" }}>Duration: {s.duration}</p>
+      <p style={{ fontFamily: "sans-serif", fontSize: "20px", color: "#085041", fontWeight: "bold" }}>{s.price}</p>
+    </div>
+  </div>
+))}
 
 {/* ABOUT STRIP */}
 <div style={{ background: "#085041", padding: "100px 60px", color: "white" }}>
