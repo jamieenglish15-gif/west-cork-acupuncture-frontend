@@ -6,8 +6,8 @@ export default function Home() {
       <div style={{
         background: "linear-gradient(135deg, #085041 0%, #0a6b55 100%)",
         color: "white",
-        padding: "100px 60px",
-        minHeight: "80vh",
+        padding: "80px 60px 60px 60px",
+        minHeight: "auto",
         display: "flex",
         alignItems: "center"
       }}>
@@ -34,7 +34,7 @@ export default function Home() {
 
       {/* INTRO STRIP */}
       <div style={{ background: "#1D9E75", padding: "24px 60px", display: "flex", gap: "40px", flexWrap: "wrap", justifyContent: "center" }}>
-        {["Pain Relief", "Stress & Anxiety", "Fertility Support", "Cosmetic Acupuncture", "Cupping Therapy"].map(t => (
+        {["Pain Relief", "Stress & Anxiety", "Fertility Support", "Cosmetic Acupuncture", "Cupping Therapy", "Facial Rejuvenation"].map(t => (
           <span key={t} style={{ color: "white", fontFamily: "sans-serif", fontSize: "13px", letterSpacing: "2px", textTransform: "uppercase" }}>{t}</span>
         ))}
       </div>
@@ -49,7 +49,8 @@ export default function Home() {
             {[
               { title: "Acupuncture", desc: "Supports pain relief, stress reduction, hormonal balance, and overall wellbeing through traditional needle therapy.", duration: "60–75 min" },
               { title: "Cupping Therapy", desc: "Releases deep muscle tension, improves circulation, and supports faster recovery from injury or stress.", duration: "45–60 min" },
-              { title: "Cosmetic Acupuncture", desc: "A natural approach to skin rejuvenation — stimulating collagen, improving tone and reducing signs of aging.", duration: "60 min" }
+              { title: "Cosmetic Acupuncture", desc: "A natural approach to skin rejuvenation — stimulating collagen, improving tone and reducing signs of aging.", duration: "60 min" },
+              { title: "Facial Rejuvenation", desc: "Stimulates blood flow, collagen production and natural healing for a more youthful appearance. A deeply relaxing and restorative treatment.", duration: "60 min" }
             ].map(s => (
               <div key={s.title} style={{ background: "white", borderRadius: "4px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
                 <div style={{ background: "#085041", height: "4px" }}></div>
@@ -117,7 +118,7 @@ export default function Home() {
       <div style={{ background: "#085041", padding: "40px 60px", textAlign: "center" }}>
         <p style={{ fontFamily: "sans-serif", color: "rgba(255,255,255,0.5)", fontSize: "13px" }}>
           © 2026 West Cork Acupuncture · 083 115 6950 ·{" "}
-          <a href="https://instagram.com/westcorkacupuncture" target="_blank" style={{ color: "#9FE1CB", textDecoration: "none" }}>Instagram</a>
+          <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" style={{ color: "#9FE1CB", textDecoration: "none" }}>Instagram</a>
         </p>
       </div>
 
