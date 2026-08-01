@@ -2,7 +2,7 @@ export default function Nav() {
   return (
     <nav style={{ background: "#085041", padding: "16px 40px", display: "flex", gap: "24px", alignItems: "center", flexWrap: "wrap" }}>
       <a href="/">
-        <img src="/logo.jpg" alt="West Cork Acupuncture" style={{ height: "48px", borderRadius: "4px" }} />
+        <img src="/logo.jpg" alt="West Cork Acupuncture" style={{ height: "70px", borderRadius: "4px" }} />
       </a>
       <div style={{ marginLeft: "auto", display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "center" }}>
         {[
