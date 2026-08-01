@@ -1,29 +1,20 @@
+import Head from "next/head";
+
 export default function Conditions() {
   const conditions = [
-    {
-      title: "Pain & Musculoskeletal",
-      items: ["Back pain", "Neck pain", "Shoulder tension", "Sciatica", "Joint pain", "Sports injuries"]
-    },
-    {
-      title: "Women's Health",
-      items: ["PMS & menstrual pain", "Cycle regulation", "Fertility support", "Pregnancy discomfort", "Postpartum recovery"]
-    },
-    {
-      title: "Stress & Mental Health",
-      items: ["Stress", "Anxiety", "Burnout", "Sleep issues", "Emotional imbalance"]
-    },
-    {
-      title: "Digestive Health",
-      items: ["IBS", "Bloating", "Nausea", "Slow digestion", "Gut motility issues"]
-    },
-    {
-      title: "Skin & Cosmetic",
-      items: ["Fine lines", "Dull complexion", "Acne", "Facial tension", "Circulation support"]
-    }
+    { title: "Pain & Musculoskeletal", items: ["Back pain", "Neck pain", "Shoulder tension", "Sciatica", "Joint pain", "Sports injuries"] },
+    { title: "Women's Health", items: ["PMS & menstrual pain", "Cycle regulation", "Fertility support", "Pregnancy discomfort", "Postpartum recovery"] },
+    { title: "Stress & Mental Health", items: ["Stress", "Anxiety", "Burnout", "Sleep issues", "Emotional imbalance"] },
+    { title: "Digestive Health", items: ["IBS", "Bloating", "Nausea", "Slow digestion", "Gut motility issues"] },
+    { title: "Skin & Cosmetic", items: ["Fine lines", "Dull complexion", "Acne", "Facial tension", "Circulation support"] }
   ];
 
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
+      <Head>
+        <title>Conditions Treated | West Cork Acupuncture Skibbereen</title>
+        <meta name="description" content="West Cork Acupuncture treats pain, stress, fertility, digestive and skin conditions. Book with Kate in Skibbereen, West Cork." />
+      </Head>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
 
         <h1 style={{ fontSize: "40px", color: "#085041", marginBottom: "12px" }}>Conditions Treated</h1>
@@ -37,7 +28,7 @@ export default function Conditions() {
               <h2 style={{ fontSize: "22px", color: "#085041", marginBottom: "12px" }}>{section.title}</h2>
               <ul style={{ fontFamily: "sans-serif", color: "#333", lineHeight: "2", paddingLeft: "0", listStyle: "none" }}>
                 {section.items.map(item => (
-                  <li key={item}>• {item}</li>
+                  <li key={item}>- {item}</li>
                 ))}
               </ul>
             </div>
