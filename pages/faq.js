@@ -1,3 +1,5 @@
+import Head from "next/head";
+
 export default function FAQ() {
   const faqs = [
     { q: "Does acupuncture hurt?", a: "Most people feel little to no discomfort. The needles are extremely fine, and treatments are gentle." },
@@ -11,6 +13,10 @@ export default function FAQ() {
 
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
+      <Head>
+        <title>FAQ | West Cork Acupuncture Skibbereen</title>
+        <meta name="description" content="Frequently asked questions about acupuncture, cupping and cosmetic treatments at West Cork Acupuncture in Skibbereen." />
+      </Head>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
 
         <h1 style={{ fontSize: "40px", color: "#085041", marginBottom: "24px" }}>Frequently Asked Questions</h1>
