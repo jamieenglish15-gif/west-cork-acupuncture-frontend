@@ -4,13 +4,13 @@ export default function QR() {
   const [qrUrl, setQrUrl] = useState("");
 
   useEffect(() => {
-    const url = encodeURIComponent("https://west-cork-acupuncture-frontend.vercel.app/book");
-    setQrUrl("https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + url);
+    const bookingUrl = "https://west-cork-acupuncture-frontend.vercel.app/book";
+    setQrUrl("https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(bookingUrl));
   }, []);
 
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", padding: "40px" }}>
-      <div style={{ background: "white", padding: "48px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", textAlign: "center", maxWidth: "480px" }}>
+      <div style={{ background: "white", padding: "48px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", textAlign: "center", maxWidth: "480px" }}>
 
         <img src="/logo.jpg" alt="West Cork Acupuncture" style={{ height: "80px", marginBottom: "24px" }} />
 
@@ -24,18 +24,18 @@ export default function QR() {
         )}
 
         <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "8px" }}>
-          13 North Street, Skibbereen · P81 Y237
+          13 North Street, Skibbereen, P81 Y237
         </p>
         <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "24px" }}>
           083 115 6950
         </p>
 
-        
-          href="/book"
-          style={{ display: "block", background: "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "16px", marginBottom: "16px" }}
+        <button
+          onClick={() => window.location.href = "/book"}
+          style={{ display: "block", width: "100%", background: "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontFamily: "sans-serif", fontSize: "16px", marginBottom: "16px", cursor: "pointer" }}
         >
           Book Online
-        </a>
+        </button>
 
         <button
           onClick={() => window.print()}
