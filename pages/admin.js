@@ -345,8 +345,10 @@ const [msg, setMsg] = useState("");
             <tbody>
               {vouchers.map(v => (
                 <tr key={v.id} style={{ borderBottom: "1px solid #E1F5EE", opacity: v.used ? 0.6 : 1 }}>
-                  <td style={{ padding: "10px", fontWeight: "bold", color: "#085041", fontFamily: "monospace", fontSize: "16px" }}>{v.code}</td>
-                  <td style={{ padding: "10px" }}>{"\u20ac"}{v.amount}</td>
+                <td style={{ padding: "10px", fontWeight: "bold", color: "#085041", fontFamily: "monospace", fontSize: "16px" }}>{v.code}</td>
+                <td style={{ padding: "10px" }}>{"\u20ac"}{v.amount}</td>
+                 <td style={{ padding: "10px" }}>{v.purchaser || "-"}</td>
+                 <td style={{ padding: "10px" }}>{v.recipient || "-"}</td>
                   <td style={{ padding: "10px" }}>
                     <span style={{ background: v.used ? "#e0e0e0" : "#E1F5EE", color: v.used ? "#888" : "#1D9E75", padding: "4px 10px", borderRadius: "20px", fontFamily: "sans-serif", fontSize: "12px" }}>
                       {v.used ? "Used" : "Active"}
@@ -355,6 +357,7 @@ const [msg, setMsg] = useState("");
                   <td style={{ padding: "10px", color: "#666" }}>{new Date(v.created_at).toLocaleDateString()}</td>
                   <td style={{ padding: "10px" }}>
                     <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                <button onClick={() => window.open("/voucher-print?code=" + v.code + "&amount=" + v.amount + "&purchaser=" + encodeURIComponent(v.purchaser || "") + "&recipient=" + encodeURIComponent(v.recipient || "") + "&date=" + new Date(v.created_at).toLocaleDateString())} style={{ background: "#085041", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Print</button>
                       <button onClick={() => sendVoucher(v)} style={{ background: "#25D366", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Send</button>
                       <button onClick={() => toggleUsed(v)} style={{ background: v.used ? "#1D9E75" : "#888", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
                         {v.used ? "Reactivate" : "Mark Used"}
