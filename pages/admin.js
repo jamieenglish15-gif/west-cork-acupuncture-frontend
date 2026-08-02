@@ -485,6 +485,7 @@ const printReceipt = (b) => {
           <button style={tabStyle("slots")} onClick={() => setTab("slots")}>Manage Slots</button>
           <button style={tabStyle("add")} onClick={() => setTab("add")}>Add Booking</button>
           <button style={tabStyle("intake")} onClick={() => setTab("intake")}>Intake Forms</button>
+                                  <button style={tabStyle("qr")} onClick={() => setTab("qr")}>QR Code</button>
         </div>
 
         {tab === "bookings" && (
@@ -829,6 +830,25 @@ const printReceipt = (b) => {
         )}
 
         {tab === "intake" && <IntakeForms />}
+{tab === "qr" && (
+  <div style={{ background: "white", borderRadius: "8px", padding: "24px", maxWidth: "480px", textAlign: "center" }}>
+    <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "8px" }}>Booking QR Code</h2>
+    <p style={{ fontFamily: "sans-serif", color: "#666", marginBottom: "24px" }}>Print and display in the clinic. Clients scan to book online.</p>
+    <img
+      src={"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent("https://west-cork-acupuncture-frontend.vercel.app/book")}
+      alt="QR Code"
+      style={{ width: "240px", height: "240px", marginBottom: "24px", border: "8px solid #E1F5EE", borderRadius: "8px" }}
+    />
+    <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "8px" }}>13 North Street, Skibbereen, P81 Y237</p>
+    <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "24px" }}>083 115 6950</p>
+    <button
+      onClick={() => window.open("/qr")}
+      style={{ width: "100%", background: "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontFamily: "sans-serif", fontSize: "16px", cursor: "pointer" }}
+    >
+      Open Full Print Page
+    </button>
+  </div>
+)}
 
       </div>
     </div>
