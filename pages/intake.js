@@ -164,9 +164,14 @@ export default function Intake() {
           Submit Questionnaire
         </button>
 
-        <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#888", marginTop: "16px", textAlign: "center" }}>
-          All information is kept strictly confidential and used only for treatment purposes.
-        </p>
+<div style={{ background: "#F5F0E8", padding: "16px", borderRadius: "6px", marginTop: "16px" }}>
+  <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#555", lineHeight: "1.7", marginBottom: "8px" }}>
+    <strong>Data Privacy Notice:</strong> The information you provide on this form is collected for the purpose of providing safe and effective acupuncture treatment. Your data is held securely and will not be shared with any third parties without your consent. You have the right to access, correct or request deletion of your personal data at any time by contacting Kate at West Cork Acupuncture.
+  </p>
+  <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#555", lineHeight: "1.7" }}>
+    By submitting this form you consent to West Cork Acupuncture storing and using your health information for treatment purposes only, in accordance with GDPR regulations.
+  </p>
+</div>
 
       </div>
     </div>
