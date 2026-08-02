@@ -298,23 +298,33 @@ const [msg, setMsg] = useState("");
     <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
       <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "24px" }}>Gift Vouchers</h2>
 
-      <div style={{ background: "#F5F0E8", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
-        <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>Generate New Voucher</h3>
-        <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
-          <select value={amount} onChange={e => setAmount(e.target.value)} style={{ padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "14px", background: "#E1F5EE" }}>
-            <option value="80">EUR80 - Acupuncture</option>
-            <option value="125">EUR125 - Cosmetic Acupuncture</option>
-          </select>
-          <button onClick={createVoucher} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 24px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>
-            Generate Code
-          </button>
-        </div>
-        {msg && (
-          <div style={{ background: "#E1F5EE", padding: "12px", borderRadius: "6px", marginTop: "16px", fontFamily: "sans-serif", fontSize: "14px", color: "#085041", fontWeight: "bold" }}>
-            {msg}
-          </div>
-        )}
-      </div>
+     <div style={{ background: "#F5F0E8", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
+  <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>Generate New Voucher</h3>
+  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
+    <div>
+      <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>Purchased By</label>
+      <input value={purchaser} onChange={e => setPurchaser(e.target.value)} placeholder="Name of buyer" style={{ width: "100%", padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "14px", background: "#E1F5EE", boxSizing: "border-box", marginTop: "4px" }} />
+    </div>
+    <div>
+      <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>Recipient</label>
+      <input value={recipient} onChange={e => setRecipient(e.target.value)} placeholder="Name of recipient" style={{ width: "100%", padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "14px", background: "#E1F5EE", boxSizing: "border-box", marginTop: "4px" }} />
+    </div>
+  </div>
+  <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+    <select value={amount} onChange={e => setAmount(e.target.value)} style={{ padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "14px", background: "#E1F5EE" }}>
+      <option value="80">EUR80 - Acupuncture</option>
+      <option value="125">EUR125 - Cosmetic Acupuncture</option>
+    </select>
+    <button onClick={createVoucher} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 24px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>
+      Generate Code
+    </button>
+  </div>
+  {msg && (
+    <div style={{ background: "#E1F5EE", padding: "12px", borderRadius: "6px", marginTop: "16px", fontFamily: "sans-serif", fontSize: "14px", color: "#085041", fontWeight: "bold" }}>
+      {msg}
+    </div>
+  )}
+</div>
 
       {vouchers.length === 0 ? (
         <p style={{ fontFamily: "sans-serif", color: "#666" }}>No vouchers yet.</p>
