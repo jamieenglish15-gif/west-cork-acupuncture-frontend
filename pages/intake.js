@@ -7,6 +7,7 @@ export default function Intake() {
     booking_id: "",
     name: "",
     date_of_birth: "",
+    sex: "",
     address: "",
     emergency_contact: "",
     emergency_phone: "",
@@ -98,6 +99,14 @@ export default function Intake() {
 
         <label style={labelStyle}>Date of Birth</label>
         <input type="date" onChange={update("date_of_birth")} style={inputStyle} />
+
+                                            <label style={labelStyle}>Sex</label>
+<select onChange={update("sex")} style={inputStyle}>
+  <option value="">Select</option>
+  <option value="female">Female</option>
+  <option value="male">Male</option>
+  <option value="prefer_not_to_say">Prefer not to say</option>
+</select>
 
         <label style={labelStyle}>Address</label>
         <textarea placeholder="Your address" onChange={update("address")} style={textareaStyle} />
