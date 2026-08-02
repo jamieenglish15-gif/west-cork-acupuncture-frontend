@@ -247,8 +247,10 @@ function SOAPNotes() {
 }
 function Vouchers() {
   const [vouchers, setVouchers] = useState([]);
-  const [amount, setAmount] = useState("80");
-  const [msg, setMsg] = useState("");
+ const [amount, setAmount] = useState("80");
+const [purchaser, setPurchaser] = useState("");
+const [recipient, setRecipient] = useState("");
+const [msg, setMsg] = useState("");
 
   const fetchVouchers = () => {
     fetch(API + "/vouchers")
@@ -263,7 +265,7 @@ function Vouchers() {
     const res = await fetch(API + "/vouchers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: parseInt(amount) })
+      body: JSON.stringify({ amount: parseInt(amount), purchaser, recipient })
     });
     const data = await res.json();
     if (data.success) {
