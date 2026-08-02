@@ -8,9 +8,9 @@ const ALL_SLOTS = [
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const SERVICES = ["Acupuncture", "Cosmetic Acupuncture", "Facial Rejuvenation"];
+const SERVICES = ["Acupuncture", "Cosmetic Acupuncture"];
 const API = "https://west-cork-acupuncture-backend-production-366a.up.railway.app";
-const PRICES = { "Acupuncture": "80", "Cosmetic Acupuncture": "125", "Facial Rejuvenation": "125" };
+const PRICES = { "Acupuncture": "80", "Cosmetic Acupuncture": "125" };
 
 function IntakeForms() {
   const [forms, setForms] = useState([]);
@@ -45,6 +45,7 @@ function IntakeForms() {
 
   const fields = [
     ["date_of_birth", "Date of Birth"],
+    ["sex", "Sex"],
     ["address", "Address"],
     ["emergency_contact", "Emergency Contact"],
     ["emergency_phone", "Emergency Phone"],
@@ -76,9 +77,7 @@ function IntakeForms() {
             <div style={{ background: "#F5F0E8", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div onClick={() => setSelected(selected === f.id ? null : f.id)} style={{ cursor: "pointer", flex: 1 }}>
                 <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{f.name}</p>
-                <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>
-                  {"Submitted: " + new Date(f.created_at).toLocaleDateString()}
-                </p>
+                <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>{"Submitted: " + new Date(f.created_at).toLocaleDateString()}</p>
               </div>
               <div style={{ display: "flex", gap: "8px" }}>
                 <button onClick={() => { setEditing(f.id); setEditData(Object.assign({}, f)); setSelected(f.id); }} style={{ background: "#085041", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Edit</button>
@@ -133,142 +132,7 @@ function IntakeForms() {
     </div>
   );
 }
-function SOAPNotes() {
-  const [notes, setNotes] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ client_name: "", session_date: "", subjective: "", objective: "", assessment: "", plan: "" });
-  const [msg, setMsg] = useState("");
 
-  const fetchNotes = () => {
-    fetch(API + "/soap")
-      .then(r => r.json())
-      .then(data => setNotes(data))
-      .catch(() => setNotes([]));
-  };
-
-  useEffect(() => { fetchNotes(); }, []);
-
-  const saveNote = async () => {
-    if (!form.client_name || !form.session_date) {
-      setMsg("Please enter client name and date.");
-      return;
-    }
-    const res = await fetch(API + "/soap", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form)
-    });
-    const data = await res.json();
-    if (data.success) {
-      setMsg("Note saved!");
-      setForm({ client_name: "", session_date: "", subjective: "", objective: "", assessment: "", plan: "" });
-      setShowForm(false);
-      fetchNotes();
-    }
-  };
-
-  const deleteNote = async (id) => {
-    if (!confirm("Delete this SOAP note?")) return;
-    await fetch(API + "/soap/" + id, { method: "DELETE" });
-    fetchNotes();
-  };
-
-  const printNote = (n) => {
-    const ref = "SOAP-" + String(n.id).padStart(4, "0");
-    window.open("/soap?name=" + encodeURIComponent(n.client_name) + "&date=" + n.session_date + "&subjective=" + encodeURIComponent(n.subjective || "") + "&objective=" + encodeURIComponent(n.objective || "") + "&assessment=" + encodeURIComponent(n.assessment || "") + "&plan=" + encodeURIComponent(n.plan || "") + "&ref=" + ref);
-  };
-
-  const ta = {
-    width: "100%",
-    padding: "10px",
-    border: "1px solid #9FE1CB",
-    borderRadius: "6px",
-    fontFamily: "sans-serif",
-    fontSize: "13px",
-    marginBottom: "16px",
-    boxSizing: "border-box",
-    background: "#E1F5EE",
-    resize: "vertical"
-  };
-
-  const inp = {
-    width: "100%",
-    padding: "10px",
-    border: "1px solid #9FE1CB",
-    borderRadius: "6px",
-    fontFamily: "sans-serif",
-    fontSize: "13px",
-    marginBottom: "16px",
-    boxSizing: "border-box",
-    background: "#E1F5EE"
-  };
-
-  return (
-    <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-        <h2 style={{ fontSize: "24px", color: "#085041", margin: 0 }}>{"SOAP Notes" + (notes.length > 0 ? " (" + notes.length + ")" : "")}</h2>
-        <button onClick={() => setShowForm(!showForm)} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>
-          {showForm ? "Cancel" : "New Note"}
-        </button>
-      </div>
-
-      {showForm && (
-        <div style={{ background: "#F5F0E8", padding: "24px", borderRadius: "8px", marginBottom: "24px" }}>
-          <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>New SOAP Note</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-            <div>
-              <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>Client Name</label>
-              <input value={form.client_name} onChange={e => setForm({ ...form, client_name: e.target.value })} style={inp} />
-            </div>
-            <div>
-              <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>Session Date</label>
-              <input type="date" value={form.session_date} onChange={e => setForm({ ...form, session_date: e.target.value })} style={inp} />
-            </div>
-          </div>
-          <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>S — Subjective (what the client reports)</label>
-          <textarea rows={3} value={form.subjective} onChange={e => setForm({ ...form, subjective: e.target.value })} style={ta} />
-          <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>O — Objective (what you observe)</label>
-          <textarea rows={3} value={form.objective} onChange={e => setForm({ ...form, objective: e.target.value })} style={ta} />
-          <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>A — Assessment</label>
-          <textarea rows={3} value={form.assessment} onChange={e => setForm({ ...form, assessment: e.target.value })} style={ta} />
-          <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>P — Plan</label>
-          <textarea rows={3} value={form.plan} onChange={e => setForm({ ...form, plan: e.target.value })} style={ta} />
-          {msg && <p style={{ fontFamily: "sans-serif", color: msg.includes("saved") ? "#1D9E75" : "#c00", marginBottom: "12px" }}>{msg}</p>}
-          <button onClick={saveNote} style={{ background: "#1D9E75", color: "white", border: "none", padding: "12px 32px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>
-            Save Note
-          </button>
-        </div>
-      )}
-
-      {notes.length === 0 ? (
-        <p style={{ fontFamily: "sans-serif", color: "#666" }}>No SOAP notes yet. Click New Note to add one.</p>
-      ) : (
-        <div>
-          {notes.map(n => (
-            <div key={n.id} style={{ border: "1px solid #E1F5EE", borderRadius: "8px", marginBottom: "12px", overflow: "hidden" }}>
-              <div style={{ background: "#F5F0E8", padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{n.client_name}</p>
-                  <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>{String(n.session_date).slice(0,10)}</p>
-                </div>
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <button onClick={() => printNote(n)} style={{ background: "#085041", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Print</button>
-                  <button onClick={() => deleteNote(n.id)} style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Delete</button>
-                </div>
-              </div>
-              <div style={{ padding: "16px", fontFamily: "sans-serif", fontSize: "13px", color: "#333", lineHeight: "1.7" }}>
-                {n.subjective && <p style={{ marginBottom: "8px" }}><strong style={{ color: "#085041" }}>S:</strong> {n.subjective}</p>}
-                {n.objective && <p style={{ marginBottom: "8px" }}><strong style={{ color: "#085041" }}>O:</strong> {n.objective}</p>}
-                {n.assessment && <p style={{ marginBottom: "8px" }}><strong style={{ color: "#085041" }}>A:</strong> {n.assessment}</p>}
-                {n.plan && <p style={{ margin: 0 }}><strong style={{ color: "#085041" }}>P:</strong> {n.plan}</p>}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 function SOAPNotes() {
   const [notes, setNotes] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -381,6 +245,7 @@ function SOAPNotes() {
     </div>
   );
 }
+
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
   const [archived, setArchived] = useState([]);
@@ -594,12 +459,14 @@ export default function Admin() {
 
   const sendReceipt = (b) => {
     const price = PRICES[b.service] || "80";
+    const ref = "WCA-" + String(b.id).padStart(4, "0");
     const phone = b.phone.replace(/\D/g, "");
-    const msg = encodeURIComponent("Hi " + b.name + ", thank you for your visit to West Cork Acupuncture on " + String(b.date).slice(0,10) + ". Treatment: " + b.service + ". Amount: EUR" + price + ". Payment: " + b.payment_method + ". Thank you - Kate");
+    const link = "https://west-cork-acupuncture-frontend.vercel.app/receipt?name=" + encodeURIComponent(b.name) + "&service=" + encodeURIComponent(b.service) + "&date=" + String(b.date).slice(0,10) + "&time=" + b.time_slot + "&payment=" + b.payment_method + "&amount=" + price + "&ref=" + ref;
+    const msg = encodeURIComponent("Hi " + b.name + ", please find your receipt for your treatment at West Cork Acupuncture: " + link + " - Thank you, Kate");
     window.open("https://wa.me/" + phone + "?text=" + msg);
   };
 
-const printReceipt = (b) => {
+  const printReceipt = (b) => {
     const price = PRICES[b.service] || "80";
     const ref = "WCA-" + String(b.id).padStart(4, "0");
     window.open("/receipt?name=" + encodeURIComponent(b.name) + "&service=" + encodeURIComponent(b.service) + "&date=" + String(b.date).slice(0,10) + "&time=" + b.time_slot + "&payment=" + b.payment_method + "&amount=" + price + "&ref=" + ref);
@@ -690,7 +557,8 @@ const printReceipt = (b) => {
     const d = String(day).padStart(2, "0");
     const dateStr = year + "-" + month + "-" + d;
     return bookings.filter(b => String(b.date).slice(0,10) === dateStr);
-  };if (!authenticated) {
+  };
+  if (!authenticated) {
     return (
       <div style={{ fontFamily: "Georgia, serif", background: "#085041", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <div style={{ background: "white", padding: "40px", borderRadius: "8px", maxWidth: "360px", width: "100%", textAlign: "center" }}>
@@ -732,9 +600,9 @@ const printReceipt = (b) => {
           <button style={tabStyle("slots")} onClick={() => setTab("slots")}>Manage Slots</button>
           <button style={tabStyle("add")} onClick={() => setTab("add")}>Add Booking</button>
           <button style={tabStyle("intake")} onClick={() => setTab("intake")}>Intake Forms</button>
-                                  <button style={tabStyle("qr")} onClick={() => setTab("qr")}>QR Code</button>
-                                  <button style={tabStyle("soap")} onClick={() => setTab("soap")}>SOAP Notes</button>
-                                  <button style={tabStyle("revenue")} onClick={() => setTab("revenue")}>Revenue</button>
+          <button style={tabStyle("soap")} onClick={() => setTab("soap")}>SOAP Notes</button>
+          <button style={tabStyle("revenue")} onClick={() => setTab("revenue")}>Revenue</button>
+          <button style={tabStyle("qr")} onClick={() => setTab("qr")}>QR Code</button>
         </div>
 
         {tab === "bookings" && (
@@ -821,9 +689,7 @@ const printReceipt = (b) => {
                               <div>
                                 <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "8px" }}>Quick Actions</p>
                                 <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                                  <button onClick={() => sendReminder(b)} style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
-                                    Send Reminder
-                                  </button>
+                                  <button onClick={() => sendReminder(b)} style={{ background: "#25D366", color: "white", padding: "6px 10px", borderRadius: "4px", border: "none", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Send Reminder</button>
                                   <button onClick={() => sendIntake(b)} style={btnStyle("#085041")}>Send Intake</button>
                                   <button onClick={() => sendReceipt(b)} style={btnStyle("#1D9E75")}>WhatsApp Receipt</button>
                                   <button onClick={() => printReceipt(b)} style={btnStyle("#085041")}>Print Receipt</button>
@@ -845,9 +711,7 @@ const printReceipt = (b) => {
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "24px" }}>
               <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1))} style={btnStyle("#085041")}>Prev</button>
-              <h2 style={{ fontSize: "24px", color: "#085041", margin: 0 }}>
-                {MONTHS[calendarDate.getMonth()] + " " + calendarDate.getFullYear()}
-              </h2>
+              <h2 style={{ fontSize: "24px", color: "#085041", margin: 0 }}>{MONTHS[calendarDate.getMonth()] + " " + calendarDate.getFullYear()}</h2>
               <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1))} style={btnStyle("#085041")}>Next</button>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px", marginBottom: "8px" }}>
@@ -884,18 +748,14 @@ const printReceipt = (b) => {
 
         {tab === "contacts" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
-            <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
-              {"Client Contacts" + (uniqueClients().length > 0 ? " (" + uniqueClients().length + ")" : "")}
-            </h2>
+            <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>{"Client Contacts" + (uniqueClients().length > 0 ? " (" + uniqueClients().length + ")" : "")}</h2>
             <div style={{ background: "#F5F0E8", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
               <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>Add New Contact</h3>
               <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                 <input placeholder="Full Name" value={newName} onChange={e => setNewName(e.target.value)} style={inputStyle} />
                 <input placeholder="Email" value={newEmail} onChange={e => setNewEmail(e.target.value)} style={inputStyle} />
                 <input placeholder="Phone" value={newPhone} onChange={e => setNewPhone(e.target.value)} style={inputStyle} />
-                <button onClick={addContact} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>
-                  Add Contact
-                </button>
+                <button onClick={addContact} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>Add Contact</button>
               </div>
             </div>
             {uniqueClients().length === 0 ? (
@@ -907,26 +767,12 @@ const printReceipt = (b) => {
                   <tbody>
                     {uniqueClients().map(b => (
                       <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
-                        <td style={{ padding: "10px" }}>
-                          {editingNote === "contact-" + b.id ? (
-                            <input id={"edit-name-" + b.id} defaultValue={b.name} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} />
-                          ) : b.name}
-                        </td>
-                        <td style={{ padding: "10px" }}>
-                          {editingNote === "contact-" + b.id ? (
-                            <input id={"edit-email-" + b.id} defaultValue={b.email} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} />
-                          ) : b.email}
-                        </td>
-                        <td style={{ padding: "10px" }}>
-                          {editingNote === "contact-" + b.id ? (
-                            <input id={"edit-phone-" + b.id} defaultValue={b.phone} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} />
-                          ) : b.phone}
-                        </td>
+                        <td style={{ padding: "10px" }}>{editingNote === "contact-" + b.id ? <input id={"edit-name-" + b.id} defaultValue={b.name} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} /> : b.name}</td>
+                        <td style={{ padding: "10px" }}>{editingNote === "contact-" + b.id ? <input id={"edit-email-" + b.id} defaultValue={b.email} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} /> : b.email}</td>
+                        <td style={{ padding: "10px" }}>{editingNote === "contact-" + b.id ? <input id={"edit-phone-" + b.id} defaultValue={b.phone} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} /> : b.phone}</td>
                         <td style={{ padding: "10px", textAlign: "center", fontWeight: "bold", color: "#085041" }}>{visitCount(b.email)}</td>
                         <td style={{ padding: "10px" }}>
-                          <a href={"https://wa.me/" + b.phone.replace(/\D/g, "")} target="_blank" style={{ background: "#1D9E75", color: "white", padding: "6px 12px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "12px" }}>
-                            Message
-                          </a>
+                          <a href={"https://wa.me/" + b.phone.replace(/\D/g, "")} target="_blank" style={{ background: "#1D9E75", color: "white", padding: "6px 12px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "12px" }}>Message</a>
                         </td>
                         <td style={{ padding: "10px" }}>
                           {editingNote === "contact-" + b.id ? (
@@ -952,9 +798,7 @@ const printReceipt = (b) => {
 
         {tab === "archive" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
-            <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>
-              {"Archived Bookings" + (archived.length > 0 ? " (" + archived.length + ")" : "")}
-            </h2>
+            <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>{"Archived Bookings" + (archived.length > 0 ? " (" + archived.length + ")" : "")}</h2>
             {archived.length === 0 ? (
               <p style={{ fontFamily: "sans-serif", color: "#666" }}>No archived bookings.</p>
             ) : (
@@ -985,8 +829,7 @@ const printReceipt = (b) => {
             )}
           </div>
         )}
-
-        {tab === "slots" && (
+{tab === "slots" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Manage Available Slots</h2>
             <p style={{ fontFamily: "sans-serif", color: "#666", marginBottom: "24px" }}>Select a date then click slots to block or unblock them.</p>
@@ -1005,21 +848,7 @@ const printReceipt = (b) => {
                   {ALL_SLOTS.map(slot => {
                     const isBlocked = blockedSlots.includes(slot);
                     return (
-                      <button
-                        key={slot}
-                        onClick={() => toggleBlock(slot)}
-                        style={{
-                          padding: "12px",
-                          border: "1px solid #9FE1CB",
-                          borderRadius: "6px",
-                          background: isBlocked ? "#e0e0e0" : "#E1F5EE",
-                          color: isBlocked ? "#aaa" : "#085041",
-                          cursor: "pointer",
-                          fontFamily: "sans-serif",
-                          fontSize: "14px",
-                          textDecoration: isBlocked ? "line-through" : "none"
-                        }}
-                      >
+                      <button key={slot} onClick={() => toggleBlock(slot)} style={{ padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", background: isBlocked ? "#e0e0e0" : "#E1F5EE", color: isBlocked ? "#aaa" : "#085041", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px", textDecoration: isBlocked ? "line-through" : "none" }}>
                         {slot + (isBlocked ? " X" : "")}
                       </button>
                     );
@@ -1034,44 +863,35 @@ const printReceipt = (b) => {
           <div style={{ background: "white", borderRadius: "8px", padding: "24px", maxWidth: "600px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "8px" }}>Add Manual Booking</h2>
             <p style={{ fontFamily: "sans-serif", color: "#666", marginBottom: "24px" }}>For bookings made over WhatsApp or phone.</p>
-
             <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Full Name</label>
             <input value={manualName} onChange={e => setManualName(e.target.value)} placeholder="Jane Smith" style={formInput} />
-
             <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Email</label>
             <input value={manualEmail} onChange={e => setManualEmail(e.target.value)} placeholder="jane@email.com" style={formInput} />
-
             <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Phone</label>
             <input value={manualPhone} onChange={e => setManualPhone(e.target.value)} placeholder="+353 87 000 0000" style={formInput} />
-
             <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Service</label>
             <select value={manualService} onChange={e => setManualService(e.target.value)} style={formInput}>
               <option value="">Select service</option>
               {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
-
             <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Date</label>
             <input type="date" value={manualDate} onChange={e => setManualDate(e.target.value)} style={formInput} />
-
             <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Time Slot</label>
             <select value={manualSlot} onChange={e => setManualSlot(e.target.value)} style={formInput}>
               <option value="">Select time</option>
               {ALL_SLOTS.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
-
             <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041" }}>Payment Method</label>
             <select value={manualPayment} onChange={e => setManualPayment(e.target.value)} style={formInput}>
               <option value="cash">Cash on the Day</option>
               <option value="card">Card</option>
               <option value="voucher">Voucher</option>
             </select>
-
             {manualMsg && (
               <div style={{ background: manualMsg.includes("success") ? "#E1F5EE" : "#ffe0e0", padding: "12px", borderRadius: "6px", marginBottom: "16px", fontFamily: "sans-serif", color: manualMsg.includes("success") ? "#085041" : "#c00" }}>
                 {manualMsg}
               </div>
             )}
-
             <button onClick={addManualBooking} style={{ width: "100%", background: "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontSize: "16px", cursor: "pointer", fontFamily: "sans-serif" }}>
               Add Booking
             </button>
@@ -1079,83 +899,85 @@ const printReceipt = (b) => {
         )}
 
         {tab === "intake" && <IntakeForms />}
-{tab === "qr" && (
-  <div style={{ background: "white", borderRadius: "8px", padding: "24px", maxWidth: "480px", textAlign: "center" }}>
-    <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "8px" }}>Booking QR Code</h2>
-    <p style={{ fontFamily: "sans-serif", color: "#666", marginBottom: "24px" }}>Print and display in the clinic. Clients scan to book online.</p>
-    <img
-      src={"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent("https://west-cork-acupuncture-frontend.vercel.app/book")}
-      alt="QR Code"
-      style={{ width: "240px", height: "240px", marginBottom: "24px", border: "8px solid #E1F5EE", borderRadius: "8px" }}
-    />
-    <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "8px" }}>13 North Street, Skibbereen, P81 Y237</p>
-    <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "24px" }}>083 115 6950</p>
-    <button
-      onClick={() => window.open("/qr")}
-      style={{ width: "100%", background: "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontFamily: "sans-serif", fontSize: "16px", cursor: "pointer" }}
-    >
-      Open Full Print Page
-    </button>
-  </div>
-)}
-{tab === "revenue" && (
-  <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
-    <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "24px" }}>Revenue Tracker</h2>
-    {(() => {
-      const allBookings = [...bookings, ...archived].filter(b => b.status === "accepted" || b.status === "archived");
-      const monthly = {};
-      allBookings.forEach(b => {
-        const month = String(b.date).slice(0, 7);
-        const price = parseInt(PRICES[b.service] || "80");
-        if (!monthly[month]) monthly[month] = { total: 0, count: 0, bookings: [] };
-        monthly[month].total += price;
-        monthly[month].count += 1;
-        monthly[month].bookings.push(b);
-      });
-      const months = Object.keys(monthly).sort().reverse();
-      const grandTotal = months.reduce((sum, m) => sum + monthly[m].total, 0);
-      return (
-        <div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "32px" }}>
-            <div style={{ background: "#085041", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
-              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#9FE1CB", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px" }}>Total Revenue</p>
-              <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "white", fontWeight: "bold" }}>{"\u20ac"}{grandTotal}</p>
-            </div>
-            <div style={{ background: "#1D9E75", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
-              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "white", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px", opacity: 0.8 }}>Total Appointments</p>
-              <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "white", fontWeight: "bold" }}>{allBookings.length}</p>
-            </div>
-            {months[0] && (
-              <div style={{ background: "#E1F5EE", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
-                <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px" }}>This Month</p>
-                <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "#085041", fontWeight: "bold" }}>{"\u20ac"}{monthly[months[0]].total}</p>
-              </div>
-            )}
+        {tab === "soap" && <SOAPNotes />}
+
+        {tab === "revenue" && (
+          <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+            <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "24px" }}>Revenue Tracker</h2>
+            {(() => {
+              const allBookings = [...bookings, ...archived].filter(b => b.status === "accepted" || b.status === "archived");
+              const monthly = {};
+              allBookings.forEach(b => {
+                const month = String(b.date).slice(0, 7);
+                const price = parseInt(PRICES[b.service] || "80");
+                if (!monthly[month]) monthly[month] = { total: 0, count: 0 };
+                monthly[month].total += price;
+                monthly[month].count += 1;
+              });
+              const months = Object.keys(monthly).sort().reverse();
+              const grandTotal = months.reduce((sum, m) => sum + monthly[m].total, 0);
+              return (
+                <div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "32px" }}>
+                    <div style={{ background: "#085041", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
+                      <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#9FE1CB", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px" }}>Total Revenue</p>
+                      <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "white", fontWeight: "bold" }}>{"\u20ac"}{grandTotal}</p>
+                    </div>
+                    <div style={{ background: "#1D9E75", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
+                      <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "white", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px", opacity: 0.8 }}>Total Appointments</p>
+                      <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "white", fontWeight: "bold" }}>{allBookings.length}</p>
+                    </div>
+                    {months[0] && (
+                      <div style={{ background: "#E1F5EE", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
+                        <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px" }}>This Month</p>
+                        <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "#085041", fontWeight: "bold" }}>{"\u20ac"}{monthly[months[0]].total}</p>
+                      </div>
+                    )}
+                  </div>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
+                    <thead>
+                      <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
+                        <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Month</th>
+                        <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Appointments</th>
+                        <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {months.map(m => (
+                        <tr key={m} style={{ borderBottom: "1px solid #E1F5EE" }}>
+                          <td style={{ padding: "10px" }}>{new Date(m + "-01").toLocaleDateString("en-IE", { month: "long", year: "numeric" })}</td>
+                          <td style={{ padding: "10px" }}>{monthly[m].count}</td>
+                          <td style={{ padding: "10px", fontWeight: "bold", color: "#085041" }}>{"\u20ac"}{monthly[m].total}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })()}
           </div>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
-            <thead>
-              <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
-                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Month</th>
-                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Appointments</th>
-                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Revenue</th>
-              </tr>
-            </thead>
-            <tbody>
-              {months.map(m => (
-                <tr key={m} style={{ borderBottom: "1px solid #E1F5EE" }}>
-                  <td style={{ padding: "10px" }}>{new Date(m + "-01").toLocaleDateString("en-IE", { month: "long", year: "numeric" })}</td>
-                  <td style={{ padding: "10px" }}>{monthly[m].count}</td>
-                  <td style={{ padding: "10px", fontWeight: "bold", color: "#085041" }}>{"\u20ac"}{monthly[m].total}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
-    })()}
-      {tab === "soap" && <SOAPNotes />}
-  </div>
-)}
+        )}
+
+        {tab === "qr" && (
+          <div style={{ background: "white", borderRadius: "8px", padding: "24px", maxWidth: "480px", textAlign: "center" }}>
+            <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "8px" }}>Booking QR Code</h2>
+            <p style={{ fontFamily: "sans-serif", color: "#666", marginBottom: "24px" }}>Print and display in the clinic. Clients scan to book online.</p>
+            <img
+              src={"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent("https://west-cork-acupuncture-frontend.vercel.app/book")}
+              alt="QR Code"
+              style={{ width: "240px", height: "240px", marginBottom: "24px", border: "8px solid #E1F5EE", borderRadius: "8px" }}
+            />
+            <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "8px" }}>13 North Street, Skibbereen, P81 Y237</p>
+            <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "24px" }}>083 115 6950</p>
+            <button
+              onClick={() => window.open("/qr")}
+              style={{ width: "100%", background: "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontFamily: "sans-serif", fontSize: "16px", cursor: "pointer" }}
+            >
+              Open Full Print Page
+            </button>
+          </div>
+        )}
+
       </div>
     </div>
   );
