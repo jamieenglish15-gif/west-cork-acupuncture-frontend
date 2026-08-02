@@ -245,7 +245,118 @@ function SOAPNotes() {
     </div>
   );
 }
+function Vouchers() {
+  const [vouchers, setVouchers] = useState([]);
+  const [amount, setAmount] = useState("80");
+  const [msg, setMsg] = useState("");
 
+  const fetchVouchers = () => {
+    fetch(API + "/vouchers")
+      .then(r => r.json())
+      .then(data => setVouchers(data))
+      .catch(() => setVouchers([]));
+  };
+
+  useEffect(() => { fetchVouchers(); }, []);
+
+  const createVoucher = async () => {
+    const res = await fetch(API + "/vouchers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: parseInt(amount) })
+    });
+    const data = await res.json();
+    if (data.success) {
+      setMsg("Voucher created: " + data.voucher.code);
+      fetchVouchers();
+    }
+  };
+
+  const toggleUsed = async (v) => {
+    await fetch(API + "/vouchers/" + v.id, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ used: !v.used })
+    });
+    fetchVouchers();
+  };
+
+  const deleteVoucher = async (id) => {
+    if (!confirm("Delete this voucher?")) return;
+    await fetch(API + "/vouchers/" + id, { method: "DELETE" });
+    fetchVouchers();
+  };
+
+  const sendVoucher = (v) => {
+    const msg = encodeURIComponent("Hi, here is your West Cork Acupuncture gift voucher code: " + v.code + ". Value: EUR" + v.amount + ". Valid for 12 months. To book: https://west-cork-acupuncture-frontend.vercel.app/book - Thank you, Kate");
+    window.open("https://wa.me/?text=" + msg);
+  };
+
+  return (
+    <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+      <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "24px" }}>Gift Vouchers</h2>
+
+      <div style={{ background: "#F5F0E8", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
+        <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>Generate New Voucher</h3>
+        <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+          <select value={amount} onChange={e => setAmount(e.target.value)} style={{ padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "14px", background: "#E1F5EE" }}>
+            <option value="80">EUR80 - Acupuncture</option>
+            <option value="125">EUR125 - Cosmetic Acupuncture</option>
+          </select>
+          <button onClick={createVoucher} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 24px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>
+            Generate Code
+          </button>
+        </div>
+        {msg && (
+          <div style={{ background: "#E1F5EE", padding: "12px", borderRadius: "6px", marginTop: "16px", fontFamily: "sans-serif", fontSize: "14px", color: "#085041", fontWeight: "bold" }}>
+            {msg}
+          </div>
+        )}
+      </div>
+
+      {vouchers.length === 0 ? (
+        <p style={{ fontFamily: "sans-serif", color: "#666" }}>No vouchers yet.</p>
+      ) : (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
+            <thead>
+              <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Code</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Amount</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Status</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Created</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {vouchers.map(v => (
+                <tr key={v.id} style={{ borderBottom: "1px solid #E1F5EE", opacity: v.used ? 0.6 : 1 }}>
+                  <td style={{ padding: "10px", fontWeight: "bold", color: "#085041", fontFamily: "monospace", fontSize: "16px" }}>{v.code}</td>
+                  <td style={{ padding: "10px" }}>{"\u20ac"}{v.amount}</td>
+                  <td style={{ padding: "10px" }}>
+                    <span style={{ background: v.used ? "#e0e0e0" : "#E1F5EE", color: v.used ? "#888" : "#1D9E75", padding: "4px 10px", borderRadius: "20px", fontFamily: "sans-serif", fontSize: "12px" }}>
+                      {v.used ? "Used" : "Active"}
+                    </span>
+                  </td>
+                  <td style={{ padding: "10px", color: "#666" }}>{new Date(v.created_at).toLocaleDateString()}</td>
+                  <td style={{ padding: "10px" }}>
+                    <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                      <button onClick={() => sendVoucher(v)} style={{ background: "#25D366", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Send</button>
+                      <button onClick={() => toggleUsed(v)} style={{ background: v.used ? "#1D9E75" : "#888", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
+                        {v.used ? "Reactivate" : "Mark Used"}
+                      </button>
+                      <button onClick={() => deleteVoucher(v.id)} style={{ background: "#c00", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
   const [archived, setArchived] = useState([]);
@@ -603,6 +714,7 @@ export default function Admin() {
           <button style={tabStyle("soap")} onClick={() => setTab("soap")}>SOAP Notes</button>
           <button style={tabStyle("revenue")} onClick={() => setTab("revenue")}>Revenue</button>
           <button style={tabStyle("qr")} onClick={() => setTab("qr")}>QR Code</button>
+          <button style={tabStyle("vouchers")} onClick={() => setTab("vouchers")}>Vouchers</button>
         </div>
 
         {tab === "bookings" && (
@@ -899,6 +1011,7 @@ export default function Admin() {
         )}
 
         {tab === "intake" && <IntakeForms />}
+        {tab === "vouchers" && <Vouchers />}
         {tab === "soap" && <SOAPNotes />}
 
         {tab === "revenue" && (
