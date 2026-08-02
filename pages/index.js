@@ -10,7 +10,7 @@ export default function Home() {
       </Head>
 
       <div style={{
-        background: "linear-gradient(135deg, #085041 0%, #0a6b55 100%)",
+        background: "linear-gradient(135deg, rgba(8,80,65,0.85) 0%, rgba(10,107,85,0.85) 100%), url('/kate-hero.jpg') center/cover no-repeat",
         color: "white",
         padding: "80px 60px 60px 60px",
         display: "flex",
