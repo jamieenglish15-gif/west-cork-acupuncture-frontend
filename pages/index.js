@@ -10,11 +10,11 @@ export default function Home() {
       </Head>
 
       <div style={{
-        background: "linear-gradient(135deg, rgba(8,80,65,0.85) 0%, rgba(10,107,85,0.85) 100%), url('/kate-hero.jpg') center 20%/cover no-repeat",
+        background: "linear-gradient(135deg, rgba(8,80,65,0.85) 0%, rgba(10,107,85,0.85) 100%), url('/kate-hero.jpg') right 20%/cover no-repeat",
         color: "white",
         padding: "80px 60px 60px 60px",
         display: "flex",
-        alignItems: "right"
+        alignItems: "center"
       }}>
         <div style={{ maxWidth: "600px" }}>
           <p style={{ fontFamily: "sans-serif", fontSize: "12px", letterSpacing: "4px", opacity: 0.7, marginBottom: "20px", textTransform: "uppercase" }}>
