@@ -333,11 +333,13 @@ const [msg, setMsg] = useState("");
           <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
             <thead>
               <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
-                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Code</th>
-                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Amount</th>
-                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Status</th>
-                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Created</th>
-                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Actions</th>
+             <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Code</th>
+<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Amount</th>
+<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>From</th>
+<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>To</th>
+<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Status</th>
+<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Created</th>
+<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
