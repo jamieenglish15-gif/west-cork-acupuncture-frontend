@@ -68,18 +68,13 @@ export default function Book() {
     setMessage("");
     setPhoneError("");
 
-    if (!name || !email || !phone || !selectedService || !date || !selectedSlot || !paymentMethod || !agreed) {
-      setError("Please fill in all fields and agree to the cancellation policy.");
+    if (!name || !phone || !selectedService || !date || !selectedSlot || !paymentMethod || !agreed) {
+      setError("Please fill in all required fields and agree to the cancellation policy.");
       return;
     }
 
     if (!validatePhone(phone)) {
-      setPhoneError("Please enter a valid Irish mobile number (e.g. 083 115 6950) or international number with country code.");
-      return;
-    }
-
-    if (!email.includes("@") || !email.includes(".")) {
-      setError("Please enter a valid email address.");
+      setPhoneError("Please enter a valid phone number with area code (e.g. 083 115 6950).");
       return;
     }
 
@@ -145,7 +140,7 @@ export default function Book() {
         <label style={labelStyle}>Full Name</label>
         <input placeholder="Jane Smith" onChange={e => setName(e.target.value)} style={inputStyle} />
 
-        <label style={labelStyle}>Email</label>
+        <label style={labelStyle}>Email (optional)</label>
         <input type="email" placeholder="jane@email.com" onChange={e => setEmail(e.target.value)} style={inputStyle} />
 
         <label style={labelStyle}>Phone</label>
@@ -210,6 +205,7 @@ export default function Book() {
 
         <div>
           {[
+            { value: "card", label: "Pay Now (Card)" },
             { value: "cash", label: "Pay Cash on the Day" },
             { value: "voucher", label: "Redeem Gift Voucher" }
           ].map(m => (
