@@ -35,6 +35,7 @@ export default function Book() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [agreedLiability, setAgreedLiability] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -68,8 +69,8 @@ export default function Book() {
     setMessage("");
     setPhoneError("");
 
-    if (!name || !phone || !selectedService || !date || !selectedSlot || !paymentMethod || !agreed) {
-      setError("Please fill in all required fields and agree to the cancellation policy.");
+    if (!name || !phone || !selectedService || !date || !selectedSlot || !paymentMethod || !agreed || !agreedLiability) {
+      setError("Please fill in all required fields and agree to both policies.");
       return;
     }
 
@@ -228,6 +229,17 @@ export default function Book() {
           <label style={{ display: "flex", alignItems: "center", gap: "8px", fontFamily: "sans-serif", fontSize: "13px", color: "#085041", cursor: "pointer" }}>
             <input type="checkbox" onChange={e => setAgreed(e.target.checked)} />
             I agree to the cancellation policy
+          </label>
+        </div>
+
+        <div style={{ background: "#F5F0E8", padding: "16px", borderRadius: "6px", marginBottom: "16px" }}>
+          <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "12px", fontWeight: "bold" }}>Liability Waiver</p>
+          <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#555", lineHeight: "1.6", marginBottom: "12px" }}>
+            I confirm that I have provided accurate health information and understand that acupuncture treatments are undertaken at my own risk. West Cork Acupuncture accepts no liability for any adverse reactions arising from undisclosed medical conditions or medications.
+          </p>
+          <label style={{ display: "flex", alignItems: "center", gap: "8px", fontFamily: "sans-serif", fontSize: "13px", color: "#085041", cursor: "pointer" }}>
+            <input type="checkbox" onChange={e => setAgreedLiability(e.target.checked)} />
+            I agree to the liability waiver
           </label>
         </div>
 
