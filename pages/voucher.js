@@ -1,6 +1,11 @@
 import Head from "next/head";
 
 export default function Voucher() {
+  const waLink = (title, amount) => {
+    const msg = encodeURIComponent("Hi Kate, I would like to purchase a gift voucher for " + title + " (EUR" + amount + "). Please let me know how to proceed.");
+    return "https://wa.me/353831156950?text=" + msg;
+  };
+
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
       <Head>
@@ -14,36 +19,37 @@ export default function Voucher() {
         </p>
 
         <div style={{ display: "grid", gap: "16px", marginBottom: "32px" }}>
-          {[
-            { title: "Acupuncture Session", amount: "80", desc: "One full acupuncture treatment with Kate." },
-            { title: "Cosmetic Acupuncture", amount: "125", desc: "One cosmetic facial acupuncture session." },
-            { title: "Custom Amount", amount: null, desc: "Contact Kate to arrange a custom gift voucher." }
-          ].map(v => (
-            <div key={v.title} style={{ background: "white", padding: "28px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                <h2 style={{ fontSize: "22px", color: "#085041", fontWeight: "normal", margin: 0 }}>{v.title}</h2>
-                {v.amount && <p style={{ fontSize: "28px", color: "#085041", fontWeight: "bold", margin: 0 }}>{"\u20ac"}{v.amount}</p>}
-              </div>
-              <p style={{ fontFamily: "sans-serif", color: "#555", marginBottom: "16px" }}>{v.desc}</p>
-              {v.amount ? (
-                
-                  href={"https://wa.me/353831156950?text=" + encodeURIComponent("Hi Kate, I would like to purchase a gift voucher for " + v.title + " (" + "\u20ac" + v.amount + "). Please let me know how to proceed.")}
-                  target="_blank"
-                  style={{ display: "inline-block", background: "#1D9E75", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px" }}
-                >
-                  Purchase via WhatsApp
-                </a>
-              ) : (
-                
-                  href="https://wa.me/353831156950"
-                  target="_blank"
-                  style={{ display: "inline-block", background: "#085041", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px" }}
-                >
-                  Contact Kate
-                </a>
-              )}
+          <div style={{ background: "white", padding: "28px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <h2 style={{ fontSize: "22px", color: "#085041", fontWeight: "normal", margin: 0 }}>Acupuncture Session</h2>
+              <p style={{ fontSize: "28px", color: "#085041", fontWeight: "bold", margin: 0 }}>{"\u20ac80"}</p>
             </div>
-          ))}
+            <p style={{ fontFamily: "sans-serif", color: "#555", marginBottom: "16px" }}>One full acupuncture treatment with Kate.</p>
+            <a href={waLink("Acupuncture Session", "80")} target="_blank" style={{ display: "inline-block", background: "#1D9E75", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px" }}>
+              Purchase via WhatsApp
+            </a>
+          </div>
+
+          <div style={{ background: "white", padding: "28px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <h2 style={{ fontSize: "22px", color: "#085041", fontWeight: "normal", margin: 0 }}>Cosmetic Acupuncture</h2>
+              <p style={{ fontSize: "28px", color: "#085041", fontWeight: "bold", margin: 0 }}>{"\u20ac125"}</p>
+            </div>
+            <p style={{ fontFamily: "sans-serif", color: "#555", marginBottom: "16px" }}>One cosmetic facial acupuncture session.</p>
+            <a href={waLink("Cosmetic Acupuncture", "125")} target="_blank" style={{ display: "inline-block", background: "#1D9E75", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px" }}>
+              Purchase via WhatsApp
+            </a>
+          </div>
+
+          <div style={{ background: "white", padding: "28px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <h2 style={{ fontSize: "22px", color: "#085041", fontWeight: "normal", margin: 0 }}>Custom Amount</h2>
+            </div>
+            <p style={{ fontFamily: "sans-serif", color: "#555", marginBottom: "16px" }}>Contact Kate to arrange a custom gift voucher.</p>
+            <a href="https://wa.me/353831156950" target="_blank" style={{ display: "inline-block", background: "#085041", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px" }}>
+              Contact Kate
+            </a>
+          </div>
         </div>
 
         <div style={{ background: "#E1F5EE", padding: "24px", borderRadius: "8px" }}>
