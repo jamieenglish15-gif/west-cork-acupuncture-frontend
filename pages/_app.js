@@ -1,4 +1,5 @@
 import Nav from "../components/Nav";
+import CookieBanner from "../components/CookieBanner";
 import Head from "next/head";
 
 export default function App({ Component, pageProps }) {
@@ -17,11 +18,12 @@ export default function App({ Component, pageProps }) {
         <meta property="og:image" content="https://west-cork-acupuncture-frontend.vercel.app/logo.jpg" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="West Cork Acupuncture" />
-        <meta name="twitter:description" content="Acupuncture, cupping and cosmetic treatments in Skibbereen, West Cork." />
+        <meta name="twitter:description" content="Acupuncture and cosmetic treatments in Skibbereen, West Cork." />
         <link rel="canonical" href="https://westcorkacupuncture.ie" />
       </Head>
       <Nav />
       <Component {...pageProps} />
+      <CookieBanner />
     </>
   );
 }
