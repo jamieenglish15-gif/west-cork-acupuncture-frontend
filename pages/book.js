@@ -15,6 +15,15 @@ function getBlockedSlots(slot) {
   return blocked;
 }
 
+function validatePhone(phone) {
+  const cleaned = phone.replace(/\s/g, "").replace(/-/g, "");
+  if (cleaned.length < 9) return false;
+  const irish = /^(083|085|086|087|089|08[0-9])[0-9]{7}$/;
+  const irishIntl = /^\+3538[0-9]{8}$/;
+  const intl = /^\+[1-9][0-9]{7,14}$/;
+  return irish.test(cleaned) || irishIntl.test(cleaned) || intl.test(cleaned);
+}
+
 export default function Book() {
   const [services, setServices] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -29,6 +38,7 @@ export default function Book() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [acceptedSlots, setAcceptedSlots] = useState([]);
 
   useEffect(() => {
@@ -56,10 +66,23 @@ export default function Book() {
   const handleBooking = async () => {
     setError("");
     setMessage("");
+    setPhoneError("");
+
     if (!name || !email || !phone || !selectedService || !date || !selectedSlot || !paymentMethod || !agreed) {
       setError("Please fill in all fields and agree to the cancellation policy.");
       return;
     }
+
+    if (!validatePhone(phone)) {
+      setPhoneError("Please enter a valid Irish mobile number (e.g. 083 115 6950) or international number with country code.");
+      return;
+    }
+
+    if (!email.includes("@") || !email.includes(".")) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     setLoading(true);
     try {
       const serviceName = services.find(s => String(s.id) === String(selectedService))?.name || selectedService;
@@ -110,12 +133,12 @@ export default function Book() {
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
       <Head>
         <title>Book Appointment | West Cork Acupuncture Skibbereen</title>
-        <meta name="description" content="Book an acupuncture, cupping or cosmetic facial acupuncture appointment online with Kate at West Cork Acupuncture, Skibbereen." />
+        <meta name="description" content="Book an acupuncture or cosmetic facial acupuncture appointment online with Kate at West Cork Acupuncture, Skibbereen." />
       </Head>
       <div style={{ maxWidth: "560px", margin: "0 auto", background: "white", padding: "40px", borderRadius: "8px", borderLeft: "8px solid #1D9E75", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
 
         <h1 style={{ fontSize: "36px", color: "#085041", marginBottom: "8px" }}>Book Appointment</h1>
-        <p style={{ fontFamily: "sans-serif", color: "#666", marginBottom: "32px" }}>Acupuncture · Cupping · Cosmetic Acupuncture</p>
+        <p style={{ fontFamily: "sans-serif", color: "#666", marginBottom: "32px" }}>Acupuncture · Cosmetic Acupuncture</p>
 
         <h3 style={{ fontSize: "20px", color: "#085041", marginBottom: "16px" }}>Your Details</h3>
 
@@ -126,7 +149,15 @@ export default function Book() {
         <input type="email" placeholder="jane@email.com" onChange={e => setEmail(e.target.value)} style={inputStyle} />
 
         <label style={labelStyle}>Phone</label>
-        <input type="tel" placeholder="+353 87 000 0000" onChange={e => setPhone(e.target.value)} style={inputStyle} />
+        <input
+          type="tel"
+          placeholder="083 115 6950 or +353831156950"
+          onChange={e => { setPhone(e.target.value); setPhoneError(""); }}
+          style={{ ...inputStyle, border: phoneError ? "1px solid #c00" : "1px solid #9FE1CB" }}
+        />
+        {phoneError && (
+          <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#c00", marginTop: "-12px", marginBottom: "12px" }}>{phoneError}</p>
+        )}
 
         <label style={labelStyle}>Service</label>
         <select onChange={e => setSelectedService(e.target.value)} style={inputStyle}>
@@ -135,10 +166,8 @@ export default function Book() {
             <option key={s.id} value={s.id}>{s.name}</option>
           )) : (
             <span>
-              <option value="1">Acupuncture</option>
-              <option value="2">Cupping Therapy</option>
-              <option value="3">Cosmetic Acupuncture</option>
-              <option value="4">Facial Rejuvenation</option>
+              <option value="1">Acupuncture - EUR80</option>
+              <option value="2">Cosmetic Acupuncture - EUR125</option>
             </span>
           )}
         </select>
@@ -181,7 +210,6 @@ export default function Book() {
 
         <div>
           {[
-            { value: "stripe", label: "Pay Now (Card)" },
             { value: "cash", label: "Pay Cash on the Day" },
             { value: "voucher", label: "Redeem Gift Voucher" }
           ].map(m => (
