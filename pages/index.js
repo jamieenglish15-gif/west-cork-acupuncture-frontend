@@ -14,7 +14,7 @@ export default function Home() {
         color: "white",
         padding: "80px 60px 60px 60px",
         display: "flex",
-        alignItems: "center"
+        alignItems: "right"
       }}>
         <div style={{ maxWidth: "600px" }}>
           <p style={{ fontFamily: "sans-serif", fontSize: "12px", letterSpacing: "4px", opacity: 0.7, marginBottom: "20px", textTransform: "uppercase" }}>
