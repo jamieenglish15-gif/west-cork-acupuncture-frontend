@@ -269,6 +269,118 @@ function SOAPNotes() {
     </div>
   );
 }
+function SOAPNotes() {
+  const [notes, setNotes] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ client_name: "", session_date: "", subjective: "", objective: "", assessment: "", plan: "" });
+  const [msg, setMsg] = useState("");
+
+  const fetchNotes = () => {
+    fetch(API + "/soap")
+      .then(r => r.json())
+      .then(data => setNotes(data))
+      .catch(() => setNotes([]));
+  };
+
+  useEffect(() => { fetchNotes(); }, []);
+
+  const saveNote = async () => {
+    if (!form.client_name || !form.session_date) {
+      setMsg("Please enter client name and date.");
+      return;
+    }
+    const res = await fetch(API + "/soap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form)
+    });
+    const data = await res.json();
+    if (data.success) {
+      setMsg("Note saved!");
+      setForm({ client_name: "", session_date: "", subjective: "", objective: "", assessment: "", plan: "" });
+      setShowForm(false);
+      fetchNotes();
+    }
+  };
+
+  const deleteNote = async (id) => {
+    if (!confirm("Delete this SOAP note?")) return;
+    await fetch(API + "/soap/" + id, { method: "DELETE" });
+    fetchNotes();
+  };
+
+  const printNote = (n) => {
+    const ref = "SOAP-" + String(n.id).padStart(4, "0");
+    window.open("/soap?name=" + encodeURIComponent(n.client_name) + "&date=" + n.session_date + "&subjective=" + encodeURIComponent(n.subjective || "") + "&objective=" + encodeURIComponent(n.objective || "") + "&assessment=" + encodeURIComponent(n.assessment || "") + "&plan=" + encodeURIComponent(n.plan || "") + "&ref=" + ref);
+  };
+
+  const ta = { width: "100%", padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "13px", marginBottom: "16px", boxSizing: "border-box", background: "#E1F5EE", resize: "vertical" };
+  const inp = { width: "100%", padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "13px", marginBottom: "16px", boxSizing: "border-box", background: "#E1F5EE" };
+
+  return (
+    <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+        <h2 style={{ fontSize: "24px", color: "#085041", margin: 0 }}>{"SOAP Notes" + (notes.length > 0 ? " (" + notes.length + ")" : "")}</h2>
+        <button onClick={() => setShowForm(!showForm)} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>
+          {showForm ? "Cancel" : "New Note"}
+        </button>
+      </div>
+      {showForm && (
+        <div style={{ background: "#F5F0E8", padding: "24px", borderRadius: "8px", marginBottom: "24px" }}>
+          <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>New SOAP Note</h3>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div>
+              <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>Client Name</label>
+              <input value={form.client_name} onChange={e => setForm({ ...form, client_name: e.target.value })} style={inp} />
+            </div>
+            <div>
+              <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>Session Date</label>
+              <input type="date" value={form.session_date} onChange={e => setForm({ ...form, session_date: e.target.value })} style={inp} />
+            </div>
+          </div>
+          <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>S - Subjective (what the client reports)</label>
+          <textarea rows={3} value={form.subjective} onChange={e => setForm({ ...form, subjective: e.target.value })} style={ta} />
+          <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>O - Objective (what you observe)</label>
+          <textarea rows={3} value={form.objective} onChange={e => setForm({ ...form, objective: e.target.value })} style={ta} />
+          <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>A - Assessment</label>
+          <textarea rows={3} value={form.assessment} onChange={e => setForm({ ...form, assessment: e.target.value })} style={ta} />
+          <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>P - Plan</label>
+          <textarea rows={3} value={form.plan} onChange={e => setForm({ ...form, plan: e.target.value })} style={ta} />
+          {msg && <p style={{ fontFamily: "sans-serif", color: msg.includes("saved") ? "#1D9E75" : "#c00", marginBottom: "12px" }}>{msg}</p>}
+          <button onClick={saveNote} style={{ background: "#1D9E75", color: "white", border: "none", padding: "12px 32px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>
+            Save Note
+          </button>
+        </div>
+      )}
+      {notes.length === 0 ? (
+        <p style={{ fontFamily: "sans-serif", color: "#666" }}>No SOAP notes yet. Click New Note to add one.</p>
+      ) : (
+        <div>
+          {notes.map(n => (
+            <div key={n.id} style={{ border: "1px solid #E1F5EE", borderRadius: "8px", marginBottom: "12px", overflow: "hidden" }}>
+              <div style={{ background: "#F5F0E8", padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{n.client_name}</p>
+                  <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>{String(n.session_date).slice(0,10)}</p>
+                </div>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button onClick={() => printNote(n)} style={{ background: "#085041", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Print</button>
+                  <button onClick={() => deleteNote(n.id)} style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Delete</button>
+                </div>
+              </div>
+              <div style={{ padding: "16px", fontFamily: "sans-serif", fontSize: "13px", color: "#333", lineHeight: "1.7" }}>
+                {n.subjective && <p style={{ marginBottom: "8px" }}><strong style={{ color: "#085041" }}>S:</strong> {n.subjective}</p>}
+                {n.objective && <p style={{ marginBottom: "8px" }}><strong style={{ color: "#085041" }}>O:</strong> {n.objective}</p>}
+                {n.assessment && <p style={{ marginBottom: "8px" }}><strong style={{ color: "#085041" }}>A:</strong> {n.assessment}</p>}
+                {n.plan && <p style={{ margin: 0 }}><strong style={{ color: "#085041" }}>P:</strong> {n.plan}</p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
   const [archived, setArchived] = useState([]);
