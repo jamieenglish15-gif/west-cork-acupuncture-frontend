@@ -46,7 +46,8 @@ export default function Nav() {
               </div>
             )}
           </div>
-
+              
+          <a href="/voucher" style={{ color: "#9FE1CB", textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px" }}>Gift Vouchers</a>
           <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" style={{ color: "#9FE1CB", textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px" }}>Instagram</a>
           <a href="/book" style={{ background: "#1D9E75", color: "white", padding: "8px 16px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px" }}>Book Now</a>
         </div>
