@@ -486,6 +486,7 @@ const printReceipt = (b) => {
           <button style={tabStyle("add")} onClick={() => setTab("add")}>Add Booking</button>
           <button style={tabStyle("intake")} onClick={() => setTab("intake")}>Intake Forms</button>
                                   <button style={tabStyle("qr")} onClick={() => setTab("qr")}>QR Code</button>
+                                  <button style={tabStyle("revenue")} onClick={() => setTab("revenue")}>Revenue</button>
         </div>
 
         {tab === "bookings" && (
@@ -849,7 +850,63 @@ const printReceipt = (b) => {
     </button>
   </div>
 )}
-
+{tab === "revenue" && (
+  <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+    <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "24px" }}>Revenue Tracker</h2>
+    {(() => {
+      const allBookings = [...bookings, ...archived].filter(b => b.status === "accepted" || b.status === "archived");
+      const monthly = {};
+      allBookings.forEach(b => {
+        const month = String(b.date).slice(0, 7);
+        const price = parseInt(PRICES[b.service] || "80");
+        if (!monthly[month]) monthly[month] = { total: 0, count: 0, bookings: [] };
+        monthly[month].total += price;
+        monthly[month].count += 1;
+        monthly[month].bookings.push(b);
+      });
+      const months = Object.keys(monthly).sort().reverse();
+      const grandTotal = months.reduce((sum, m) => sum + monthly[m].total, 0);
+      return (
+        <div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "32px" }}>
+            <div style={{ background: "#085041", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
+              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#9FE1CB", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px" }}>Total Revenue</p>
+              <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "white", fontWeight: "bold" }}>{"\u20ac"}{grandTotal}</p>
+            </div>
+            <div style={{ background: "#1D9E75", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
+              <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "white", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px", opacity: 0.8 }}>Total Appointments</p>
+              <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "white", fontWeight: "bold" }}>{allBookings.length}</p>
+            </div>
+            {months[0] && (
+              <div style={{ background: "#E1F5EE", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
+                <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px" }}>This Month</p>
+                <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "#085041", fontWeight: "bold" }}>{"\u20ac"}{monthly[months[0]].total}</p>
+              </div>
+            )}
+          </div>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
+            <thead>
+              <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Month</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Appointments</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {months.map(m => (
+                <tr key={m} style={{ borderBottom: "1px solid #E1F5EE" }}>
+                  <td style={{ padding: "10px" }}>{new Date(m + "-01").toLocaleDateString("en-IE", { month: "long", year: "numeric" })}</td>
+                  <td style={{ padding: "10px" }}>{monthly[m].count}</td>
+                  <td style={{ padding: "10px", fontWeight: "bold", color: "#085041" }}>{"\u20ac"}{monthly[m].total}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    })()}
+  </div>
+)}
       </div>
     </div>
   );
