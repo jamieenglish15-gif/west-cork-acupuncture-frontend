@@ -9,7 +9,9 @@ export default function Voucher() {
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
       <Head>
-        <title>Gift Vouchers | West Cork Acupuncture</title>
+        <title>Gift Vouchers | West Cork Acupuncture Skibbereen</title>
+        <meta name="description" content="Buy gift vouchers for acupuncture and cosmetic facial acupuncture treatments at West Cork Acupuncture, Skibbereen." />
+        <link rel="canonical" href="https://westcorkacupuncture.ie/voucher" />
       </Head>
       <div style={{ maxWidth: "600px", margin: "0 auto" }}>
 
