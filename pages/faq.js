@@ -15,7 +15,8 @@ export default function FAQ() {
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
       <Head>
         <title>FAQ | West Cork Acupuncture Skibbereen</title>
-        <meta name="description" content="Frequently asked questions about acupuncture, cupping and cosmetic treatments at West Cork Acupuncture in Skibbereen." />
+        <meta name="description" content="Frequently asked questions about acupuncture and cosmetic treatments at West Cork Acupuncture in Skibbereen." />
+        <link rel="canonical" href="https://westcorkacupuncture.ie/faq" />
       </Head>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
 
