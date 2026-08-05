@@ -290,7 +290,7 @@ const [msg, setMsg] = useState("");
   };
 
   const sendVoucher = (v) => {
-    const msg = encodeURIComponent("Hi, here is your West Cork Acupuncture gift voucher code: " + v.code + ". Value: EUR" + v.amount + ". Valid for 12 months. To book: https://west-cork-acupuncture-frontend.vercel.app/book - Thank you, Kate");
+    const msg = encodeURIComponent("Hi, here is your West Cork Acupuncture gift voucher code: " + v.code + ". Value: EUR" + v.amount + ". Valid for 12 months. To book: https://westcorkacupuncture.ie/book - Thank you, Kate");
     window.open("https://wa.me/?text=" + msg);
   };
 
@@ -581,7 +581,7 @@ export default function Admin() {
 
   const sendIntake = (b) => {
     const phone = b.phone.replace(/\D/g, "");
-    const msg = encodeURIComponent("Hi " + b.name + ", please fill in our health questionnaire before your appointment: https://west-cork-acupuncture-frontend.vercel.app/intake - Thanks, Kate");
+    const msg = encodeURIComponent("Hi " + b.name + ", please fill in our health questionnaire before your appointment: https://westcorkacupuncture.ie/intake - Thanks, Kate");
     window.open("https://wa.me/" + phone + "?text=" + msg);
   };
 
@@ -589,7 +589,7 @@ export default function Admin() {
     const price = PRICES[b.service] || "80";
     const ref = "WCA-" + String(b.id).padStart(4, "0");
     const phone = b.phone.replace(/\D/g, "");
-    const link = "https://west-cork-acupuncture-frontend.vercel.app/receipt?name=" + encodeURIComponent(b.name) + "&service=" + encodeURIComponent(b.service) + "&date=" + String(b.date).slice(0,10) + "&time=" + b.time_slot + "&payment=" + b.payment_method + "&amount=" + price + "&ref=" + ref;
+    const link = "https://westcorkacupuncture.ie/receipt?name=" + encodeURIComponent(b.name) + "&service=" + encodeURIComponent(b.service) + "&date=" + String(b.date).slice(0,10) + "&time=" + b.time_slot + "&payment=" + b.payment_method + "&amount=" + price + "&ref=" + ref;
     const msg = encodeURIComponent("Hi " + b.name + ", please find your receipt for your treatment at West Cork Acupuncture: " + link + " - Thank you, Kate");
     window.open("https://wa.me/" + phone + "?text=" + msg);
   };
@@ -1093,7 +1093,7 @@ export default function Admin() {
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "8px" }}>Booking QR Code</h2>
             <p style={{ fontFamily: "sans-serif", color: "#666", marginBottom: "24px" }}>Print and display in the clinic. Clients scan to book online.</p>
             <img
-              src={"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent("https://west-cork-acupuncture-frontend.vercel.app/book")}
+              src={"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent("https://westcorkacupuncture.ie/book")}
               alt="QR Code"
               style={{ width: "240px", height: "240px", marginBottom: "24px", border: "8px solid #E1F5EE", borderRadius: "8px" }}
             />
