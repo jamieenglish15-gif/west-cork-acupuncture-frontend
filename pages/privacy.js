@@ -5,6 +5,8 @@ export default function Privacy() {
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
       <Head>
         <title>Privacy Policy | West Cork Acupuncture</title>
+        <meta name="description" content="Privacy policy for West Cork Acupuncture. How we collect, store and use your personal data in accordance with GDPR." />
+        <link rel="canonical" href="https://westcorkacupuncture.ie/privacy" />
       </Head>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
 
