@@ -6,6 +6,7 @@ export default function Contact() {
       <Head>
         <title>Contact | West Cork Acupuncture Skibbereen</title>
         <meta name="description" content="Contact West Cork Acupuncture. Kate is based at 13 North Street, Skibbereen, P81 Y237. Call 083 115 6950 or book online." />
+        <link rel="canonical" href="https://westcorkacupuncture.ie/contact" />
       </Head>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
 
