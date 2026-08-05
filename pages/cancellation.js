@@ -1,6 +1,13 @@
+import Head from "next/head";
+
 export default function Cancellation() {
   return (
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
+      <Head>
+        <title>Cancellation Policy | West Cork Acupuncture</title>
+        <meta name="description" content="Cancellation policy for West Cork Acupuncture. We require 24 hours notice for cancellations or rescheduling." />
+        <link rel="canonical" href="https://westcorkacupuncture.ie/cancellation" />
+      </Head>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
 
         <h1 style={{ fontSize: "40px", color: "#085041", marginBottom: "24px" }}>Cancellation Policy</h1>
