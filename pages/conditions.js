@@ -14,6 +14,7 @@ export default function Conditions() {
       <Head>
         <title>Conditions Treated | West Cork Acupuncture Skibbereen</title>
         <meta name="description" content="West Cork Acupuncture treats pain, stress, fertility, digestive and skin conditions. Book with Kate in Skibbereen, West Cork." />
+        <link rel="canonical" href="https://westcorkacupuncture.ie/conditions" />
       </Head>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
 
