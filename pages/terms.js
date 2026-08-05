@@ -5,6 +5,8 @@ export default function Terms() {
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
       <Head>
         <title>Terms & Conditions | West Cork Acupuncture</title>
+        <meta name="description" content="Terms and conditions for West Cork Acupuncture. Appointments, cancellations, pricing and liability information." />
+        <link rel="canonical" href="https://westcorkacupuncture.ie/terms" />
       </Head>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
 
