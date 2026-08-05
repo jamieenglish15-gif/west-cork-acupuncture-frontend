@@ -5,7 +5,8 @@ export default function About() {
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
       <Head>
         <title>About Kate | West Cork Acupuncture Skibbereen</title>
-        <meta name="description" content="Meet Kate, dedicated acupuncturist at West Cork Acupuncture in Skibbereen. Trained in traditional acupuncture, cupping and cosmetic facial acupuncture." />
+        <meta name="description" content="Meet Kate, dedicated acupuncturist at West Cork Acupuncture in Skibbereen. Trained in traditional acupuncture and cosmetic facial acupuncture." />
+        <link rel="canonical" href="https://westcorkacupuncture.ie/about" />
       </Head>
       <div style={{ maxWidth: "720px", margin: "0 auto" }}>
 
@@ -17,7 +18,7 @@ export default function About() {
             Kate is a dedicated acupuncturist with a passion for helping clients reconnect with balance, ease, and natural healing. With a calm, grounded approach, each treatment is tailored to support the nervous system, reduce pain, and restore harmony in the body.
           </p>
           <p style={{ fontFamily: "sans-serif", color: "#333", lineHeight: "1.8", marginBottom: "16px" }}>
-            Trained in traditional acupuncture, cupping therapy, and cosmetic facial acupuncture, Kate blends evidence-based practice with intuitive care.
+            Trained in traditional acupuncture and cosmetic facial acupuncture, Kate blends evidence-based practice with intuitive care.
           </p>
           <p style={{ fontFamily: "sans-serif", color: "#333", lineHeight: "1.8" }}>
             Whether you are seeking pain relief, stress reduction, hormonal support, or a cosmetic boost, Kate's treatments are designed to help you feel grounded, restored, and deeply cared for.
