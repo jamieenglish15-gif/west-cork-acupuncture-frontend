@@ -29,7 +29,7 @@ export default function Nav() {
         <a href="/">
           <img src="/logo.jpg" alt="West Cork Acupuncture" style={{ height: "60px", borderRadius: "4px" }} />
         </a>
-        <div style={{ marginLeft: "auto", display: "flex", gap: "4px", flexWrap: "wrap", alignItems: "center" }}>
+        <div style={{ marginLeft: "auto", display: "flex", gap: "4px", flexWrap: "wrap", alignItems: "center", fontWeight: "bold" }}>
 
           <a href="/" style={{ color: linkColor("home"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("home")} onMouseLeave={() => setHovered(null)}>Home</a>
           {divider}
