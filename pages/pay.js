@@ -98,4 +98,33 @@ export default function Pay() {
               <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041", fontWeight: "bold" }}>Service</label>
               <select value={service} onChange={e => { setService(e.target.value); setAmount(e.target.value === "Cosmetic Acupuncture" ? 125 : 80); }} style={{ width: "100%", padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginTop: "6px", fontFamily: "sans-serif", fontSize: "14px", boxSizing: "border-box" }}>
                 <option value="Acupuncture">Acupuncture — {"\u20ac"}80</option>
-                <option value="Cosmetic Acupuncture">Cosmetic Acupuncture —
+                <option value="Cosmetic Acupuncture">Cosmetic Acupuncture — {"\u20ac"}125</option>
+              </select>
+            </div>
+            <div style={{ background: "#E1F5EE", padding: "16px", borderRadius: "6px", marginBottom: "24px", textAlign: "center" }}>
+              <p style={{ fontFamily: "sans-serif", fontSize: "32px", fontWeight: "bold", color: "#085041", margin: 0 }}>{"\u20ac"}{amount}</p>
+              <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#666", margin: 0 }}>{service}</p>
+            </div>
+            <button onClick={startPayment} disabled={loading} style={{ width: "100%", background: loading ? "#999" : "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontFamily: "sans-serif", fontSize: "16px", cursor: "pointer" }}>
+              {loading ? "Loading..." : "Continue to Payment"}
+            </button>
+          </div>
+        ) : (
+          <div style={{ background: "white", padding: "32px", borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
+            <div style={{ background: "#E1F5EE", padding: "16px", borderRadius: "6px", marginBottom: "24px", textAlign: "center" }}>
+              <p style={{ fontFamily: "sans-serif", fontSize: "28px", fontWeight: "bold", color: "#085041", margin: 0 }}>{"\u20ac"}{amount}</p>
+              <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#666", margin: 0 }}>{service} — {name}</p>
+            </div>
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <CheckoutForm amount={amount} name={name} service={service} onSuccess={() => setSuccess(true)} />
+            </Elements>
+          </div>
+        )}
+
+        <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#888", textAlign: "center", marginTop: "24px" }}>
+          Payments are processed securely by Stripe. West Cork Acupuncture never stores your card details.
+        </p>
+      </div>
+    </div>
+  );
+}
