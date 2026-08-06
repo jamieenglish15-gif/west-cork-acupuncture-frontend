@@ -36,6 +36,7 @@ export default function Book() {
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [agreedLiability, setAgreedLiability] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -86,12 +87,13 @@ export default function Book() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name, email, phone,
-          service: serviceName,
-          date, time_slot: selectedSlot,
-          payment_method: paymentMethod,
-          voucher_code: voucherCode || null
-        })
+  name, email, phone,
+  service: serviceName,
+  date, time_slot: selectedSlot,
+  payment_method: paymentMethod,
+  voucher_code: voucherCode || null,
+  marketing_opt_in: marketingOptIn
+})
       });
       const data = await res.json();
       if (data.success) {
@@ -231,7 +233,13 @@ export default function Book() {
             I agree to the cancellation policy
           </label>
         </div>
-
+              
+        <div style={{ background: "#F5F0E8", padding: "16px", borderRadius: "6px", marginBottom: "16px" }}>
+  <label style={{ display: "flex", alignItems: "center", gap: "8px", fontFamily: "sans-serif", fontSize: "13px", color: "#085041", cursor: "pointer" }}>
+    <input type="checkbox" onChange={e => setMarketingOptIn(e.target.checked)} />
+    I would like to receive occasional updates and offers from West Cork Acupuncture (optional)
+  </label>
+</div>
         <div style={{ background: "#F5F0E8", padding: "16px", borderRadius: "6px", marginBottom: "16px" }}>
           <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "12px", fontWeight: "bold" }}>Liability Waiver</p>
           <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#555", lineHeight: "1.6", marginBottom: "12px" }}>
