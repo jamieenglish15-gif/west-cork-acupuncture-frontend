@@ -3,7 +3,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import Head from "next/head";
 
-const stripePromise = loadStripe("pk_test_pk_test_51U0JAWJzahbtGOvyNjgkOaSoSNAD7X3Dr7HHkhFmbjbRZm3KQnIxNnw1FJC3rfh6yYAswd3zPlKgpe1D5jKXo7YG009OTBKEDZ");
+const stripePromise = loadStripe("pk_test_51U0JAWJzahbtGOvyNjgkOaSoSNAD7X3Dr7HHkhFmbjbRZm3KQnIxNnw1FJC3rfh6yYAswd3zPlKgpe1D5jKXo7YG009OTBKEDZ");
 const API = "https://west-cork-acupuncture-backend-production-366a.up.railway.app";
 
 function CheckoutForm({ amount, name, service, onSuccess }) {
