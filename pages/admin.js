@@ -79,6 +79,35 @@ function IntakeForms() {
                 <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{f.name}</p>
                 <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>{"Submitted: " + new Date(f.created_at).toLocaleDateString()}</p>
               </div>
+              <div style={{ background: "#085041", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
+  <h3 style={{ fontSize: "18px", color: "white", marginBottom: "12px" }}>Bulk WhatsApp Message</h3>
+  <p style={{ fontFamily: "sans-serif", color: "#9FE1CB", fontSize: "13px", marginBottom: "12px" }}>Only sends to clients who opted in to marketing messages.</p>
+  <textarea
+    id="bulk-message"
+    placeholder="Type your message here e.g. Hi, we have availability this week at West Cork Acupuncture. Book at westcorkacupuncture.ie"
+    style={{ width: "100%", padding: "12px", border: "none", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "13px", marginBottom: "12px", boxSizing: "border-box", height: "80px", resize: "vertical" }}
+  />
+  <button
+    onClick={() => {
+      const msg = document.getElementById("bulk-message").value;
+      if (!msg) { alert("Please type a message first."); return; }
+      const clients = uniqueClients().filter(c => c.marketing_opt_in);
+      if (clients.length === 0) { alert("No clients have opted in to marketing messages."); return; }
+      if (!confirm("This will open WhatsApp for " + clients.length + " opted-in clients. Continue?")) return;
+      clients.forEach((c, i) => {
+        setTimeout(() => {
+          const phone = c.phone.replace(/\D/g, "");
+          if (phone.length >= 9) {
+            window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(msg));
+          }
+        }, i * 1500);
+      });
+    }}
+    style={{ background: "#25D366", color: "white", border: "none", padding: "12px 24px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px", fontWeight: "bold" }}
+  >
+    Send to Opted-in Clients via WhatsApp
+  </button>
+</div>
               <div style={{ display: "flex", gap: "8px" }}>
                 <button onClick={() => { setEditing(f.id); setEditData(Object.assign({}, f)); setSelected(f.id); }} style={{ background: "#085041", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Edit</button>
                 <button onClick={() => deleteForm(f.id)} style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Delete</button>
