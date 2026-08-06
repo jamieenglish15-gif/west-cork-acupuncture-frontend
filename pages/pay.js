@@ -53,17 +53,27 @@ export default function Pay() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const startPayment = async () => {
+const startPayment = async () => {
     if (!name) { alert("Please enter your name."); return; }
     setLoading(true);
-    const res = await fetch(API + "/create-payment-intent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount, name, service })
-    });
-    const data = await res.json();
-    setClientSecret(data.clientSecret);
-    setLoading(false);
+    try {
+      const res = await fetch(API + "/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount, name, service })
+      });
+      const data = await res.json();
+      if (data.error) {
+        alert("Payment error: " + data.error);
+        setLoading(false);
+        return;
+      }
+      setClientSecret(data.clientSecret);
+      setLoading(false);
+    } catch (err) {
+      alert("Connection error: " + err.message);
+      setLoading(false);
+    }
   };
 
   if (success) {
