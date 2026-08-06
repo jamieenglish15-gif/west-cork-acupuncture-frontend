@@ -892,7 +892,7 @@ export default function Admin() {
             ) : (
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
-                  <thead>{tableHead(["Name", "Email", "Phone", "Visits", "WhatsApp", "Edit", "Delete"])}</thead>
+                  <thead>{tableHead(["Name", "Email", "Phone", "Visits", "Marketing", "WhatsApp", "Edit", "Delete"])}</thead>
                   <tbody>
                     {uniqueClients().map(b => (
                       <tr key={b.id} style={{ borderBottom: "1px solid #E1F5EE" }}>
@@ -900,6 +900,13 @@ export default function Admin() {
                         <td style={{ padding: "10px" }}>{editingNote === "contact-" + b.id ? <input id={"edit-email-" + b.id} defaultValue={b.email} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} /> : b.email}</td>
                         <td style={{ padding: "10px" }}>{editingNote === "contact-" + b.id ? <input id={"edit-phone-" + b.id} defaultValue={b.phone} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} /> : b.phone}</td>
                         <td style={{ padding: "10px", textAlign: "center", fontWeight: "bold", color: "#085041" }}>{visitCount(b.email)}</td>
+                        <td style={{ padding: "10px", textAlign: "center" }}>
+  {b.marketing_opt_in ? (
+    <span style={{ background: "#E1F5EE", color: "#1D9E75", padding: "4px 10px", borderRadius: "20px", fontFamily: "sans-serif", fontSize: "12px", fontWeight: "bold" }}>Yes</span>
+  ) : (
+    <span style={{ background: "#f0f0f0", color: "#888", padding: "4px 10px", borderRadius: "20px", fontFamily: "sans-serif", fontSize: "12px" }}>No</span>
+  )}
+</td>                 
                         <td style={{ padding: "10px" }}>
                           <a href={"https://wa.me/" + b.phone.replace(/\D/g, "")} target="_blank" style={{ background: "#1D9E75", color: "white", padding: "6px 12px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "12px" }}>Message</a>
                         </td>
