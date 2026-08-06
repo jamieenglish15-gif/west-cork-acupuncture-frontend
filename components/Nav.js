@@ -1,31 +1,12 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
 
 export default function Nav() {
   const [policyOpen, setPolicyOpen] = useState(false);
-  const router = useRouter();
+  const [hovered, setHovered] = useState(null);
 
-  const activeColor = (href) => router.pathname === href ? "white" : "#9FE1CB";
+  const linkColor = (id) => hovered === id ? "white" : "#9FE1CB";
 
-  const navLink = (href, label) => (
-    
-      href={href}
-      style={{
-        color: activeColor(href),
-        textDecoration: "none",
-        fontFamily: "sans-serif",
-        fontSize: "13px",
-        paddingBottom: "2px",
-        borderBottom: router.pathname === href ? "2px solid #1D9E75" : "2px solid transparent"
-      }}
-      onMouseEnter={e => e.currentTarget.style.color = "white"}
-      onMouseLeave={e => e.currentTarget.style.color = activeColor(href)}
-    >
-      {label}
-    </a>
-  );
-
-  const divider = <span style={{ color: "rgba(255,255,255,0.2)" }}>|</span>;
+  const divider = <span style={{ color: "rgba(255,255,255,0.2)", margin: "0 4px" }}>|</span>;
 
   const waStyle = {
     position: "fixed",
@@ -48,24 +29,25 @@ export default function Nav() {
         <a href="/">
           <img src="/logo.jpg" alt="West Cork Acupuncture" style={{ height: "60px", borderRadius: "4px" }} />
         </a>
-        <div style={{ marginLeft: "auto", display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "center" }}>
-          {navLink("/", "Home")}
+        <div style={{ marginLeft: "auto", display: "flex", gap: "4px", flexWrap: "wrap", alignItems: "center" }}>
+
+          <a href="/" style={{ color: linkColor("home"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("home")} onMouseLeave={() => setHovered(null)}>Home</a>
           {divider}
-          {navLink("/about", "About")}
+          <a href="/about" style={{ color: linkColor("about"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("about")} onMouseLeave={() => setHovered(null)}>About</a>
           {divider}
-          {navLink("/conditions", "Conditions Treated")}
+          <a href="/conditions" style={{ color: linkColor("conditions"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("conditions")} onMouseLeave={() => setHovered(null)}>Conditions Treated</a>
           {divider}
-          {navLink("/faq", "FAQ")}
+          <a href="/faq" style={{ color: linkColor("faq"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("faq")} onMouseLeave={() => setHovered(null)}>FAQ</a>
           {divider}
-          {navLink("/contact", "Contact")}
+          <a href="/contact" style={{ color: linkColor("contact"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("contact")} onMouseLeave={() => setHovered(null)}>Contact</a>
           {divider}
 
-          <div style={{ position: "relative" }}>
+          <div style={{ position: "relative", padding: "0 8px" }}>
             <button
               onClick={() => setPolicyOpen(!policyOpen)}
-              onMouseEnter={e => e.currentTarget.style.color = "white"}
-              onMouseLeave={e => e.currentTarget.style.color = "#9FE1CB"}
-              style={{ background: "transparent", border: "none", color: "#9FE1CB", fontFamily: "sans-serif", fontSize: "13px", cursor: "pointer", padding: 0 }}
+              onMouseEnter={() => setHovered("policy")}
+              onMouseLeave={() => setHovered(null)}
+              style={{ background: "transparent", border: "none", color: linkColor("policy"), fontFamily: "sans-serif", fontSize: "13px", cursor: "pointer", padding: 0 }}
             >
               Policy
             </button>
@@ -79,20 +61,11 @@ export default function Nav() {
           </div>
 
           {divider}
-          {navLink("/voucher", "Gift Vouchers")}
+          <a href="/voucher" style={{ color: linkColor("voucher"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("voucher")} onMouseLeave={() => setHovered(null)}>Gift Vouchers</a>
           {divider}
-          
-            href="https://www.instagram.com/west_corkacupuncture/"
-            target="_blank"
-            style={{ color: "#9FE1CB", textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px" }}
-            onMouseEnter={e => e.currentTarget.style.color = "white"}
-            onMouseLeave={e => e.currentTarget.style.color = "#9FE1CB"}
-          >
-            Instagram
-          </a>
-          <a href="/book" style={{ background: "#1D9E75", color: "white", padding: "8px 16px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px" }}>
-            Book Now
-          </a>
+          <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" style={{ color: linkColor("instagram"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("instagram")} onMouseLeave={() => setHovered(null)}>Instagram</a>
+
+          <a href="/book" style={{ background: "#1D9E75", color: "white", padding: "8px 16px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", marginLeft: "8px" }}>Book Now</a>
         </div>
       </nav>
       <a href="https://wa.me/353831156950" target="_blank" style={waStyle}>WhatsApp Kate</a>
