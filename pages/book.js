@@ -96,9 +96,14 @@ export default function Book() {
 })
       });
       const data = await res.json();
-      if (data.success) {
-        setMessage("Booking request sent! Redirecting you home...");
-        setTimeout(() => { window.location.href = "/"; }, 2000);
+    if (data.success) {
+  if (paymentMethod === "card") {
+    setMessage("Booking request sent! Redirecting to payment...");
+    setTimeout(() => { window.location.href = "/pay"; }, 2000);
+  } else {
+    setMessage("Booking request sent! Redirecting you home...");
+    setTimeout(() => { window.location.href = "/"; }, 2000);
+  }
       } else {
         setError("Something went wrong. Please try again.");
       }
