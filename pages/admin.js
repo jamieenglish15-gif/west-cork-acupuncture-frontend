@@ -79,35 +79,6 @@ function IntakeForms() {
                 <p style={{ fontFamily: "sans-serif", fontWeight: "bold", color: "#085041", margin: 0 }}>{f.name}</p>
                 <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#666", margin: 0 }}>{"Submitted: " + new Date(f.created_at).toLocaleDateString()}</p>
               </div>
-              <div style={{ background: "#085041", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
-  <h3 style={{ fontSize: "18px", color: "white", marginBottom: "12px" }}>Bulk WhatsApp Message</h3>
-  <p style={{ fontFamily: "sans-serif", color: "#9FE1CB", fontSize: "13px", marginBottom: "12px" }}>Only sends to clients who opted in to marketing messages.</p>
-  <textarea
-    id="bulk-message"
-    placeholder="Type your message here e.g. Hi, we have availability this week at West Cork Acupuncture. Book at westcorkacupuncture.ie"
-    style={{ width: "100%", padding: "12px", border: "none", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "13px", marginBottom: "12px", boxSizing: "border-box", height: "80px", resize: "vertical" }}
-  />
-  <button
-    onClick={() => {
-      const msg = document.getElementById("bulk-message").value;
-      if (!msg) { alert("Please type a message first."); return; }
-      const clients = uniqueClients().filter(c => c.marketing_opt_in);
-      if (clients.length === 0) { alert("No clients have opted in to marketing messages."); return; }
-      if (!confirm("This will open WhatsApp for " + clients.length + " opted-in clients. Continue?")) return;
-      clients.forEach((c, i) => {
-        setTimeout(() => {
-          const phone = c.phone.replace(/\D/g, "");
-          if (phone.length >= 9) {
-            window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(msg));
-          }
-        }, i * 1500);
-      });
-    }}
-    style={{ background: "#25D366", color: "white", border: "none", padding: "12px 24px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px", fontWeight: "bold" }}
-  >
-    Send to Opted-in Clients via WhatsApp
-  </button>
-</div>
               <div style={{ display: "flex", gap: "8px" }}>
                 <button onClick={() => { setEditing(f.id); setEditData(Object.assign({}, f)); setSelected(f.id); }} style={{ background: "#085041", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Edit</button>
                 <button onClick={() => deleteForm(f.id)} style={{ background: "#c00", color: "white", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Delete</button>
@@ -274,12 +245,13 @@ function SOAPNotes() {
     </div>
   );
 }
+
 function Vouchers() {
   const [vouchers, setVouchers] = useState([]);
- const [amount, setAmount] = useState("80");
-const [purchaser, setPurchaser] = useState("");
-const [recipient, setRecipient] = useState("");
-const [msg, setMsg] = useState("");
+  const [amount, setAmount] = useState("80");
+  const [purchaser, setPurchaser] = useState("");
+  const [recipient, setRecipient] = useState("");
+  const [msg, setMsg] = useState("");
 
   const fetchVouchers = () => {
     fetch(API + "/vouchers")
@@ -299,6 +271,7 @@ const [msg, setMsg] = useState("");
     const data = await res.json();
     if (data.success) {
       setMsg("Voucher created: " + data.voucher.code);
+      setPurchaser(""); setRecipient("");
       fetchVouchers();
     }
   };
@@ -326,35 +299,27 @@ const [msg, setMsg] = useState("");
   return (
     <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
       <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "24px" }}>Gift Vouchers</h2>
-
-     <div style={{ background: "#F5F0E8", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
-  <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>Generate New Voucher</h3>
-  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
-    <div>
-      <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>Purchased By</label>
-      <input value={purchaser} onChange={e => setPurchaser(e.target.value)} placeholder="Name of buyer" style={{ width: "100%", padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "14px", background: "#E1F5EE", boxSizing: "border-box", marginTop: "4px" }} />
-    </div>
-    <div>
-      <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>Recipient</label>
-      <input value={recipient} onChange={e => setRecipient(e.target.value)} placeholder="Name of recipient" style={{ width: "100%", padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "14px", background: "#E1F5EE", boxSizing: "border-box", marginTop: "4px" }} />
-    </div>
-  </div>
-  <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
-    <select value={amount} onChange={e => setAmount(e.target.value)} style={{ padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "14px", background: "#E1F5EE" }}>
-      <option value="80">EUR80 - Acupuncture</option>
-      <option value="125">EUR125 - Cosmetic Acupuncture</option>
-    </select>
-    <button onClick={createVoucher} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 24px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>
-      Generate Code
-    </button>
-  </div>
-  {msg && (
-    <div style={{ background: "#E1F5EE", padding: "12px", borderRadius: "6px", marginTop: "16px", fontFamily: "sans-serif", fontSize: "14px", color: "#085041", fontWeight: "bold" }}>
-      {msg}
-    </div>
-  )}
-</div>
-
+      <div style={{ background: "#F5F0E8", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
+        <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>Generate New Voucher</h3>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
+          <div>
+            <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>Purchased By</label>
+            <input value={purchaser} onChange={e => setPurchaser(e.target.value)} placeholder="Name of buyer" style={{ width: "100%", padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "14px", background: "#E1F5EE", boxSizing: "border-box", marginTop: "4px" }} />
+          </div>
+          <div>
+            <label style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", fontWeight: "bold" }}>Recipient</label>
+            <input value={recipient} onChange={e => setRecipient(e.target.value)} placeholder="Name of recipient" style={{ width: "100%", padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "14px", background: "#E1F5EE", boxSizing: "border-box", marginTop: "4px" }} />
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+          <select value={amount} onChange={e => setAmount(e.target.value)} style={{ padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "14px", background: "#E1F5EE" }}>
+            <option value="80">EUR80 - Acupuncture</option>
+            <option value="125">EUR125 - Cosmetic Acupuncture</option>
+          </select>
+          <button onClick={createVoucher} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 24px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>Generate Code</button>
+        </div>
+        {msg && <div style={{ background: "#E1F5EE", padding: "12px", borderRadius: "6px", marginTop: "16px", fontFamily: "sans-serif", fontSize: "14px", color: "#085041", fontWeight: "bold" }}>{msg}</div>}
+      </div>
       {vouchers.length === 0 ? (
         <p style={{ fontFamily: "sans-serif", color: "#666" }}>No vouchers yet.</p>
       ) : (
@@ -362,22 +327,22 @@ const [msg, setMsg] = useState("");
           <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
             <thead>
               <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
-             <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Code</th>
-<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Amount</th>
-<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>From</th>
-<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>To</th>
-<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Status</th>
-<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Created</th>
-<th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Actions</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Code</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Amount</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>From</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>To</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Status</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Created</th>
+                <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {vouchers.map(v => (
                 <tr key={v.id} style={{ borderBottom: "1px solid #E1F5EE", opacity: v.used ? 0.6 : 1 }}>
-                <td style={{ padding: "10px", fontWeight: "bold", color: "#085041", fontFamily: "monospace", fontSize: "16px" }}>{v.code}</td>
-                <td style={{ padding: "10px" }}>{"\u20ac"}{v.amount}</td>
-                 <td style={{ padding: "10px" }}>{v.purchaser || "-"}</td>
-                 <td style={{ padding: "10px" }}>{v.recipient || "-"}</td>
+                  <td style={{ padding: "10px", fontWeight: "bold", color: "#085041", fontFamily: "monospace", fontSize: "16px" }}>{v.code}</td>
+                  <td style={{ padding: "10px" }}>{"\u20ac"}{v.amount}</td>
+                  <td style={{ padding: "10px" }}>{v.purchaser || "-"}</td>
+                  <td style={{ padding: "10px" }}>{v.recipient || "-"}</td>
                   <td style={{ padding: "10px" }}>
                     <span style={{ background: v.used ? "#e0e0e0" : "#E1F5EE", color: v.used ? "#888" : "#1D9E75", padding: "4px 10px", borderRadius: "20px", fontFamily: "sans-serif", fontSize: "12px" }}>
                       {v.used ? "Used" : "Active"}
@@ -386,11 +351,9 @@ const [msg, setMsg] = useState("");
                   <td style={{ padding: "10px", color: "#666" }}>{new Date(v.created_at).toLocaleDateString()}</td>
                   <td style={{ padding: "10px" }}>
                     <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                <button onClick={() => window.open("/voucher-print?code=" + v.code + "&amount=" + v.amount + "&purchaser=" + encodeURIComponent(v.purchaser || "") + "&recipient=" + encodeURIComponent(v.recipient || "") + "&date=" + new Date(v.created_at).toLocaleDateString())} style={{ background: "#085041", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Print</button>
+                      <button onClick={() => window.open("/voucher-print?code=" + v.code + "&amount=" + v.amount + "&purchaser=" + encodeURIComponent(v.purchaser || "") + "&recipient=" + encodeURIComponent(v.recipient || "") + "&date=" + new Date(v.created_at).toLocaleDateString())} style={{ background: "#085041", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Print</button>
                       <button onClick={() => sendVoucher(v)} style={{ background: "#25D366", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Send</button>
-                      <button onClick={() => toggleUsed(v)} style={{ background: v.used ? "#1D9E75" : "#888", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>
-                        {v.used ? "Reactivate" : "Mark Used"}
-                      </button>
+                      <button onClick={() => toggleUsed(v)} style={{ background: v.used ? "#1D9E75" : "#888", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>{v.used ? "Reactivate" : "Mark Used"}</button>
                       <button onClick={() => deleteVoucher(v.id)} style={{ background: "#c00", color: "white", border: "none", padding: "6px 10px", borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px" }}>Delete</button>
                     </div>
                   </td>
@@ -403,6 +366,7 @@ const [msg, setMsg] = useState("");
     </div>
   );
 }
+
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
   const [archived, setArchived] = useState([]);
@@ -428,6 +392,7 @@ export default function Admin() {
   const [manualPayment, setManualPayment] = useState("cash");
   const [manualMsg, setManualMsg] = useState("");
   const [expandedRow, setExpandedRow] = useState(null);
+  const [bulkMessage, setBulkMessage] = useState("");
 
   const login = () => {
     if (password === "wca2024") {
@@ -561,17 +526,9 @@ export default function Admin() {
   const toggleBlock = async (slot) => {
     const isBlocked = blockedSlots.includes(slot);
     if (isBlocked) {
-      await fetch(API + "/blocked", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date: blockDate, time_slot: slot })
-      });
+      await fetch(API + "/blocked", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ date: blockDate, time_slot: slot }) });
     } else {
-      await fetch(API + "/blocked", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date: blockDate, time_slot: slot })
-      });
+      await fetch(API + "/blocked", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ date: blockDate, time_slot: slot }) });
     }
     fetchBlockedSlots(blockDate);
   };
@@ -579,11 +536,7 @@ export default function Admin() {
   const blockAll = async () => {
     for (const slot of ALL_SLOTS) {
       if (!blockedSlots.includes(slot)) {
-        await fetch(API + "/blocked", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ date: blockDate, time_slot: slot })
-        });
+        await fetch(API + "/blocked", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ date: blockDate, time_slot: slot }) });
       }
     }
     fetchBlockedSlots(blockDate);
@@ -592,11 +545,7 @@ export default function Admin() {
   const unblockAll = async () => {
     for (const slot of ALL_SLOTS) {
       if (blockedSlots.includes(slot)) {
-        await fetch(API + "/blocked", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ date: blockDate, time_slot: slot })
-        });
+        await fetch(API + "/blocked", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ date: blockDate, time_slot: slot }) });
       }
     }
     fetchBlockedSlots(blockDate);
@@ -637,49 +586,27 @@ export default function Admin() {
   };
 
   const tabStyle = (t) => ({
-    padding: "10px 24px",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontFamily: "sans-serif",
-    fontSize: "14px",
+    padding: "10px 24px", border: "none", borderRadius: "6px", cursor: "pointer",
+    fontFamily: "sans-serif", fontSize: "14px",
     background: tab === t ? "#1D9E75" : "white",
     color: tab === t ? "white" : "#085041",
-    marginRight: "8px",
-    marginBottom: "8px"
+    marginRight: "8px", marginBottom: "8px"
   });
 
   const btnStyle = (color) => ({
-    background: color,
-    color: "white",
-    border: "none",
-    padding: "6px 10px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontFamily: "sans-serif",
-    fontSize: "12px"
+    background: color, color: "white", border: "none", padding: "6px 10px",
+    borderRadius: "4px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "12px"
   });
 
   const inputStyle = {
-    padding: "10px",
-    border: "1px solid #9FE1CB",
-    borderRadius: "6px",
-    fontFamily: "sans-serif",
-    fontSize: "14px",
-    flex: 1,
-    minWidth: "150px"
+    padding: "10px", border: "1px solid #9FE1CB", borderRadius: "6px",
+    fontFamily: "sans-serif", fontSize: "14px", flex: 1, minWidth: "150px"
   };
 
   const formInput = {
-    width: "100%",
-    padding: "12px",
-    border: "1px solid #9FE1CB",
-    borderRadius: "6px",
-    marginBottom: "16px",
-    fontFamily: "sans-serif",
-    fontSize: "14px",
-    boxSizing: "border-box",
-    background: "#E1F5EE"
+    width: "100%", padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px",
+    marginBottom: "16px", fontFamily: "sans-serif", fontSize: "14px",
+    boxSizing: "border-box", background: "#E1F5EE"
   };
 
   const uniqueClients = () => {
@@ -694,6 +621,19 @@ export default function Admin() {
 
   const visitCount = (email) => {
     return [...bookings, ...archived].filter(x => x.email === email && x.status !== "contact").length;
+  };
+
+  const sendBulkWhatsApp = () => {
+    if (!bulkMessage) { alert("Please type a message first."); return; }
+    const clients = uniqueClients().filter(c => c.marketing_opt_in);
+    if (clients.length === 0) { alert("No clients have opted in to marketing messages."); return; }
+    if (!confirm("This will open WhatsApp for " + clients.length + " opted-in clients. Continue?")) return;
+    clients.forEach((c, i) => {
+      setTimeout(() => {
+        const phone = c.phone.replace(/\D/g, "");
+        if (phone.length >= 9) window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(bulkMessage));
+      }, i * 1500);
+    });
   };
 
   const getCalendarDays = () => {
@@ -759,8 +699,8 @@ export default function Admin() {
           <button style={tabStyle("intake")} onClick={() => setTab("intake")}>Intake Forms</button>
           <button style={tabStyle("soap")} onClick={() => setTab("soap")}>SOAP Notes</button>
           <button style={tabStyle("revenue")} onClick={() => setTab("revenue")}>Revenue</button>
-          <button style={tabStyle("qr")} onClick={() => setTab("qr")}>QR Code</button>
           <button style={tabStyle("vouchers")} onClick={() => setTab("vouchers")}>Vouchers</button>
+          <button style={tabStyle("qr")} onClick={() => setTab("qr")}>QR Code</button>
         </div>
 
         {tab === "bookings" && (
@@ -793,12 +733,8 @@ export default function Admin() {
                                 <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Reject</button>
                               </div>
                             )}
-                            {b.status === "accepted" && (
-                              <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Cancel</button>
-                            )}
-                            {b.status === "rejected" && (
-                              <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Restore</button>
-                            )}
+                            {b.status === "accepted" && <button onClick={() => updateStatus(b.id, "rejected", b)} style={btnStyle("#c00")}>Cancel</button>}
+                            {b.status === "rejected" && <button onClick={() => updateStatus(b.id, "accepted", b)} style={btnStyle("#1D9E75")}>Restore</button>}
                             <button onClick={() => updateStatus(b.id, "archived", b)} style={btnStyle("#888")}>Archive</button>
                             <button onClick={() => deleteBooking(b.id)} style={btnStyle("#333")}>Delete</button>
                           </div>
@@ -824,12 +760,7 @@ export default function Admin() {
                                 <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", marginBottom: "4px" }}>Notes</p>
                                 {editingNote === b.id ? (
                                   <div>
-                                    <textarea
-                                      defaultValue={b.notes || ""}
-                                      onChange={e => setNoteText(e.target.value)}
-                                      style={{ width: "100%", padding: "6px", fontFamily: "sans-serif", fontSize: "12px", borderRadius: "4px", border: "1px solid #9FE1CB", marginBottom: "4px" }}
-                                      rows={3}
-                                    />
+                                    <textarea defaultValue={b.notes || ""} onChange={e => setNoteText(e.target.value)} style={{ width: "100%", padding: "6px", fontFamily: "sans-serif", fontSize: "12px", borderRadius: "4px", border: "1px solid #9FE1CB", marginBottom: "4px" }} rows={3} />
                                     <div style={{ display: "flex", gap: "4px" }}>
                                       <button onClick={() => saveNote(b.id)} style={btnStyle("#1D9E75")}>Save</button>
                                       <button onClick={() => setEditingNote(null)} style={btnStyle("#888")}>Cancel</button>
@@ -838,9 +769,7 @@ export default function Admin() {
                                 ) : (
                                   <div>
                                     <p style={{ fontSize: "12px", color: "#555", marginBottom: "4px" }}>{b.notes || "No notes"}</p>
-                                    <button onClick={() => { setEditingNote(b.id); setNoteText(b.notes || ""); }} style={btnStyle("#085041")}>
-                                      {b.notes ? "Edit Note" : "Add Note"}
-                                    </button>
+                                    <button onClick={() => { setEditingNote(b.id); setNoteText(b.notes || ""); }} style={btnStyle("#085041")}>{b.notes ? "Edit Note" : "Add Note"}</button>
                                   </div>
                                 )}
                               </div>
@@ -873,9 +802,7 @@ export default function Admin() {
               <button onClick={() => setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1))} style={btnStyle("#085041")}>Next</button>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px", marginBottom: "8px" }}>
-              {DAYS.map(d => (
-                <div key={d} style={{ textAlign: "center", fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", padding: "8px" }}>{d}</div>
-              ))}
+              {DAYS.map(d => <div key={d} style={{ textAlign: "center", fontFamily: "sans-serif", fontSize: "12px", color: "#085041", fontWeight: "bold", padding: "8px" }}>{d}</div>)}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px" }}>
               {getCalendarDays().map((day, i) => {
@@ -907,6 +834,7 @@ export default function Admin() {
         {tab === "contacts" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>{"Client Contacts" + (uniqueClients().length > 0 ? " (" + uniqueClients().length + ")" : "")}</h2>
+
             <div style={{ background: "#F5F0E8", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
               <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "16px" }}>Add New Contact</h3>
               <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
@@ -916,6 +844,23 @@ export default function Admin() {
                 <button onClick={addContact} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px" }}>Add Contact</button>
               </div>
             </div>
+
+            <div style={{ background: "#085041", padding: "20px", borderRadius: "8px", marginBottom: "24px" }}>
+              <h3 style={{ fontSize: "18px", color: "white", marginBottom: "8px" }}>Bulk WhatsApp Message</h3>
+              <p style={{ fontFamily: "sans-serif", color: "#9FE1CB", fontSize: "13px", marginBottom: "12px" }}>
+                {"Only sends to clients who opted in to marketing. Opted in: " + uniqueClients().filter(c => c.marketing_opt_in).length}
+              </p>
+              <textarea
+                value={bulkMessage}
+                onChange={e => setBulkMessage(e.target.value)}
+                placeholder="Type your message here e.g. Hi, we have availability this week at West Cork Acupuncture. Book at westcorkacupuncture.ie"
+                style={{ width: "100%", padding: "12px", border: "none", borderRadius: "6px", fontFamily: "sans-serif", fontSize: "13px", marginBottom: "12px", boxSizing: "border-box", height: "80px", resize: "vertical" }}
+              />
+              <button onClick={sendBulkWhatsApp} style={{ background: "#25D366", color: "white", border: "none", padding: "12px 24px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif", fontSize: "14px", fontWeight: "bold" }}>
+                Send to Opted-in Clients via WhatsApp
+              </button>
+            </div>
+
             {uniqueClients().length === 0 ? (
               <p style={{ fontFamily: "sans-serif", color: "#666" }}>No contacts yet.</p>
             ) : (
@@ -930,12 +875,12 @@ export default function Admin() {
                         <td style={{ padding: "10px" }}>{editingNote === "contact-" + b.id ? <input id={"edit-phone-" + b.id} defaultValue={b.phone} style={{ padding: "6px", border: "1px solid #9FE1CB", borderRadius: "4px", fontFamily: "sans-serif", fontSize: "13px", width: "100%" }} /> : b.phone}</td>
                         <td style={{ padding: "10px", textAlign: "center", fontWeight: "bold", color: "#085041" }}>{visitCount(b.email)}</td>
                         <td style={{ padding: "10px", textAlign: "center" }}>
-  {b.marketing_opt_in ? (
-    <span style={{ background: "#E1F5EE", color: "#1D9E75", padding: "4px 10px", borderRadius: "20px", fontFamily: "sans-serif", fontSize: "12px", fontWeight: "bold" }}>Yes</span>
-  ) : (
-    <span style={{ background: "#f0f0f0", color: "#888", padding: "4px 10px", borderRadius: "20px", fontFamily: "sans-serif", fontSize: "12px" }}>No</span>
-  )}
-</td>                 
+                          {b.marketing_opt_in ? (
+                            <span style={{ background: "#E1F5EE", color: "#1D9E75", padding: "4px 10px", borderRadius: "20px", fontFamily: "sans-serif", fontSize: "12px", fontWeight: "bold" }}>Yes</span>
+                          ) : (
+                            <span style={{ background: "#f0f0f0", color: "#888", padding: "4px 10px", borderRadius: "20px", fontFamily: "sans-serif", fontSize: "12px" }}>No</span>
+                          )}
+                        </td>
                         <td style={{ padding: "10px" }}>
                           <a href={"https://wa.me/" + b.phone.replace(/\D/g, "")} target="_blank" style={{ background: "#1D9E75", color: "white", padding: "6px 12px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "12px" }}>Message</a>
                         </td>
@@ -998,13 +943,23 @@ export default function Admin() {
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
             <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "16px" }}>Manage Available Slots</h2>
             <p style={{ fontFamily: "sans-serif", color: "#666", marginBottom: "24px" }}>Select a date then click slots to block or unblock them.</p>
-            <input
-              type="date"
-              onChange={e => setBlockDate(e.target.value)}
-              style={{ padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginBottom: "24px", fontFamily: "sans-serif", fontSize: "14px" }}
-            />
+            <input type="date" onChange={e => setBlockDate(e.target.value)} style={{ padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginBottom: "24px", fontFamily: "sans-serif", fontSize: "14px" }} />
             {blockDate && (
               <div>
+                <div style={{ background: "#E1F5EE", padding: "16px", borderRadius: "8px", marginBottom: "16px", display: "flex", gap: "32px", flexWrap: "wrap" }}>
+                  <div>
+                    <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "4px" }}>Available Slots</p>
+                    <p style={{ fontFamily: "sans-serif", fontSize: "28px", fontWeight: "bold", color: "#085041", margin: 0 }}>{ALL_SLOTS.length - blockedSlots.length}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "4px" }}>Potential Earnings</p>
+                    <p style={{ fontFamily: "sans-serif", fontSize: "28px", fontWeight: "bold", color: "#1D9E75", margin: 0 }}>{"\u20ac"}{(ALL_SLOTS.length - blockedSlots.length) * 80}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "4px" }}>Blocked Slots</p>
+                    <p style={{ fontFamily: "sans-serif", fontSize: "28px", fontWeight: "bold", color: "#c00", margin: 0 }}>{blockedSlots.length}</p>
+                  </div>
+                </div>
                 <div style={{ marginBottom: "16px", display: "flex", gap: "10px" }}>
                   <button onClick={blockAll} style={{ background: "#c00", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>Block All</button>
                   <button onClick={unblockAll} style={{ background: "#1D9E75", color: "white", border: "none", padding: "10px 20px", borderRadius: "6px", cursor: "pointer", fontFamily: "sans-serif" }}>Unblock All</button>
@@ -1064,8 +1019,8 @@ export default function Admin() {
         )}
 
         {tab === "intake" && <IntakeForms />}
-        {tab === "vouchers" && <Vouchers />}
         {tab === "soap" && <SOAPNotes />}
+        {tab === "vouchers" && <Vouchers />}
 
         {tab === "revenue" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
@@ -1135,10 +1090,7 @@ export default function Admin() {
             />
             <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "8px" }}>13 North Street, Skibbereen, P81 Y237</p>
             <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#085041", marginBottom: "24px" }}>083 115 6950</p>
-            <button
-              onClick={() => window.open("/qr")}
-              style={{ width: "100%", background: "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontFamily: "sans-serif", fontSize: "16px", cursor: "pointer" }}
-            >
+            <button onClick={() => window.open("/qr")} style={{ width: "100%", background: "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontFamily: "sans-serif", fontSize: "16px", cursor: "pointer" }}>
               Open Full Print Page
             </button>
           </div>
