@@ -65,6 +65,8 @@ export default function Nav() {
           {divider}
           <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" style={{ color: linkColor("instagram"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("instagram")} onMouseLeave={() => setHovered(null)}>Instagram</a>
 
+            <a href="/pay" style={{ color: linkColor("pay"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("pay")} onMouseLeave={() => setHovered(null)}>Pay Online</a>
+{divider}
           <a href="/book" style={{ background: "#1D9E75", color: "white", padding: "8px 16px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", marginLeft: "8px" }}>Book Now</a>
         </div>
       </nav>
