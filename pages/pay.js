@@ -85,7 +85,7 @@ export default function Pay() {
           <p style={{ fontSize: "48px", marginBottom: "16px" }}>✓</p>
           <h1 style={{ fontSize: "28px", color: "#085041", marginBottom: "16px" }}>Payment Successful</h1>
           <p style={{ fontFamily: "sans-serif", color: "#555", marginBottom: "24px" }}>Thank you {name}. Your payment has been received. Kate will be in touch to confirm your appointment.</p>
-          <a href="/book" style={{ background: "#1D9E75", color: "white", padding: "12px 32px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>Book Appointment</a>
+          <a href="/" style={{ background: "#1D9E75", color: "white", padding: "12px 32px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>Return Home</a>
         </div>
       </div>
     );
