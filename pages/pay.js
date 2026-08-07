@@ -47,11 +47,13 @@ function CheckoutForm({ amount, name, service, onSuccess }) {
 
 export default function Pay() {
   const [clientSecret, setClientSecret] = useState("");
-  const [amount, setAmount] = useState(80);
-  const [name, setName] = useState("");
-  const [service, setService] = useState("Acupuncture");
-  const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
+const [amount, setAmount] = useState(80);
+const [baseAmount, setBaseAmount] = useState(80);
+const [tip, setTip] = useState(0);
+const [name, setName] = useState("");
+const [service, setService] = useState("Acupuncture");
+const [success, setSuccess] = useState(false);
+const [loading, setLoading] = useState(false);
 
 const startPayment = async () => {
     if (!name) { alert("Please enter your name."); return; }
@@ -106,19 +108,31 @@ const startPayment = async () => {
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041", fontWeight: "bold" }}>Service</label>
-              <select value={service} onChange={e => { setService(e.target.value); setAmount(e.target.value === "Cosmetic Acupuncture" ? 125 : 80); }} style={{ width: "100%", padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginTop: "6px", fontFamily: "sans-serif", fontSize: "14px", boxSizing: "border-box" }}>
+              <select value={service} onChange={e => { const base = e.target.value === "Cosmetic Acupuncture" ? 125 : 80; setService(e.target.value); setBaseAmount(base); setAmount(base + tip); }} style={{ width: "100%", padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginTop: "6px", fontFamily: "sans-serif", fontSize: "14px", boxSizing: "border-box" }}>
                 <option value="Acupuncture">Acupuncture — {"\u20ac"}80</option>
                 <option value="Cosmetic Acupuncture">Cosmetic Acupuncture — {"\u20ac"}125</option>
               </select>
             </div>
-            <div style={{ background: "#E1F5EE", padding: "16px", borderRadius: "6px", marginBottom: "24px", textAlign: "center" }}>
-              <p style={{ fontFamily: "sans-serif", fontSize: "32px", fontWeight: "bold", color: "#085041", margin: 0 }}>{"\u20ac"}{amount}</p>
-              <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#666", margin: 0 }}>{service}</p>
-            </div>
-            <button onClick={startPayment} disabled={loading} style={{ width: "100%", background: loading ? "#999" : "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontFamily: "sans-serif", fontSize: "16px", cursor: "pointer" }}>
-              {loading ? "Loading..." : "Continue to Payment"}
-            </button>
-          </div>
+           <div style={{ marginBottom: "16px" }}>
+  <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041", fontWeight: "bold" }}>Add a Tip (optional)</label>
+  <div style={{ display: "flex", gap: "8px", marginTop: "8px", flexWrap: "wrap" }}>
+    {[0, 10, 15, 20].map(pct => (
+      <button
+        key={pct}
+        type="button"
+        onClick={() => { const t = Math.round(baseAmount * pct / 100); setTip(t); setAmount(baseAmount + t); }}
+        style={{ padding: "8px 16px", borderRadius: "6px", border: "2px solid", borderColor: tip === Math.round(baseAmount * pct / 100) ? "#085041" : "#9FE1CB", background: tip === Math.round(baseAmount * pct / 100) ? "#085041" : "white", color: tip === Math.round(baseAmount * pct / 100) ? "white" : "#085041", fontFamily: "sans-serif", fontSize: "13px", cursor: "pointer" }}
+      >
+        {pct === 0 ? "No tip" : pct + "% (" + "\u20ac" + Math.round(baseAmount * pct / 100) + ")"}
+      </button>
+    ))}
+  </div>
+</div>
+
+<div style={{ background: "#E1F5EE", padding: "16px", borderRadius: "6px", marginBottom: "24px", textAlign: "center" }}>
+  <p style={{ fontFamily: "sans-serif", fontSize: "32px", fontWeight: "bold", color: "#085041", margin: 0 }}>{"\u20ac"}{amount}</p>
+  <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#666", margin: 0 }}>{service}{tip > 0 ? " + \u20ac" + tip + " tip" : ""}</p>
+</div>
         ) : (
           <div style={{ background: "white", padding: "32px", borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
             <div style={{ background: "#E1F5EE", padding: "16px", borderRadius: "6px", marginBottom: "24px", textAlign: "center" }}>
