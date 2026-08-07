@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import Head from "next/head";
@@ -6,7 +6,7 @@ import Head from "next/head";
 const stripePromise = loadStripe("pk_test_51U0JAWJzahbtGOvyNjgkOaSoSNAD7X3Dr7HHkhFmbjbRZm3KQnIxNnw1FJC3rfh6yYAswd3zPlKgpe1D5jKXo7YG009OTBKEDZ");
 const API = "https://west-cork-acupuncture-backend-production-366a.up.railway.app";
 
-function CheckoutForm({ amount, name, service, onSuccess }) {
+function CheckoutForm({ amount, name, service, tip, onSuccess }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -39,23 +39,23 @@ function CheckoutForm({ amount, name, service, onSuccess }) {
         disabled={!stripe || loading}
         style={{ width: "100%", background: loading ? "#999" : "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontFamily: "sans-serif", fontSize: "16px", cursor: loading ? "not-allowed" : "pointer", marginTop: "20px" }}
       >
-        {loading ? "Processing..." : "Pay " + "\u20ac" + amount}
+        {loading ? "Processing..." : "Pay " + "\u20ac" + amount + (tip > 0 ? " (incl. \u20ac" + tip + " tip)" : "")}
       </button>
     </form>
   );
 }
 
 export default function Pay() {
+  const [amount, setAmount] = useState(80);
+  const [baseAmount, setBaseAmount] = useState(80);
+  const [tip, setTip] = useState(0);
+  const [name, setName] = useState("");
+  const [service, setService] = useState("Acupuncture");
   const [clientSecret, setClientSecret] = useState("");
-const [amount, setAmount] = useState(80);
-const [baseAmount, setBaseAmount] = useState(80);
-const [tip, setTip] = useState(0);
-const [name, setName] = useState("");
-const [service, setService] = useState("Acupuncture");
-const [success, setSuccess] = useState(false);
-const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-const startPayment = async () => {
+  const startPayment = async () => {
     if (!name) { alert("Please enter your name."); return; }
     setLoading(true);
     try {
@@ -95,6 +95,7 @@ const startPayment = async () => {
     <div style={{ fontFamily: "Georgia, serif", background: "#F5F0E8", minHeight: "100vh", padding: "40px" }}>
       <Head>
         <title>Pay Online | West Cork Acupuncture</title>
+        <link rel="canonical" href="https://westcorkacupuncture.ie/pay" />
       </Head>
       <div style={{ maxWidth: "480px", margin: "0 auto" }}>
         <h1 style={{ fontSize: "36px", color: "#085041", marginBottom: "8px" }}>Pay Online</h1>
@@ -108,39 +109,48 @@ const startPayment = async () => {
             </div>
             <div style={{ marginBottom: "16px" }}>
               <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041", fontWeight: "bold" }}>Service</label>
-              <select value={service} onChange={e => { const base = e.target.value === "Cosmetic Acupuncture" ? 125 : 80; setService(e.target.value); setBaseAmount(base); setAmount(base + tip); }} style={{ width: "100%", padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginTop: "6px", fontFamily: "sans-serif", fontSize: "14px", boxSizing: "border-box" }}>
+              <select value={service} onChange={e => { const base = e.target.value === "Cosmetic Acupuncture" ? 125 : 80; setService(e.target.value); setBaseAmount(base); setTip(0); setAmount(base); }} style={{ width: "100%", padding: "12px", border: "1px solid #9FE1CB", borderRadius: "6px", marginTop: "6px", fontFamily: "sans-serif", fontSize: "14px", boxSizing: "border-box" }}>
                 <option value="Acupuncture">Acupuncture — {"\u20ac"}80</option>
                 <option value="Cosmetic Acupuncture">Cosmetic Acupuncture — {"\u20ac"}125</option>
               </select>
             </div>
-           <div style={{ marginBottom: "16px" }}>
-  <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041", fontWeight: "bold" }}>Add a Tip (optional)</label>
-  <div style={{ display: "flex", gap: "8px", marginTop: "8px", flexWrap: "wrap" }}>
-    {[0, 10, 15, 20].map(pct => (
-      <button
-        key={pct}
-        type="button"
-        onClick={() => { const t = Math.round(baseAmount * pct / 100); setTip(t); setAmount(baseAmount + t); }}
-        style={{ padding: "8px 16px", borderRadius: "6px", border: "2px solid", borderColor: tip === Math.round(baseAmount * pct / 100) ? "#085041" : "#9FE1CB", background: tip === Math.round(baseAmount * pct / 100) ? "#085041" : "white", color: tip === Math.round(baseAmount * pct / 100) ? "white" : "#085041", fontFamily: "sans-serif", fontSize: "13px", cursor: "pointer" }}
-      >
-        {pct === 0 ? "No tip" : pct + "% (" + "\u20ac" + Math.round(baseAmount * pct / 100) + ")"}
-      </button>
-    ))}
-  </div>
-</div>
 
-<div style={{ background: "#E1F5EE", padding: "16px", borderRadius: "6px", marginBottom: "24px", textAlign: "center" }}>
-  <p style={{ fontFamily: "sans-serif", fontSize: "32px", fontWeight: "bold", color: "#085041", margin: 0 }}>{"\u20ac"}{amount}</p>
-  <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#666", margin: 0 }}>{service}{tip > 0 ? " + \u20ac" + tip + " tip" : ""}</p>
-</div>
+            <div style={{ marginBottom: "16px" }}>
+              <label style={{ fontFamily: "sans-serif", fontSize: "14px", color: "#085041", fontWeight: "bold" }}>Add a Tip (optional)</label>
+              <div style={{ display: "flex", gap: "8px", marginTop: "8px", flexWrap: "wrap" }}>
+                {[0, 10, 15, 20].map(pct => {
+                  const t = Math.round(baseAmount * pct / 100);
+                  return (
+                    <button
+                      key={pct}
+                      type="button"
+                      onClick={() => { setTip(t); setAmount(baseAmount + t); }}
+                      style={{ padding: "8px 16px", borderRadius: "6px", border: "2px solid", borderColor: tip === t ? "#085041" : "#9FE1CB", background: tip === t ? "#085041" : "white", color: tip === t ? "white" : "#085041", fontFamily: "sans-serif", fontSize: "13px", cursor: "pointer" }}
+                    >
+                      {pct === 0 ? "No tip" : pct + "% (" + "\u20ac" + t + ")"}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div style={{ background: "#E1F5EE", padding: "16px", borderRadius: "6px", marginBottom: "24px", textAlign: "center" }}>
+              <p style={{ fontFamily: "sans-serif", fontSize: "32px", fontWeight: "bold", color: "#085041", margin: 0 }}>{"\u20ac"}{amount}</p>
+              <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#666", margin: 0 }}>{service}{tip > 0 ? " + \u20ac" + tip + " tip" : ""}</p>
+            </div>
+
+            <button onClick={startPayment} disabled={loading} style={{ width: "100%", background: loading ? "#999" : "#1D9E75", color: "white", padding: "14px", borderRadius: "6px", border: "none", fontFamily: "sans-serif", fontSize: "16px", cursor: "pointer" }}>
+              {loading ? "Loading..." : "Continue to Payment"}
+            </button>
+          </div>
         ) : (
           <div style={{ background: "white", padding: "32px", borderRadius: "8px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
             <div style={{ background: "#E1F5EE", padding: "16px", borderRadius: "6px", marginBottom: "24px", textAlign: "center" }}>
               <p style={{ fontFamily: "sans-serif", fontSize: "28px", fontWeight: "bold", color: "#085041", margin: 0 }}>{"\u20ac"}{amount}</p>
-              <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#666", margin: 0 }}>{service} — {name}</p>
+              <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "#666", margin: 0 }}>{service}{tip > 0 ? " + \u20ac" + tip + " tip" : ""} — {name}</p>
             </div>
             <Elements stripe={stripePromise} options={{ clientSecret }}>
-              <CheckoutForm amount={amount} name={name} service={service} onSuccess={() => setSuccess(true)} />
+              <CheckoutForm amount={amount} name={name} service={service} tip={tip} onSuccess={() => setSuccess(true)} />
             </Elements>
           </div>
         )}
