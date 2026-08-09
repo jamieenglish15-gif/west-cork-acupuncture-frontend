@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /receipt
+Disallow: /voucher-print
+Disallow: /soap
+Disallow: /qr
+Disallow: /intake
 
 Sitemap: https://westcorkacupuncture.ie/sitemap.xml
