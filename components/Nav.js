@@ -1,12 +1,71 @@
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Nav() {
-  const [policyOpen, setPolicyOpen] = useState(false);
-  const [hovered, setHovered] = useState(null);
+  const [open, setOpen] = useState(null);
 
-  const linkColor = (id) => hovered === id ? "white" : "#9FE1CB";
+  const toggle = (id) => setOpen(open === id ? null : id);
+  const close = () => setOpen(null);
 
-  const divider = <span style={{ color: "rgba(255,255,255,0.2)", margin: "0 4px" }}>|</span>;
+  const btnStyle = {
+    background: "rgba(255,255,255,0.12)",
+    color: "#fff",
+    border: "1px solid rgba(255,255,255,0.25)",
+    borderRadius: "4px",
+    padding: "7px 14px",
+    fontFamily: "sans-serif",
+    fontSize: "13px",
+    fontWeight: "600",
+    cursor: "pointer",
+    textDecoration: "none",
+    whiteSpace: "nowrap",
+  };
+
+  const bookStyle = {
+    ...btnStyle,
+    background: "#1D9E75",
+    border: "1px solid #1D9E75",
+  };
+
+  const dropTrigger = (id, label) => ({
+    background: "transparent",
+    border: "none",
+    color: open === id ? "#fff" : "#9FE1CB",
+    fontFamily: "sans-serif",
+    fontSize: "13px",
+    fontWeight: "600",
+    cursor: "pointer",
+    padding: "7px 10px",
+    display: "flex",
+    alignItems: "center",
+    gap: "4px",
+    whiteSpace: "nowrap",
+  });
+
+  const dropMenu = {
+    position: "absolute",
+    top: "calc(100% + 8px)",
+    left: "0",
+    background: "#fff",
+    borderRadius: "8px",
+    boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+    minWidth: "180px",
+    zIndex: 500,
+    overflow: "hidden",
+  };
+
+  const dropItem = {
+    display: "block",
+    padding: "11px 16px",
+    fontFamily: "sans-serif",
+    fontSize: "13px",
+    color: "#085041",
+    textDecoration: "none",
+    borderBottom: "1px solid #E1F5EE",
+    fontWeight: "500",
+  };
+
+  const dropItemLast = { ...dropItem, borderBottom: "none" };
 
   const waStyle = {
     position: "fixed",
@@ -20,57 +79,85 @@ export default function Nav() {
     fontFamily: "sans-serif",
     fontSize: "14px",
     fontWeight: "bold",
-    zIndex: 999
+    zIndex: 999,
   };
 
   return (
     <div>
-      <nav style={{ background: "#085041", padding: "12px 24px", display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap", position: "sticky", top: 0, zIndex: 100, borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-        <a href="/">
-          <img src="/logo.jpg" alt="West Cork Acupuncture" style={{ height: "60px", borderRadius: "4px" }} />
+      {open && (
+        <div
+          onClick={close}
+          style={{ position: "fixed", inset: 0, zIndex: 99 }}
+        />
+      )}
+
+      <nav style={{
+        background: "#085041",
+        padding: "10px 24px",
+        display: "flex",
+        gap: "8px",
+        alignItems: "center",
+        flexWrap: "wrap",
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+        borderBottom: "1px solid rgba(255,255,255,0.1)",
+      }}>
+        <a href="/" onClick={close}>
+          <img src="/logo.jpg" alt="West Cork Acupuncture" style={{ height: "56px", borderRadius: "4px" }} />
         </a>
-        <div style={{ marginLeft: "auto", display: "flex", gap: "4px", flexWrap: "wrap", alignItems: "center", fontWeight: "bold" }}>
 
-          <a href="/" style={{ color: linkColor("home"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("home")} onMouseLeave={() => setHovered(null)}>Home</a>
-          {divider}
-          <a href="/about" style={{ color: linkColor("about"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("about")} onMouseLeave={() => setHovered(null)}>About</a>
-          {divider}
-          <a href="/conditions" style={{ color: linkColor("conditions"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("conditions")} onMouseLeave={() => setHovered(null)}>Conditions Treated</a>
-          {divider}
-          <a href="/faq" style={{ color: linkColor("faq"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("faq")} onMouseLeave={() => setHovered(null)}>FAQ</a>
-          {divider}
-          <a href="/contact" style={{ color: linkColor("contact"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("contact")} onMouseLeave={() => setHovered(null)}>Contact</a>
-          {divider}
+        <div style={{ marginLeft: "auto", display: "flex", gap: "4px", alignItems: "center", flexWrap: "wrap" }}>
 
-          <div style={{ position: "relative", padding: "0 8px" }}>
-            <button
-              onClick={() => setPolicyOpen(!policyOpen)}
-              onMouseEnter={() => setHovered("policy")}
-              onMouseLeave={() => setHovered(null)}
-              style={{ background: "transparent", border: "none", color: linkColor("policy"), fontFamily: "sans-serif", fontSize: "13px", cursor: "pointer", padding: 0 }}
-            >
-              Policy
+          {/* Treatments dropdown */}
+          <div style={{ position: "relative" }}>
+            <button style={dropTrigger("treatments")} onClick={() => toggle("treatments")}>
+              Treatments <span style={{ fontSize: "10px" }}>{open === "treatments" ? "▲" : "▼"}</span>
             </button>
-            {policyOpen && (
-              <div style={{ position: "absolute", top: "24px", right: 0, background: "white", borderRadius: "6px", boxShadow: "0 4px 16px rgba(0,0,0,0.15)", minWidth: "200px", zIndex: 200 }}>
-                <a href="/cancellation" onClick={() => setPolicyOpen(false)} style={{ display: "block", padding: "12px 16px", fontFamily: "sans-serif", fontSize: "13px", color: "#085041", textDecoration: "none", borderBottom: "1px solid #E1F5EE" }}>Cancellation Policy</a>
-                <a href="/privacy" onClick={() => setPolicyOpen(false)} style={{ display: "block", padding: "12px 16px", fontFamily: "sans-serif", fontSize: "13px", color: "#085041", textDecoration: "none", borderBottom: "1px solid #E1F5EE" }}>Privacy Policy</a>
-                <a href="/terms" onClick={() => setPolicyOpen(false)} style={{ display: "block", padding: "12px 16px", fontFamily: "sans-serif", fontSize: "13px", color: "#085041", textDecoration: "none" }}>Terms & Conditions</a>
+            {open === "treatments" && (
+              <div style={dropMenu}>
+                <a href="/conditions" style={dropItem} onClick={close}>Conditions Treated</a>
+                <a href="/faq" style={dropItemLast} onClick={close}>FAQ</a>
               </div>
             )}
           </div>
 
-          {divider}
-          <a href="/voucher" style={{ color: linkColor("voucher"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("voucher")} onMouseLeave={() => setHovered(null)}>Gift Vouchers</a>
-          {divider}
-          <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" style={{ color: linkColor("instagram"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("instagram")} onMouseLeave={() => setHovered(null)}>Instagram</a>
+          {/* About dropdown */}
+          <div style={{ position: "relative" }}>
+            <button style={dropTrigger("about")} onClick={() => toggle("about")}>
+              About <span style={{ fontSize: "10px" }}>{open === "about" ? "▲" : "▼"}</span>
+            </button>
+            {open === "about" && (
+              <div style={dropMenu}>
+                <a href="/about" style={dropItem} onClick={close}>About Kate</a>
+                <a href="/contact" style={dropItemLast} onClick={close}>Contact</a>
+              </div>
+            )}
+          </div>
 
-            <a href="/pay" style={{ color: linkColor("pay"), textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", padding: "0 8px" }} onMouseEnter={() => setHovered("pay")} onMouseLeave={() => setHovered(null)}>Pay Online</a>
-{divider}
-          <a href="/book" style={{ background: "#1D9E75", color: "white", padding: "8px 16px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "13px", marginLeft: "8px" }}>Book Now</a>
+          {/* Policy dropdown */}
+          <div style={{ position: "relative" }}>
+            <button style={dropTrigger("policy")} onClick={() => toggle("policy")}>
+              Policy <span style={{ fontSize: "10px" }}>{open === "policy" ? "▲" : "▼"}</span>
+            </button>
+            {open === "policy" && (
+              <div style={dropMenu}>
+                <a href="/cancellation" style={dropItem} onClick={close}>Cancellation Policy</a>
+                <a href="/privacy" style={dropItem} onClick={close}>Privacy Policy</a>
+                <a href="/terms" style={dropItemLast} onClick={close}>Terms & Conditions</a>
+              </div>
+            )}
+          </div>
+
+          <a href="/shop" style={btnStyle}>Shop</a>
+          <a href="/voucher" style={btnStyle}>Gift Vouchers</a>
+          <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" rel="noreferrer" style={btnStyle}>Instagram</a>
+          <a href="/book" style={bookStyle}>Book Now</a>
+
         </div>
       </nav>
-      <a href="https://wa.me/353831156950" target="_blank" style={waStyle}>WhatsApp Kate</a>
+
+      <a href="https://wa.me/353831156950" target="_blank" rel="noreferrer" style={waStyle}>WhatsApp Kate</a>
     </div>
   );
 }
