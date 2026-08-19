@@ -366,6 +366,90 @@ function Vouchers() {
     </div>
   );
 }
+function RevenueTab({ bookings, archived }) {
+  const [vouchers, setVouchers] = useState([]);
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    fetch(API + "/vouchers").then(r => r.json()).then(setVouchers).catch(() => setVouchers([]));
+    fetch(API + "/orders").then(r => r.json()).then(setOrders).catch(() => setOrders([]));
+  }, []);
+
+  const allBookings = [...bookings, ...archived].filter(b => b.status === "accepted" || b.status === "archived");
+  const monthly = {};
+
+  allBookings.forEach(b => {
+    const month = String(b.date).slice(0, 7);
+    const price = parseInt(PRICES[b.service] || "80");
+    if (!monthly[month]) monthly[month] = { appointments: 0, vouchers: 0, shop: 0 };
+    monthly[month].appointments += price;
+  });
+
+  vouchers.forEach(v => {
+    if (!v.used) return;
+    const month = String(v.created_at).slice(0, 7);
+    if (!monthly[month]) monthly[month] = { appointments: 0, vouchers: 0, shop: 0 };
+    monthly[month].vouchers += parseInt(v.amount);
+  });
+
+  orders.forEach(o => {
+    const month = String(o.created_at).slice(0, 7);
+    if (!monthly[month]) monthly[month] = { appointments: 0, vouchers: 0, shop: 0 };
+    monthly[month].shop += parseFloat(o.total);
+  });
+
+  const months = Object.keys(monthly).sort().reverse();
+  const grandTotal = months.reduce((sum, m) => sum + monthly[m].appointments + monthly[m].vouchers + monthly[m].shop, 0);
+  const voucherTotal = vouchers.filter(v => v.used).reduce((sum, v) => sum + parseInt(v.amount), 0);
+  const shopTotal = orders.reduce((sum, o) => sum + parseFloat(o.total), 0);
+  const apptTotal = allBookings.reduce((sum, b) => sum + parseInt(PRICES[b.service] || "80"), 0);
+
+  return (
+    <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
+      <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "24px" }}>Revenue Tracker</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginBottom: "32px" }}>
+        <div style={{ background: "#085041", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
+          <p style={{ fontFamily: "sans-serif", fontSize: "11px", color: "#9FE1CB", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px" }}>Total Revenue</p>
+          <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "white", fontWeight: "bold", margin: 0 }}>€{grandTotal.toFixed(0)}</p>
+        </div>
+        <div style={{ background: "#1D9E75", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
+          <p style={{ fontFamily: "sans-serif", fontSize: "11px", color: "white", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px", opacity: 0.8 }}>Appointments</p>
+          <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "white", fontWeight: "bold", margin: 0 }}>€{apptTotal}</p>
+        </div>
+        <div style={{ background: "#E1F5EE", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
+          <p style={{ fontFamily: "sans-serif", fontSize: "11px", color: "#085041", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px" }}>Vouchers Sold</p>
+          <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "#085041", fontWeight: "bold", margin: 0 }}>€{voucherTotal}</p>
+        </div>
+        <div style={{ background: "#F5F0E8", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
+          <p style={{ fontFamily: "sans-serif", fontSize: "11px", color: "#085041", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px" }}>Shop Orders</p>
+          <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "#085041", fontWeight: "bold", margin: 0 }}>€{shopTotal.toFixed(0)}</p>
+        </div>
+      </div>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
+        <thead>
+          <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
+            <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Month</th>
+            <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Appointments</th>
+            <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Vouchers</th>
+            <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Shop</th>
+            <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {months.map(m => (
+            <tr key={m} style={{ borderBottom: "1px solid #E1F5EE" }}>
+              <td style={{ padding: "10px" }}>{new Date(m + "-01").toLocaleDateString("en-IE", { month: "long", year: "numeric" })}</td>
+              <td style={{ padding: "10px" }}>€{monthly[m].appointments}</td>
+              <td style={{ padding: "10px" }}>€{monthly[m].vouchers}</td>
+              <td style={{ padding: "10px" }}>€{monthly[m].shop.toFixed(0)}</td>
+              <td style={{ padding: "10px", fontWeight: "bold", color: "#085041" }}>€{(monthly[m].appointments + monthly[m].vouchers + monthly[m].shop).toFixed(0)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
@@ -1023,61 +1107,8 @@ export default function Admin() {
         {tab === "vouchers" && <Vouchers />}
 
         {tab === "revenue" && (
-          <div style={{ background: "white", borderRadius: "8px", padding: "24px" }}>
-            <h2 style={{ fontSize: "24px", color: "#085041", marginBottom: "24px" }}>Revenue Tracker</h2>
-            {(() => {
-              const allBookings = [...bookings, ...archived].filter(b => b.status === "accepted" || b.status === "archived");
-              const monthly = {};
-              allBookings.forEach(b => {
-                const month = String(b.date).slice(0, 7);
-                const price = parseInt(PRICES[b.service] || "80");
-                if (!monthly[month]) monthly[month] = { total: 0, count: 0 };
-                monthly[month].total += price;
-                monthly[month].count += 1;
-              });
-              const months = Object.keys(monthly).sort().reverse();
-              const grandTotal = months.reduce((sum, m) => sum + monthly[m].total, 0);
-              return (
-                <div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "32px" }}>
-                    <div style={{ background: "#085041", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
-                      <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#9FE1CB", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px" }}>Total Revenue</p>
-                      <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "white", fontWeight: "bold" }}>{"\u20ac"}{grandTotal}</p>
-                    </div>
-                    <div style={{ background: "#1D9E75", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
-                      <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "white", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px", opacity: 0.8 }}>Total Appointments</p>
-                      <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "white", fontWeight: "bold" }}>{allBookings.length}</p>
-                    </div>
-                    {months[0] && (
-                      <div style={{ background: "#E1F5EE", padding: "24px", borderRadius: "8px", textAlign: "center" }}>
-                        <p style={{ fontFamily: "sans-serif", fontSize: "12px", color: "#085041", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "2px" }}>This Month</p>
-                        <p style={{ fontFamily: "sans-serif", fontSize: "36px", color: "#085041", fontWeight: "bold" }}>{"\u20ac"}{monthly[months[0]].total}</p>
-                      </div>
-                    )}
-                  </div>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: "14px" }}>
-                    <thead>
-                      <tr style={{ borderBottom: "2px solid #E1F5EE" }}>
-                        <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Month</th>
-                        <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Appointments</th>
-                        <th style={{ padding: "10px", textAlign: "left", color: "#085041" }}>Revenue</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {months.map(m => (
-                        <tr key={m} style={{ borderBottom: "1px solid #E1F5EE" }}>
-                          <td style={{ padding: "10px" }}>{new Date(m + "-01").toLocaleDateString("en-IE", { month: "long", year: "numeric" })}</td>
-                          <td style={{ padding: "10px" }}>{monthly[m].count}</td>
-                          <td style={{ padding: "10px", fontWeight: "bold", color: "#085041" }}>{"\u20ac"}{monthly[m].total}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              );
-            })()}
-          </div>
-        )}
+  <RevenueTab bookings={bookings} archived={archived} />
+)}
 
         {tab === "qr" && (
           <div style={{ background: "white", borderRadius: "8px", padding: "24px", maxWidth: "480px", textAlign: "center" }}>
