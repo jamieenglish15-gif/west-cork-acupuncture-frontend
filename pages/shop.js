@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import Head from "next/head";
-import Nav from "../components/Nav";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
@@ -96,7 +94,7 @@ function CheckoutForm({ cart, total, onSuccess, onClose }) {
           </button>
         </form>
         <p style={{ fontSize: "0.8rem", color: "#888", textAlign: "center", marginTop: "1rem" }}>
-          Click & collect only — 13 North Street, Skibbereen, Mon–Fri 9am–5pm
+          Click & collect — 13 North Street, Skibbereen, Mon–Fri 9am–5pm
         </p>
       </div>
     </div>
@@ -158,12 +156,6 @@ export default function Shop() {
 
   return (
     <>
-      <Head>
-        <title>Shop — West Cork Acupuncture</title>
-        <meta name="description" content="Mount Lai facial tools and wellness products — West Cork Acupuncture, Skibbereen" />
-      </Head>
-      <Nav />
-
       <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "2rem 1.5rem" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "2rem", borderBottom: "1px solid #eee", paddingBottom: "1.5rem" }}>
           <div>
@@ -172,7 +164,7 @@ export default function Shop() {
             <p style={{ margin: "8px 0 0", color: "#555" }}>Curated tools Kate uses and recommends in clinic. Click & collect from the studio.</p>
           </div>
           {cartCount > 0 && (
-            <button onClick={() => setCartOpen(true)} style={{ position: "relative", background: "#2c5f5f", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 20px", cursor: "pointer", fontWeight: 600, fontSize: "0.95rem" }}>
+            <button onClick={() => setCartOpen(true)} style={{ background: "#2c5f5f", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 20px", cursor: "pointer", fontWeight: 600, fontSize: "0.95rem" }}>
               Cart ({cartCount}) — €{cartTotal.toFixed(2)}
             </button>
           )}
@@ -181,7 +173,7 @@ export default function Shop() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "1.5rem" }}>
           {products.map(product => {
             const inStock = parseInt(product.stock) > 0;
-            const imgSrc = IMAGE_MAP[product.image_key] || "/Logo.jpg";
+            const imgSrc = IMAGE_MAP[product.image_key] || "/logo.jpg";
             return (
               <div key={product.id} style={{ background: "#fff", border: "1px solid #eee", borderRadius: "12px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
                 <div style={{ position: "relative", paddingTop: "100%", background: "#f8f8f8" }}>
@@ -224,7 +216,7 @@ export default function Shop() {
               <>
                 {cart.map(item => (
                   <div key={item.id} style={{ display: "flex", gap: "12px", marginBottom: "1rem", paddingBottom: "1rem", borderBottom: "1px solid #eee" }}>
-                    <img src={IMAGE_MAP[item.image_key] || "/Logo.jpg"} alt={item.name} style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "6px" }} />
+                    <img src={IMAGE_MAP[item.image_key] || "/logo.jpg"} alt={item.name} style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "6px" }} />
                     <div style={{ flex: 1 }}>
                       <p style={{ margin: "0 0 4px", fontSize: "0.9rem", fontWeight: 600 }}>{item.name}</p>
                       <p style={{ margin: "0 0 8px", fontSize: "0.85rem", color: "#2c5f5f" }}>€{parseFloat(item.price).toFixed(2)}</p>
