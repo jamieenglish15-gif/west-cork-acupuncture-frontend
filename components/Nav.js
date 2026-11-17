@@ -13,12 +13,11 @@ export default function Nav() {
     color: "#0B5A45",
     border: "1px solid #C9A44C",
     borderRadius: "2px",
-    padding: "9px 14px",
+    padding: "9px 16px",
     fontFamily: "'Helvetica Neue', Arial, sans-serif",
-    fontSize: "11px",
-    fontWeight: "600",
-    letterSpacing: "1.5px",
-    textTransform: "uppercase",
+    fontSize: "14px",
+    fontWeight: "500",
+    letterSpacing: "0.3px",
     cursor: "pointer",
     textDecoration: "none",
     whiteSpace: "nowrap",
@@ -108,7 +107,7 @@ export default function Nav() {
       }}>
         <a href="/" onClick={close} style={{ display: "flex", alignItems: "center", gap: "14px", textDecoration: "none" }}>
           <img src="/wca-emblem.jpg" alt="West Cork Acupuncture" style={{ height: "64px", width: "auto" }} />
-          <span className="wca-wordmark" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", fontWeight: 700, letterSpacing: "3px", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+          <span className="wca-wordmark" style={{ fontFamily: "'Helvetica Neue', Arial, sans-serif", fontSize: "15px", fontWeight: 600, letterSpacing: "3px", textTransform: "uppercase", whiteSpace: "nowrap" }}>
             <span style={{ color: "#0B5A45" }}>West</span>{" "}<span style={{ color: "#C9A44C" }}>Cork</span>{" "}<span style={{ color: "#0B5A45" }}>Acupuncture</span>
           </span>
         </a>
