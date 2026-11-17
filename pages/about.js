@@ -45,9 +45,6 @@ export default function About() {
             <a href="https://wa.me/353831156950" style={{ background: "#1D9E75", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>
               WhatsApp Kate
             </a>
-            <a href="/book" style={{ background: "#085041", color: "white", padding: "12px 24px", borderRadius: "6px", textDecoration: "none", fontFamily: "sans-serif" }}>
-              Book Appointment
-            </a>
           </div>
         </div>
 

@@ -152,7 +152,7 @@ export default function Nav() {
           <a href="/shop" style={btnStyle}>Shop</a>
           <a href="/voucher" style={btnStyle}>Gift Vouchers</a>
           <a href="https://www.instagram.com/west_corkacupuncture/" target="_blank" rel="noreferrer" style={btnStyle}>Instagram</a>
-          <a href="/book" style={bookStyle}>Book Now</a>
+          <a href="https://wa.me/353831156950" target="_blank" rel="noreferrer" style={bookStyle}>Message Kate</a>
 
         </div>
       </nav>

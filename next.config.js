@@ -1,6 +1,13 @@
 const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
+  async redirects() {
+    return [
+      { source: "/book", destination: "/contact", permanent: true },
+      { source: "/book-confirmed", destination: "/contact", permanent: true },
+      { source: "/qr", destination: "/contact", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

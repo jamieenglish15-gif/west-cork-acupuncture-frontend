@@ -43,7 +43,7 @@ export default function VoucherPrint() {
 
           <div style={{ background: "#1D9E75", padding: "16px", textAlign: "center" }}>
             <p style={{ fontFamily: "sans-serif", fontSize: "13px", color: "white", margin: 0 }}>
-              Book online at westcorkacupuncture.ie/book and enter your voucher code
+              Message Kate on WhatsApp 083 115 6950 and quote your voucher code
             </p>
           </div>
         </div>
