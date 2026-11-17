@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
+import Head from "next/head";
 
 export default function Nav() {
   const [open, setOpen] = useState(null);
@@ -8,38 +9,31 @@ export default function Nav() {
   const close = () => setOpen(null);
 
   const btnStyle = {
-    background: "rgba(255,255,255,0.12)",
-    color: "#fff",
-    border: "1px solid rgba(255,255,255,0.25)",
-    borderRadius: "4px",
-    padding: "7px 14px",
-    fontFamily: "sans-serif",
-    fontSize: "13px",
+    background: "transparent",
+    color: "#0B5A45",
+    border: "1px solid #C9A44C",
+    borderRadius: "2px",
+    padding: "9px 18px",
+    fontFamily: "'Helvetica Neue', Arial, sans-serif",
+    fontSize: "11px",
     fontWeight: "600",
+    letterSpacing: "2px",
+    textTransform: "uppercase",
     cursor: "pointer",
     textDecoration: "none",
     whiteSpace: "nowrap",
-  };
-
-  const bookStyle = {
-    ...btnStyle,
-    background: "#1D9E75",
-    border: "1px solid #1D9E75",
-  };
-
-  const dropTrigger = (id, label) => ({
-    background: "transparent",
-    border: "none",
-    color: open === id ? "#fff" : "#9FE1CB",
-    fontFamily: "sans-serif",
-    fontSize: "13px",
-    fontWeight: "600",
-    cursor: "pointer",
-    padding: "7px 10px",
-    display: "flex",
+    display: "inline-flex",
     alignItems: "center",
-    gap: "4px",
-    whiteSpace: "nowrap",
+    gap: "6px",
+    lineHeight: 1.2,
+  };
+
+  const bookStyle = btnStyle;
+
+  const dropTrigger = (id) => ({
+    ...btnStyle,
+    background: open === id ? "#0B5A45" : "transparent",
+    color: open === id ? "#F9FAF7" : "#0B5A45",
   });
 
   const dropMenu = {
@@ -47,7 +41,9 @@ export default function Nav() {
     top: "calc(100% + 8px)",
     left: "0",
     background: "#fff",
-    borderRadius: "8px",
+    border: "1px solid #E6DFCC",
+    borderTop: "2px solid #C9A44C",
+    borderRadius: "2px",
     boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
     minWidth: "180px",
     zIndex: 500,
@@ -59,9 +55,9 @@ export default function Nav() {
     padding: "11px 16px",
     fontFamily: "sans-serif",
     fontSize: "13px",
-    color: "#085041",
+    color: "#0B5A45",
     textDecoration: "none",
-    borderBottom: "1px solid #E1F5EE",
+    borderBottom: "1px solid #F1EEE6",
     fontWeight: "500",
   };
 
@@ -84,6 +80,13 @@ export default function Nav() {
 
   return (
     <div>
+      <Head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap" />
+      </Head>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .wca-nb:hover { background: #0B5A45 !important; color: #F9FAF7 !important; }
+        @media (max-width: 900px) { .wca-wordmark { display: none; } }
+      ` }} />
       {open && (
         <div
           onClick={close}
@@ -92,8 +95,8 @@ export default function Nav() {
       )}
 
       <nav style={{
-        background: "#085041",
-        padding: "10px 24px",
+        background: "#F9FAF7",
+        padding: "10px 28px",
         display: "flex",
         gap: "8px",
         alignItems: "center",
@@ -101,17 +104,18 @@ export default function Nav() {
         position: "sticky",
         top: 0,
         zIndex: 100,
-        borderBottom: "1px solid rgba(255,255,255,0.1)",
+        borderBottom: "1px solid #C9A44C",
       }}>
-        <a href="/" onClick={close}>
-          <img src="/logo.jpg" alt="West Cork Acupuncture" style={{ height: "56px", borderRadius: "4px" }} />
+        <a href="/" onClick={close} style={{ display: "flex", alignItems: "center", gap: "14px", textDecoration: "none" }}>
+          <img src="/wca-emblem.jpg" alt="West Cork Acupuncture" style={{ height: "64px", width: "auto" }} />
+          <span className="wca-wordmark" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "19px", fontWeight: 600, letterSpacing: "3px", color: "#0B5A45", textTransform: "uppercase" }}>West Cork Acupuncture</span>
         </a>
 
-        <div style={{ marginLeft: "auto", display: "flex", gap: "4px", alignItems: "center", flexWrap: "wrap" }}>
+        <div style={{ marginLeft: "auto", display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
 
           {/* Treatments dropdown */}
           <div style={{ position: "relative" }}>
-            <button style={dropTrigger("treatments")} onClick={() => toggle("treatments")}>
+            <button className="wca-nb" style={dropTrigger("treatments")} onClick={() => toggle("treatments")}>
               Treatments <span style={{ fontSize: "10px" }}>{open === "treatments" ? "▲" : "▼"}</span>
             </button>
             {open === "treatments" && (
@@ -124,7 +128,7 @@ export default function Nav() {
 
           {/* About dropdown */}
           <div style={{ position: "relative" }}>
-            <button style={dropTrigger("about")} onClick={() => toggle("about")}>
+            <button className="wca-nb" style={dropTrigger("about")} onClick={() => toggle("about")}>
               About <span style={{ fontSize: "10px" }}>{open === "about" ? "▲" : "▼"}</span>
             </button>
             {open === "about" && (
@@ -137,7 +141,7 @@ export default function Nav() {
 
           {/* Policy dropdown */}
           <div style={{ position: "relative" }}>
-            <button style={dropTrigger("policy")} onClick={() => toggle("policy")}>
+            <button className="wca-nb" style={dropTrigger("policy")} onClick={() => toggle("policy")}>
               Policy <span style={{ fontSize: "10px" }}>{open === "policy" ? "▲" : "▼"}</span>
             </button>
             {open === "policy" && (
@@ -149,9 +153,9 @@ export default function Nav() {
             )}
           </div>
 
-          <a href="/shop" style={btnStyle}>Shop</a>
-          <a href="/voucher" style={btnStyle}>Gift Vouchers</a>
-          <a href="https://wa.me/353831156950" target="_blank" rel="noreferrer" style={bookStyle}>Message Kate</a>
+          <a href="/shop" className="wca-nb" style={btnStyle}>Shop</a>
+          <a href="/voucher" className="wca-nb" style={btnStyle}>Gift Vouchers</a>
+          <a href="https://wa.me/353831156950" target="_blank" rel="noreferrer" className="wca-nb" style={bookStyle}>Message Kate</a>
 
         </div>
       </nav>
