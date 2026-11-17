@@ -50,8 +50,8 @@ export default function Cancellation() {
         </div>
 
         <div style={{ textAlign: "center", marginTop: "40px" }}>
-          <a href="/book" style={{ background: "#1D9E75", color: "white", padding: "14px 40px", borderRadius: "8px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "16px" }}>
-            Book Appointment
+          <a href="https://wa.me/353831156950" target="_blank" rel="noreferrer" style={{ background: "#1D9E75", color: "white", padding: "14px 40px", borderRadius: "8px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "16px" }}>
+            Message Kate on WhatsApp
           </a>
         </div>
 

@@ -110,7 +110,7 @@ function SuccessModal({ code, name, onClose }) {
           <p style={{ margin: "0 0 8px", fontSize: "0.85rem", color: "#555" }}>Voucher code</p>
           <p style={{ margin: 0, fontSize: "1.8rem", fontWeight: "700", color: "#085041", letterSpacing: "0.1em" }}>{code}</p>
         </div>
-        <p style={{ fontSize: "0.85rem", color: "#888", marginBottom: "1.5rem" }}>Valid for 12 months. Enter this code when booking online.</p>
+        <p style={{ fontSize: "0.85rem", color: "#888", marginBottom: "1.5rem" }}>Valid for 12 months. Quote this code when you book with Kate.</p>
         <button onClick={onClose} style={{ padding: "10px 24px", background: "#085041", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "600" }}>Done</button>
       </div>
     </div>
@@ -175,7 +175,7 @@ export default function Voucher() {
           <h3 style={{ fontSize: "18px", color: "#085041", marginBottom: "12px" }}>How it works</h3>
           <p style={{ fontFamily: "sans-serif", color: "#333", lineHeight: "1.8", marginBottom: "8px" }}>1. Purchase a voucher by card — you'll receive a unique code instantly by email</p>
           <p style={{ fontFamily: "sans-serif", color: "#333", lineHeight: "1.8", marginBottom: "8px" }}>2. Share the voucher code with the recipient</p>
-          <p style={{ fontFamily: "sans-serif", color: "#333", lineHeight: "1.8", marginBottom: "8px" }}>3. The recipient enters the code when booking online</p>
+          <p style={{ fontFamily: "sans-serif", color: "#333", lineHeight: "1.8", marginBottom: "8px" }}>3. The recipient quotes the code when booking with Kate</p>
           <p style={{ fontFamily: "sans-serif", color: "#333", lineHeight: "1.8" }}>4. Vouchers are valid for 12 months from date of purchase</p>
         </div>
       </div>
