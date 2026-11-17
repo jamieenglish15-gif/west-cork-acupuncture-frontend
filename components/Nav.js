@@ -13,11 +13,11 @@ export default function Nav() {
     color: "#0B5A45",
     border: "1px solid #C9A44C",
     borderRadius: "2px",
-    padding: "9px 18px",
+    padding: "9px 14px",
     fontFamily: "'Helvetica Neue', Arial, sans-serif",
     fontSize: "11px",
     fontWeight: "600",
-    letterSpacing: "2px",
+    letterSpacing: "1.5px",
     textTransform: "uppercase",
     cursor: "pointer",
     textDecoration: "none",
@@ -85,7 +85,7 @@ export default function Nav() {
       </Head>
       <style dangerouslySetInnerHTML={{ __html: `
         .wca-nb:hover { background: #0B5A45 !important; color: #F9FAF7 !important; }
-        @media (max-width: 900px) { .wca-wordmark { display: none; } }
+        @media (max-width: 1100px) { .wca-wordmark { display: none; } }
       ` }} />
       {open && (
         <div
@@ -108,17 +108,17 @@ export default function Nav() {
       }}>
         <a href="/" onClick={close} style={{ display: "flex", alignItems: "center", gap: "14px", textDecoration: "none" }}>
           <img src="/wca-emblem.jpg" alt="West Cork Acupuncture" style={{ height: "64px", width: "auto" }} />
-          <span className="wca-wordmark" style={{ fontFamily: "'DejaVu Serif', Georgia, 'Times New Roman', serif", fontSize: "17px", fontWeight: 700, letterSpacing: "4px", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+          <span className="wca-wordmark" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "24px", fontWeight: 700, letterSpacing: "3px", textTransform: "uppercase", whiteSpace: "nowrap" }}>
             <span style={{ color: "#0B5A45" }}>West</span>{" "}<span style={{ color: "#C9A44C" }}>Cork</span>{" "}<span style={{ color: "#0B5A45" }}>Acupuncture</span>
           </span>
         </a>
 
-        <div style={{ marginLeft: "auto", display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
+        <div style={{ marginLeft: "auto", display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
 
           {/* Treatments dropdown */}
           <div style={{ position: "relative" }}>
             <button className="wca-nb" style={dropTrigger("treatments")} onClick={() => toggle("treatments")}>
-              Treatments <span style={{ fontSize: "10px" }}>{open === "treatments" ? "▲" : "▼"}</span>
+              Treatments <span style={{ fontSize: "8px", opacity: 0.7 }}>{open === "treatments" ? "▲" : "▼"}</span>
             </button>
             {open === "treatments" && (
               <div style={dropMenu}>
@@ -131,7 +131,7 @@ export default function Nav() {
           {/* About dropdown */}
           <div style={{ position: "relative" }}>
             <button className="wca-nb" style={dropTrigger("about")} onClick={() => toggle("about")}>
-              About <span style={{ fontSize: "10px" }}>{open === "about" ? "▲" : "▼"}</span>
+              About <span style={{ fontSize: "8px", opacity: 0.7 }}>{open === "about" ? "▲" : "▼"}</span>
             </button>
             {open === "about" && (
               <div style={dropMenu}>
@@ -144,7 +144,7 @@ export default function Nav() {
           {/* Policy dropdown */}
           <div style={{ position: "relative" }}>
             <button className="wca-nb" style={dropTrigger("policy")} onClick={() => toggle("policy")}>
-              Policy <span style={{ fontSize: "10px" }}>{open === "policy" ? "▲" : "▼"}</span>
+              Policy <span style={{ fontSize: "8px", opacity: 0.7 }}>{open === "policy" ? "▲" : "▼"}</span>
             </button>
             {open === "policy" && (
               <div style={dropMenu}>
