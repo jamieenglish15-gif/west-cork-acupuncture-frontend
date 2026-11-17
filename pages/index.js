@@ -41,7 +41,7 @@ export default function Home() {
             Restore.<br /><em style={{ color: GOLD }}>Rebalance.</em><br />Heal.
           </h1>
           <p style={{ fontFamily: sans, fontSize: "17px", color: "#4b5b54", lineHeight: 1.8, margin: "0 0 40px", maxWidth: "480px" }}>
-            Gentle, evidence-based acupuncture to support your body's natural healing, in a calm, private clinic in Skibbereen.
+            Gentle, evidence-based acupuncture to support your body's natural healing, in a calm, professional setting in Skibbereen.
           </p>
           <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
             <a href="https://wa.me/353831156950" target="_blank" rel="noreferrer" className="wca-btn wca-btn-solid">MESSAGE KATE</a>
