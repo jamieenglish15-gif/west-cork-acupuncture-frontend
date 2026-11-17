@@ -458,7 +458,7 @@ export default function Admin() {
   const [password, setPassword] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
   const [error, setError] = useState("");
-  const [tab, setTab] = useState("bookings");
+  const [tab, setTab] = useState("contacts");
   const [blockDate, setBlockDate] = useState("");
   const [blockedSlots, setBlockedSlots] = useState([]);
   const [editingNote, setEditingNote] = useState(null);
@@ -774,17 +774,11 @@ export default function Admin() {
         <p style={{ fontFamily: "sans-serif", color: "#9FE1CB", marginBottom: "24px" }}>West Cork Acupuncture</p>
 
         <div style={{ marginBottom: "24px" }}>
-          <button style={tabStyle("bookings")} onClick={() => setTab("bookings")}>Bookings</button>
-          <button style={tabStyle("calendar")} onClick={() => setTab("calendar")}>Calendar</button>
           <button style={tabStyle("contacts")} onClick={() => setTab("contacts")}>Contacts</button>
-          <button style={tabStyle("archive")} onClick={() => setTab("archive")}>Archive</button>
-          <button style={tabStyle("slots")} onClick={() => setTab("slots")}>Manage Slots</button>
-          <button style={tabStyle("add")} onClick={() => setTab("add")}>Add Booking</button>
           <button style={tabStyle("intake")} onClick={() => setTab("intake")}>Intake Forms</button>
           <button style={tabStyle("soap")} onClick={() => setTab("soap")}>SOAP Notes</button>
           <button style={tabStyle("revenue")} onClick={() => setTab("revenue")}>Revenue</button>
           <button style={tabStyle("vouchers")} onClick={() => setTab("vouchers")}>Vouchers</button>
-          <button style={tabStyle("qr")} onClick={() => setTab("qr")}>QR Code</button>
         </div>
 
         {tab === "bookings" && (

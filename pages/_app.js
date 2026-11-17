@@ -9,11 +9,11 @@ export default function App({ Component, pageProps }) {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>West Cork Acupuncture | Kate | Skibbereen</title>
-        <meta name="description" content="Traditional acupuncture and cosmetic facial acupuncture in Skibbereen, West Cork. Book online with Kate." />
+        <meta name="description" content="Traditional acupuncture and cosmetic facial acupuncture in Skibbereen, West Cork. Message Kate to arrange your appointment." />
         <meta name="keywords" content="acupuncture west cork, acupuncture skibbereen, cosmetic acupuncture ireland, facial acupuncture cork" />
         <meta name="author" content="West Cork Acupuncture" />
         <meta property="og:title" content="West Cork Acupuncture | Skibbereen" />
-        <meta property="og:description" content="Gentle, evidence-based acupuncture treatments in Skibbereen, West Cork. Book online today." />
+        <meta property="og:description" content="Gentle, evidence-based acupuncture treatments in Skibbereen, West Cork. Get in touch today." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://westcorkacupuncture.ie" />
         <meta property="og:image" content="https://westcorkacupuncture.ie/logo.jpg" />

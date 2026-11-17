@@ -27,8 +27,8 @@ export default function Home() {
             Gentle, evidence-based acupuncture treatments tailored to support your body's natural healing in a calm, private clinic in West Cork.
           </p>
           <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-            <a href="/book" style={{ background: "#1D9E75", color: "white", padding: "16px 40px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px", letterSpacing: "1px" }}>
-              BOOK NOW
+            <a href="https://wa.me/353831156950" target="_blank" rel="noreferrer" style={{ background: "#1D9E75", color: "white", padding: "16px 40px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px", letterSpacing: "1px" }}>
+              MESSAGE KATE
             </a>
             <a href="/conditions" style={{ border: "1px solid rgba(255,255,255,0.5)", color: "white", padding: "16px 40px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px", letterSpacing: "1px" }}>
               LEARN MORE
@@ -107,11 +107,8 @@ export default function Home() {
 
       <div style={{ background: "#1D9E75", padding: "80px 60px", textAlign: "center" }}>
         <h2 style={{ fontSize: "42px", color: "white", fontWeight: "normal", marginBottom: "16px" }}>Ready to Begin?</h2>
-        <p style={{ fontFamily: "sans-serif", color: "rgba(255,255,255,0.85)", fontSize: "16px", marginBottom: "40px" }}>Book your appointment online or message Kate directly on WhatsApp.</p>
+        <p style={{ fontFamily: "sans-serif", color: "rgba(255,255,255,0.85)", fontSize: "16px", marginBottom: "40px" }}>Message Kate directly on WhatsApp to arrange your appointment.</p>
         <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="/book" style={{ background: "white", color: "#085041", padding: "16px 48px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px", letterSpacing: "1px" }}>
-            BOOK ONLINE
-          </a>
           <a href="https://wa.me/353831156950" style={{ border: "1px solid white", color: "white", padding: "16px 48px", borderRadius: "4px", textDecoration: "none", fontFamily: "sans-serif", fontSize: "14px", letterSpacing: "1px" }}>
             WHATSAPP KATE
           </a>
