@@ -108,7 +108,9 @@ export default function Nav() {
       }}>
         <a href="/" onClick={close} style={{ display: "flex", alignItems: "center", gap: "14px", textDecoration: "none" }}>
           <img src="/wca-emblem.jpg" alt="West Cork Acupuncture" style={{ height: "64px", width: "auto" }} />
-          <span className="wca-wordmark" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "19px", fontWeight: 600, letterSpacing: "3px", color: "#0B5A45", textTransform: "uppercase" }}>West Cork Acupuncture</span>
+          <span className="wca-wordmark" style={{ fontFamily: "'DejaVu Serif', Georgia, 'Times New Roman', serif", fontSize: "17px", fontWeight: 700, letterSpacing: "4px", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+            <span style={{ color: "#0B5A45" }}>West</span>{" "}<span style={{ color: "#C9A44C" }}>Cork</span>{" "}<span style={{ color: "#0B5A45" }}>Acupuncture</span>
+          </span>
         </a>
 
         <div style={{ marginLeft: "auto", display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
