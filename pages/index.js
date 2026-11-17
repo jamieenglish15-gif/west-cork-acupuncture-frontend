@@ -49,7 +49,7 @@ export default function Home() {
           </div>
         </div>
         <div className="wca-hero-art">
-          <img src="/wca-emblem.jpg" alt="West Cork Acupuncture: phoenix rising over mountains" style={{ width: "100%", maxWidth: "460px", height: "auto" }} />
+          <img src="/wca-emblem.jpg" alt="West Cork Acupuncture: phoenix rising over mountains" style={{ width: "100%", maxWidth: "560px", height: "auto" }} />
         </div>
       </section>
 
